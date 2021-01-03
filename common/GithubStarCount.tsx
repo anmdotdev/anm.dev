@@ -20,7 +20,7 @@ const GithubStarCount = ({ orgName, repoName }) => {
     <Link
       href={`${githubUrl}/${orgName}/${repoName}`}
       external
-      className="border border-gray-lighter text-sm rounded-sm bg-white"
+      className="border border-gray-lighter text-xs rounded-sm bg-white"
       showIcon="never"
     >
       <span className="flex items-center p-1 px-2 space-x-2 bg-gray-lightest group-hover:bg-white">
