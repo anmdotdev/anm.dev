@@ -5,7 +5,7 @@ import Link from 'common/Link'
 const siteName = 'anmdotdev'
 
 const navLinks = [
-  { link: '/open-source', text: 'Open Source' },
+  { link: '/open-source', text: 'OSS' },
   { link: 'https://twitter.com/anmdotdev', text: 'Follow me on Twitter', external: true },
 ]
 
