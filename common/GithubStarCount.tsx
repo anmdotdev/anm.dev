@@ -6,7 +6,7 @@ const githubUrl = 'https://github.com'
 const githubApi = 'https://api.github.com/repos'
 
 const GithubStarCount = ({ orgName, repoName }) => {
-  const [stars, setStars] = useState()
+  const [stars, setStars] = useState(0)
 
   useEffect(() => {
     fetch(`${githubApi}/${orgName}/${repoName}`)
@@ -27,7 +27,7 @@ const GithubStarCount = ({ orgName, repoName }) => {
         <IconGithub width={18} />
         <span>Star on Github</span>
       </span>
-      {stars && (
+      {stars > 0 && (
         <span className="border-l border-gray-lighter bg-white p-1 px-2 flex items-center">
           {stars}
         </span>
