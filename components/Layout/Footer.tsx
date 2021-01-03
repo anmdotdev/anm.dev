@@ -21,7 +21,7 @@ const links = [
   },
   {
     icon: IconLinkedIn,
-    link: 'https://linkedin.com/in/anmdotdev',
+    link: 'https://linkedin.com/in/anmolmahatpurkar',
     text: 'View Linkedin Profile',
   },
   {
