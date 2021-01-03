@@ -1,0 +1,21 @@
+{
+  "name": "anm.dev",
+  "short_name": "anm.dev",
+  "icons": [
+    {
+      "src": "/logos/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/logos/android-chrome-384x384.png",
+      "sizes": "384x384",
+      "type": "image/png"
+    }
+  ],
+  "theme_color": "#222222",
+  "background_color": "#ffffff",
+  "description": "Developer",
+  "display": "fullscreen",
+  "start_url": "/"
+}
