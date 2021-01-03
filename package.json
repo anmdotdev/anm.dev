@@ -1,5 +1,5 @@
 {
-  "name": "anmdotdev",
+  "name": "anm.dev",
   "version": "1.0.0",
   "private": true,
   "scripts": {
@@ -8,16 +8,12 @@
     "start": "next start"
   },
   "dependencies": {
-    "@prefresh/next": "^1.4.4",
+    "@tippyjs/react": "^4.2.0",
     "next": "10.0.4",
     "next-offline": "^5.0.3",
-    "next-plugin-preact": "^3.0.3",
     "next-seo": "^4.17.0",
-    "preact": "^10.5.9",
-    "preact-render-to-string": "^5.1.12",
-    "react": "npm:@preact/compat@^0.0.3",
-    "react-dom": "npm:@preact/compat@^0.0.3",
-    "react-ssr-prepass": "npm:preact-ssr-prepass@^1.1.2",
+    "react": "17.0.1",
+    "react-dom": "17.0.1",
     "tailwindcss": "^2.0.2"
   },
   "devDependencies": {

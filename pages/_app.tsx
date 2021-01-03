@@ -6,6 +6,7 @@ import Firebase from 'common/Firebase'
 import Layout from 'components/Layout/Layout'
 
 import 'tailwindcss/tailwind.css'
+import 'tippy.js/dist/tippy.css'
 
 declare global {
   interface Window {

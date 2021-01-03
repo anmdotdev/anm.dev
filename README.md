@@ -1,6 +1,6 @@
 # anmdotdev - my dev website
 
-My personal website, built using Preact, TypeScript, NextJS, and TailwindCSS.
+My personal website, built using React, TypeScript, NextJS, and TailwindCSS.
 
 ## Features
 
