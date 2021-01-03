@@ -1,6 +1,6 @@
 export const OPEN_SOURCE_PROJECTS = [
   {
-    image: '/images/cogo-toast.gif',
+    image: '/images/cogo-toast.png',
     name: 'CogoToast',
     description: 'A Beautiful, Zero Configuration, Plug and Play Toast Notifications Library',
     tags: [
