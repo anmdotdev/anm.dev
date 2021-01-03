@@ -6,7 +6,7 @@ const siteName = 'anmdotdev'
 
 const navLinks = [
   { link: '/open-source', text: 'OSS' },
-  { link: 'https://twitter.com/anmdotdev', text: 'Follow me on Twitter', external: true },
+  { link: 'https://twitter.com/anmdotdev', text: 'Follow on Twitter', external: true },
 ]
 
 const Header = () => {
