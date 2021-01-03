@@ -57,10 +57,11 @@ const palette = {
 }
 
 module.exports = {
-  purge:
-    process.env.NODE_ENV === 'production'
-      ? ['./packages/**/*.{js,ts,jsx,tsx}', './pages/**/*.{js,ts,jsx,tsx}']
-      : undefined,
+  purge: [
+    './common/**/*.{js,ts,jsx,tsx}',
+    './components/**/*.{js,ts,jsx,tsx}',
+    './pages/**/*.{js,ts,jsx,tsx}',
+  ],
   darkMode: 'class',
   theme: {
     colors: {
