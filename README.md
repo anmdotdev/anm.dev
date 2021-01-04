@@ -5,7 +5,7 @@ My personal website, built using React, TypeScript, NextJS, and TailwindCSS.
 ## Features
 
 - 📱 **Responsive** - Works on mobile, tablets and desktops.
-- ✨ **Server Side rendering** of pages generated via Preact and Tailwind
+- ✨ **Server Side rendering** of pages generated via React and Tailwind
 - 📴 Works **Offline** - Install as a **PWA**. Configured via a Service Worker.
 - 🚗 **Perfect score** for all parameters with Google **Lighthouse** Audit.
 - 📜 Written in **TypeScript.**
