@@ -22,7 +22,6 @@ export const OPEN_SOURCE_PROJECTS = [
       { label: 'TypeScript', color: 'gray' },
       { label: 'Next.js', color: 'gray' },
       { label: 'TailwindCSS', color: 'gray' },
-      { label: 'Preact', color: 'gray' },
     ],
     githubOrgName: 'anmdotdev',
     githubRepoName: 'anmdotdev',
