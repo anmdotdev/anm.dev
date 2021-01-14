@@ -20,7 +20,7 @@ const Header = () => {
       <nav className="space-x-4 flex items-center">
         {navLinks.map(({ link, text, wip }) =>
           wip ? (
-            <Tippy content="Work in Progress">
+            <Tippy key={link} content="Work in Progress">
               <span className="text-gray-dark cursor-pointer hover:underline">{text}</span>
             </Tippy>
           ) : (
