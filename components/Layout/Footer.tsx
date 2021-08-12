@@ -44,25 +44,22 @@ const Footer = () => {
         <div className="flex-1">
           <h2 className="text-lg font-semibold mb-4">About</h2>
           <p>
-            Welcome to my personal website! I'm Anmol Mahatpurkar, a Frontend Engineer from India 🇮🇳
-            and I love JavaScript and React.
+            {`Welcome to my personal website! I'm Anmol Mahatpurkar, a Frontend Engineer from India 🇮🇳 and I love JavaScript and React.`}
           </p>
         </div>
         <div className="flex-1">
           <h2 className="text-lg font-semibold mb-4">Social</h2>
           {links.map(({ icon: Icon, link, text, download }) => (
-            <div>
-              <Link
-                key={link}
-                href={link}
-                className="space-x-3 mb-1 text-gray-dark"
-                external
-                download={download}
-              >
-                <Icon className="text-black w-4" />
-                <span>{text}</span>
-              </Link>
-            </div>
+            <Link
+              key={link}
+              href={link}
+              className="space-x-3 mb-1 text-gray-dark"
+              external
+              download={download}
+            >
+              <Icon className="text-black w-4" />
+              <span>{text}</span>
+            </Link>
           ))}
         </div>
       </div>

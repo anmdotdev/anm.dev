@@ -7,7 +7,7 @@ const Intro = () => {
     <section className="w-full max-w-lg mx-auto pt-10 pb-8 sm:px-6">
       <h1 className="text-center font-bold text-4xl mb-8">Hey, I'm Anmol 👋</h1>
       <p className="mb-6">
-        I am a Frontend Engineer from India 🇮🇳 and I love JavaScript and React. I currently work as
+        I am a Frontend Engineer from India, and I love JavaScript and React. I currently work as
         a <strong className="font-medium">Sr. Software Engineer</strong> at{' '}
         <Link href="https://airbase.com" className="text-link" external showIcon="never">
           Airbase Inc.
