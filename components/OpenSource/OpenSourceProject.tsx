@@ -1,6 +1,5 @@
 import React, { ReactNode, FC } from 'react'
 
-import Image from 'next/image'
 import Link from 'common/Link'
 import Chips from 'common/Chips'
 import GithubStarCount from 'common/GithubStarCount'
@@ -29,9 +28,14 @@ const OpenSourceProject: FC<Props> = ({
   npmName,
 }) => {
   return (
-    <div className={classnames('w-full flex space-x-5 md:flex-col md:space-x-0 md:space-y-5 md:items-center md:px-6 md:text-center', className)}>
+    <div
+      className={classnames(
+        'w-full flex space-x-5 md:flex-col md:space-x-0 md:space-y-5 md:items-center md:px-6 md:text-center',
+        className,
+      )}
+    >
       <div className="flex-1">
-        <Image src={image} alt={name} priority loading="eager" width={400} height={250} />
+        <img src={image} alt={name} width={400} height={250} />
       </div>
       <div className="flex-1 py-4">
         <h3 className="text-lg font-semibold mb-3">{name}</h3>

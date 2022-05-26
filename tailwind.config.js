@@ -57,12 +57,11 @@ const palette = {
 }
 
 module.exports = {
-  purge: [
+  content: [
     './common/**/*.{js,ts,jsx,tsx}',
     './components/**/*.{js,ts,jsx,tsx}',
     './pages/**/*.{js,ts,jsx,tsx}',
   ],
-  darkMode: 'class',
   theme: {
     colors: {
       purple: palette.purple,
@@ -110,11 +109,6 @@ module.exports = {
         4: '4 4 0%',
         5: '5 5 0%',
       },
-    },
-  },
-  variants: {
-    extend: {
-      borderWidth: ['last'],
     },
   },
   plugins: [],
