@@ -12,7 +12,7 @@ const Intro = () => {
         <Link href="https://airbase.com" className="text-link" external showIcon="never">
           Airbase Inc.
         </Link>{' '}
-        and have a total of about 6 years of experience as an engineer.
+        and have a total of about 8 years of experience as an engineer.
       </p>
       <p>
         When I am not working, you would find me playing games on my not-so-gaming PC. I also like
