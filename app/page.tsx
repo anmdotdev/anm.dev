@@ -1,9 +1,7 @@
-import React from 'react'
-
 import Intro from 'components/Home/Intro'
 import OpenSource from 'components/Home/OpenSource'
 
-const HomePage = () => {
+export default function HomePage() {
   return (
     <>
       <Intro />
@@ -11,5 +9,3 @@ const HomePage = () => {
     </>
   )
 }
-
-export default HomePage

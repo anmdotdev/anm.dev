@@ -1,3 +1,5 @@
+'use client'
+
 import { useEffect, useState } from 'react'
 import IconGithub from './Icons/IconGithub'
 import Link from './Link'

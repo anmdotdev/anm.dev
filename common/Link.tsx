@@ -1,3 +1,5 @@
+'use client'
+
 import { ReactNode, FC } from 'react'
 
 import NextLink from 'next/link'
@@ -43,25 +45,22 @@ const Link: FC<Props> = (props) => {
   ) : target === '_blank' ? (
     <IconNewTab className={classnames(iconClassName, 'w-4')} />
   ) : null
-
   const onClick = () => {
     logEvent(Events.Link.Clicked, { href, target, download, rel, external })
   }
-
   return (
-    <NextLink href={href}>
-      <a
-        {...rest}
-        target={target}
-        download={download}
-        rel={rel || external ? 'noreferrer noopener nofollow' : ''}
-        className={classnames('group inline-flex items-center hover:underline', className || '')}
-        onClick={onClick}
-      >
-        {children}
+    <NextLink
+      {...rest}
+      href={href}
+      target={target}
+      download={download}
+      rel={rel || external ? 'noreferrer noopener nofollow' : ''}
+      className={classnames('group inline-flex items-center hover:underline', className || '')}
+      onClick={onClick}
+    >
+      {children}
 
-        {showIcon !== 'never' ? icon : null}
-      </a>
+      {showIcon !== 'never' ? icon : null}
     </NextLink>
   )
 }

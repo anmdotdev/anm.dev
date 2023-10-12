@@ -1,8 +1,9 @@
+'use client'
+
 import React, { useEffect } from 'react'
 
 import Header from './Header'
 import Footer from './Footer'
-
 import { analytics } from 'utils/analytics'
 
 const Layout = ({ children }) => {

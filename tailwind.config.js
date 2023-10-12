@@ -58,9 +58,9 @@ const palette = {
 
 module.exports = {
   content: [
+    './app/**/*.{js,ts,jsx,tsx}',
     './common/**/*.{js,ts,jsx,tsx}',
     './components/**/*.{js,ts,jsx,tsx}',
-    './pages/**/*.{js,ts,jsx,tsx}',
   ],
   theme: {
     colors: {
@@ -101,7 +101,7 @@ module.exports = {
     },
     extend: {
       fontFamily: {
-        sans: ['Raleway', ...defaultTheme.fontFamily.sans],
+        sans: ['var(--font-raleway)', ...defaultTheme.fontFamily.sans],
       },
       flex: {
         2: '2 2 0%',
