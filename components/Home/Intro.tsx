@@ -16,7 +16,7 @@ const Intro = () => {
         an engineer.
       </p>
       <p>
-        When I am not working, you would find me playing Age of Empires 2. I also like to play
+        When I am not working, you would find me playing Age of Empires 2 on my PC. I also like to play
         chess, and think about the mysteries of the human mind, sometimes.
       </p>
     </section>
