@@ -26,7 +26,6 @@ const defaultMetadata: Metadata = {
       },
     ],
   },
-  themeColor: '#fff',
   openGraph: {
     url: 'https://anm.dev',
     title: 'Anmol Mahatpurkar - A Frontend Engineer from India 🇮🇳 - @anmdotdev',

@@ -44,7 +44,7 @@ const Footer = () => {
         <div className="flex-1">
           <h2 className="text-lg font-semibold mb-4">About</h2>
           <p>
-            {`Welcome to my personal website! I'm Anmol Mahatpurkar, a Frontend Engineer from India 🇮🇳 and I love JavaScript and React.`}
+            {`Welcome to my personal website! I'm Anmol Mahatpurkar, a Staff Frontend Engineer from India 🇮🇳 and I love JavaScript and React.`}
           </p>
         </div>
         <div className="flex-1">

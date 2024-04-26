@@ -8,7 +8,7 @@ const Intro = () => {
       <h1 className="text-center font-bold text-4xl mb-8">Hey, I'm Anmol 👋</h1>
       <p className="mb-6">
         I am a Frontend Engineer from India, and I love JavaScript and React. I currently work as a{' '}
-        <strong className="font-medium">Sr. Software Engineer</strong> at{' '}
+        <strong className="font-medium">Staff Software Engineer</strong> at{' '}
         <Link href="https://airbase.com" className="text-link" external showIcon="never">
           Airbase Inc.
         </Link>{' '}
@@ -16,8 +16,8 @@ const Intro = () => {
         an engineer.
       </p>
       <p>
-        When I am not working, you would find me playing Age of Empires 2 on my PC. I also like to play
-        chess, and think about the mysteries of the human mind, sometimes.
+        When I am not working, you would find me playing Age of Empires 2 on my PC. I also like to
+        play chess, and think about the mysteries of the human mind, sometimes.
       </p>
     </section>
   )
