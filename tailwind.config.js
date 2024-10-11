@@ -9,6 +9,9 @@ const palette = {
 
   link: '#3867d6',
 
+  airbase: '#ff6447',
+  paylocity: '#fd6311',
+
   purple: {
     darker: '#4317c0',
     dark: '#5a27ed',
@@ -78,6 +81,9 @@ module.exports = {
       white: palette.white,
       black: palette.black,
       'pure-black': palette['pure-black'],
+
+      airbase: palette.airbase,
+      paylocity: palette.paylocity,
     },
     boxShadow: (theme) => ({
       DEFAULT: '-4px 9px 25px -6px rgba(0, 0, 0, 0.1)',

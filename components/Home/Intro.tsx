@@ -9,12 +9,16 @@ const Intro = () => {
       <p className="mb-6">
         I am a Frontend Engineer from India, and I love JavaScript and React. I currently work as a{' '}
         <strong className="font-medium">Staff Software Engineer</strong> at{' '}
-        <Link href="https://airbase.com" className="text-link" external showIcon="never">
+        <Link href="https://airbase.com" className="text-link font-semibold" external showIcon="never">
           Airbase Inc.
-        </Link>{' '}
-        and have a total of <strong className="font-medium">about 9 years of experience</strong> as
+        </Link>, recently acquired by{' '}
+        <Link href="https://www.paylocity.com/resources/resource-library/press-release/paylocity-announces-completion-of-acquisition-of-airbase-inc/" className="text-link font-semibold" external showIcon="never">
+          Paylocity
+        </Link>,
+        and have a total of <strong className="font-medium">about 10 years of experience</strong> as
         an engineer.
       </p>
+      <p className="mb-6">Over the span of 10 years, I have worked with a <strong className="font-medium">range of Frontend initiatives</strong>, including multiple <strong className="font-medium">Design Systems, Web & Mobile Apps, mentored</strong> multiple teams on building their <strong className="font-medium">frontend initiatives.</strong></p>
       <p>
         When I am not working, you would find me playing Age of Empires 2 on my PC. I also like to
         play chess, and think about the mysteries of the human mind, sometimes.
