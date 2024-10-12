@@ -1,12 +1,12 @@
 import { ReactNode, FC } from 'react'
 import { classnames } from 'utils/helpers'
 
-interface ChipProps {
+interface IChipProps {
   color?: string
   children: ReactNode
 }
 
-export const Chip: FC<ChipProps> = ({ children }) => {
+export const Chip = ({ children }: IChipProps) => {
   return (
     <span className="border p-1 rounded border-gray-lighter bg-gray-lightest text-gray-darker text-xs">
       {children}
@@ -14,7 +14,7 @@ export const Chip: FC<ChipProps> = ({ children }) => {
   )
 }
 
-interface ChipsProps {
+interface IChipsProps {
   chips: {
     label: ReactNode
     color?: string
@@ -22,16 +22,14 @@ interface ChipsProps {
   className?: string
 }
 
-const Chips: FC<ChipsProps> = ({ chips, className }) => {
-  return (
-    <div className={classnames('space-x-3', className)}>
-      {chips.map((chip, id: number) => (
-        <Chip key={id} color={chip.color}>
-          {chip.label}
-        </Chip>
-      ))}
-    </div>
-  )
-}
+const Chips = ({ chips, className }: IChipsProps) => (
+  <div className={classnames('space-x-3', className)}>
+    {chips.map((chip, id: number) => (
+      <Chip key={id} color={chip.color}>
+        {chip.label}
+      </Chip>
+    ))}
+  </div>
+)
 
 export default Chips

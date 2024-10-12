@@ -25,12 +25,16 @@ const raleway = Raleway({
 
 export const metadata: Metadata = defaultMetadata
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <html lang="en" className={`${raleway.variable}`}>
-      <body>
-        <Layout>{children}</Layout>
-      </body>
-    </html>
-  )
+interface IRootLayoutProps {
+  children: React.ReactNode
 }
+
+const RootLayout = ({ children }: IRootLayoutProps) => (
+  <html lang="en" className={`${raleway.variable}`}>
+    <body>
+      <Layout>{children}</Layout>
+    </body>
+  </html>
+)
+
+export default RootLayout

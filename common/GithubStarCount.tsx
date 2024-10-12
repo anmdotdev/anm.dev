@@ -7,7 +7,12 @@ import Link from './Link'
 const githubUrl = 'https://github.com'
 const githubApi = 'https://api.github.com/repos'
 
-const GithubStarCount = ({ orgName, repoName }) => {
+interface IGithubStarCountProps {
+  orgName: string
+  repoName: string
+}
+
+const GithubStarCount = ({ orgName, repoName }: IGithubStarCountProps) => {
   const [stars, setStars] = useState(0)
 
   useEffect(() => {

@@ -1,11 +1,11 @@
 import Intro from 'components/Home/Intro'
-import OpenSource from 'components/Home/OpenSource'
+import OpenSourceProjects from 'components/Home/OpenSourceProjects'
 
-export default function HomePage() {
-  return (
-    <>
-      <Intro />
-      <OpenSource />
-    </>
-  )
-}
+const HomePage = () => (
+  <>
+    <Intro />
+    <OpenSourceProjects />
+  </>
+)
+
+export default HomePage

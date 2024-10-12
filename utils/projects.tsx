@@ -13,6 +13,19 @@ export const OPEN_SOURCE_PROJECTS = [
     githubRepoName: 'cogo-toast',
   },
   {
+    image: '/images/aashay-dedhia.png',
+    name: 'Aashay Dedhia - Portfolio Website for a Designer Friend',
+    description: 'A portfolio website developed in partnership with a UX UI designer friend.',
+    tags: [
+      { label: 'React', color: 'gray' },
+      { label: 'TypeScript', color: 'gray' },
+      { label: 'Next.js', color: 'gray' },
+      { label: 'TailwindCSS', color: 'gray' },
+    ],
+    githubOrgName: 'aashaydedhia01',
+    githubRepoName: 'aashaydedhia',
+  },
+  {
     image: '/images/anmdotdev.png',
     name: 'anmdotdev - This Website',
     description:
@@ -39,18 +52,5 @@ export const OPEN_SOURCE_PROJECTS = [
     ],
     githubOrgName: 'anmdotdev',
     githubRepoName: 'grids-and-tables',
-  },
-  {
-    image: '/images/aashay-dedhia.png',
-    name: 'Aashay Dedhia - Portfolio Website for a Designer Friend',
-    description: 'A portfolio website developed in partnership with a UX UI designer friend.',
-    tags: [
-      { label: 'React', color: 'gray' },
-      { label: 'TypeScript', color: 'gray' },
-      { label: 'Next.js', color: 'gray' },
-      { label: 'TailwindCSS', color: 'gray' },
-    ],
-    githubOrgName: 'aashaydedhia01',
-    githubRepoName: 'aashaydedhia',
   },
 ]
