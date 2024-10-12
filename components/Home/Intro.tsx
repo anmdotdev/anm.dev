@@ -18,7 +18,7 @@ const Intro = () => {
         and have a total of <strong className="font-medium">about 10 years of experience</strong> as
         an engineer.
       </p>
-      <p className="mb-6">Over the span of 10 years, I have worked with a <strong className="font-medium">range of Frontend initiatives</strong>, including multiple <strong className="font-medium">Design Systems, Web & Mobile Apps, mentored</strong> multiple teams on building their <strong className="font-medium">frontend initiatives.</strong></p>
+      <p className="mb-6">Over the span of 10 years, I have worked with a <strong className="font-medium">range of Frontend initiatives</strong>, including multiple <strong className="font-medium">Design Systems, Web & Mobile Apps, & mentored</strong> multiple teams on building <strong className="font-medium">frontend across multiple different product areas.</strong></p>
       <p>
         When I am not working, you would find me playing Age of Empires 2 on my PC. I also like to
         play chess, and think about the mysteries of the human mind, sometimes.
