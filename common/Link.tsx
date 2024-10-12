@@ -57,6 +57,7 @@ const Link: FC<Props> = (props) => {
       rel={rel || external ? 'noreferrer noopener nofollow' : ''}
       className={classnames('group inline-flex items-center hover:underline', className || '')}
       onClick={onClick}
+      prefetch={!external}
     >
       {children}
 
