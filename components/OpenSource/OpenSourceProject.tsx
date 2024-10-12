@@ -33,7 +33,7 @@ const OpenSourceProject: FC<Props> = ({
       )}
     >
       <div className="flex-1">
-        <Image src={image} alt={name} width={400} height={250} />
+        <Image src={image} alt={name} width={400} height={250} priority />
       </div>
       <div className="flex-1 py-4">
         <h3 className="text-lg font-semibold mb-3">{name}</h3>
