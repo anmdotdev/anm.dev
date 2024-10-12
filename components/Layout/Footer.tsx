@@ -53,7 +53,7 @@ const Footer = () => {
             <Link
               key={link}
               href={link}
-              className="space-x-3 mb-1 text-gray-dark"
+              className="space-x-3 mb-1 text-black"
               external
               download={download}
             >

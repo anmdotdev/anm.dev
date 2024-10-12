@@ -23,15 +23,10 @@ const Header = () => {
         {navLinks.map(({ link, text, wip }) =>
           wip ? (
             <Tippy key={link} content="Work in Progress">
-              <span className="text-gray-dark cursor-pointer hover:underline">{text}</span>
+              <span className="text-black cursor-pointer hover:underline">{text}</span>
             </Tippy>
           ) : (
-            <Link
-              key={link}
-              href={link}
-              className="text-gray-dark hover:underline"
-              showIcon="never"
-            >
+            <Link key={link} href={link} className="text-black hover:underline" showIcon="never">
               {text}
             </Link>
           ),

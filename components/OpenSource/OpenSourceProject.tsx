@@ -37,7 +37,7 @@ const OpenSourceProject: FC<Props> = ({
       </div>
       <div className="flex-1 py-4">
         <h3 className="text-lg font-semibold mb-3">{name}</h3>
-        <p className="text-gray-dark text-sm mb-4">{description}</p>
+        <p className="text-black text-sm mb-4">{description}</p>
         <Chips className="text-sm mb-4" chips={tags} />
         {githubOrgName && githubRepoName && (
           <div className="mt-2">

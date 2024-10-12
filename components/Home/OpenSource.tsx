@@ -15,7 +15,7 @@ const OpenSourceProjects = () => {
       <OpenSourceProject {...OPEN_SOURCE_PROJECTS[0]} />
 
       <div className="text-center">
-        <Link href="/open-source" className="my-4 text-sm underline hover:text-gray-dark">
+        <Link href="/open-source" className="my-4 text-sm underline hover:text-black">
           See all my open source projects...
         </Link>
       </div>
