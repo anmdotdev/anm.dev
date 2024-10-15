@@ -11,6 +11,8 @@ import 'tippy.js/dist/tippy.css'
 
 import { Raleway } from 'next/font/google'
 
+import '@pigment-css/react/styles.css'
+
 declare global {
   interface Window {
     firebase: any

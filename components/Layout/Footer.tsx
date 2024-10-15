@@ -1,3 +1,5 @@
+import { css } from '@pigment-css/react'
+
 import Link from 'common/Link'
 
 import IconGithub from 'common/Icons/IconGithub'
@@ -36,25 +38,90 @@ const links = [
 ]
 
 const Footer = () => (
-  <footer className="w-full bg-white border-t border-gray-lighter absolute bottom-0 md:text-center">
-    <div className="max-w-lg mx-auto flex py-8 space-x-6 sm:flex-col sm:space-x-0 sm:space-y-6 sm:px-6">
-      <div className="flex-1">
-        <h2 className="text-lg font-semibold mb-4">About</h2>
+  <footer
+    className={css(({ theme }) => ({
+      width: '100%',
+      background: theme.colors.white,
+      borderTop: `1px solid ${theme.colors.gray.lighter}`,
+      position: 'absolute',
+      bottom: 0,
+
+      '@media (max-width: 768px)': {
+        textAlign: 'center',
+      },
+    }))}
+  >
+    <div
+      className={css({
+        maxWidth: 512,
+        marginLeft: 'auto',
+        marginRight: 'auto',
+
+        display: 'flex',
+        gap: 24,
+
+        paddingTop: 32,
+        paddingBottom: 32,
+
+        '@media (max-width: 540px)': {
+          flexDirection: 'column',
+          paddingLeft: 24,
+          paddingRight: 24,
+        },
+      })}
+    >
+      <div
+        className={css({
+          flex: 1,
+        })}
+      >
+        <h2
+          className={css({
+            fontSize: '18px',
+            lineHeight: '28px',
+            fontWeight: 600,
+            marginBottom: 16,
+          })}
+        >
+          About
+        </h2>
         <p>
           {`Welcome to my personal website! I'm Anmol Mahatpurkar, a Staff Frontend Engineer from India 🇮🇳 and I love JavaScript and React.`}
         </p>
       </div>
-      <div className="flex-1">
-        <h2 className="text-lg font-semibold mb-4">Social</h2>
+      <div
+        className={css({
+          flex: 1,
+        })}
+      >
+        <h2
+          className={css({
+            fontSize: '18px',
+            lineHeight: '28px',
+            fontWeight: 600,
+            marginBottom: 16,
+          })}
+        >
+          Social
+        </h2>
         {links.map(({ icon: Icon, link, text, download }) => (
           <Link
             key={link}
             href={link}
-            className="space-x-3 mb-1 text-black"
+            className={css(({ theme }) => ({
+              gap: 12,
+              color: theme.colors.black,
+              marginBottom: 4,
+            }))}
             external
             download={download}
           >
-            <Icon className="text-black w-4" />
+            <Icon
+              className={css(({ theme }) => ({
+                color: theme.colors.black,
+                width: 16,
+              }))}
+            />
             <span>{text}</span>
           </Link>
         ))}
