@@ -1,4 +1,5 @@
-import { ReactNode, FC } from 'react'
+import { css } from '@pigment-css/react'
+import { ReactNode } from 'react'
 import { classnames } from 'utils/helpers'
 
 interface IChipProps {
@@ -8,7 +9,17 @@ interface IChipProps {
 
 export const Chip = ({ children }: IChipProps) => {
   return (
-    <span className="border p-1 rounded border-gray-lighter bg-gray-lightest text-gray-darker text-xs">
+    <span
+      className={css(({ theme }) => ({
+        border: `1px solid ${theme.colors.gray.lighter}`,
+        padding: 4,
+        background: theme.colors.gray.lightest,
+        color: theme.colors.gray.darker,
+        fontSize: 12,
+        lineHeight: 1.1,
+        borderRadius: 4,
+      }))}
+    >
       {children}
     </span>
   )
@@ -23,7 +34,7 @@ interface IChipsProps {
 }
 
 const Chips = ({ chips, className }: IChipsProps) => (
-  <div className={classnames('space-x-3', className)}>
+  <div className={classnames(css({ display: 'inline-flex', gap: 8 }), className)}>
     {chips.map((chip, id: number) => (
       <Chip key={id} color={chip.color}>
         {chip.label}

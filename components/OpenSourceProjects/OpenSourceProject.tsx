@@ -6,6 +6,8 @@ import GithubStarCount from 'common/GithubStarCount'
 import { classnames } from 'utils/helpers'
 import Image from 'next/image'
 
+import { css } from '@pigment-css/react'
+
 interface IOpenSourceProjectProps {
   image: string
   name: string
@@ -27,19 +29,68 @@ const OpenSourceProject = ({
 }: IOpenSourceProjectProps) => (
   <div
     className={classnames(
-      'w-full flex space-x-5 md:flex-col md:space-x-0 md:space-y-5 md:items-center md:px-6 md:text-center',
+      css(({ theme }) => ({
+        width: '100%',
+        display: 'flex',
+        gap: 20,
+
+        '@media (max-width: 768px)': {
+          flexDirection: 'column',
+          alignItems: 'center',
+
+          paddingLeft: 24,
+          paddingRight: 24,
+
+          textAlign: 'center',
+        },
+      })),
       className,
     )}
   >
-    <div className="flex-1">
+    <div className={css(({ theme }) => ({ flex: 1 }))}>
       <Image src={image} alt={name} width={400} height={250} priority />
     </div>
-    <div className="flex-1 py-4">
-      <h3 className="text-lg font-semibold mb-3">{name}</h3>
-      <p className="text-black text-sm mb-4">{description}</p>
-      <Chips className="text-sm mb-4" chips={tags} />
+    <div
+      className={css(({ theme }) => ({
+        flex: 1,
+        paddingTop: 16,
+        paddingBottom: 16,
+      }))}
+    >
+      <h3
+        className={css(({ theme }) => ({
+          fontSize: 18,
+          lineHeight: 1.1,
+          fontWeight: 600,
+          marginBottom: 12,
+        }))}
+      >
+        {name}
+      </h3>
+      <p
+        className={css(({ theme }) => ({
+          color: theme.colors.black,
+          fontSize: 18,
+          lineHeight: 1.1,
+          marginBottom: 16,
+        }))}
+      >
+        {description}
+      </p>
+      <Chips
+        className={css(({ theme }) => ({
+          fontSize: 18,
+          lineHeight: 1.1,
+          marginBottom: 16,
+        }))}
+        chips={tags}
+      />
       {githubOrgName && githubRepoName && (
-        <div className="mt-2">
+        <div
+          className={css(({ theme }) => ({
+            marginTop: 8,
+          }))}
+        >
           <GithubStarCount orgName={githubOrgName} repoName={githubRepoName} />
         </div>
       )}

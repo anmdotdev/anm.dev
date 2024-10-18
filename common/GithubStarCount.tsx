@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react'
 import IconGithub from './Icons/IconGithub'
 import Link from './Link'
 
+import { css } from '@pigment-css/react'
+
 const githubUrl = 'https://github.com'
 const githubApi = 'https://api.github.com/repos'
 
@@ -27,15 +29,45 @@ const GithubStarCount = ({ orgName, repoName }: IGithubStarCountProps) => {
     <Link
       href={`${githubUrl}/${orgName}/${repoName}`}
       external
-      className="border border-gray-lighter text-xs rounded-sm bg-white"
+      className={css(({ theme }) => ({
+        border: `1px solid ${theme.colors.gray.lighter}`,
+        background: theme.colors.white,
+        fontSize: 12,
+        lineHeight: 1.1,
+        borderRadius: 4,
+      }))}
       showIcon="never"
     >
-      <span className="flex items-center p-1 px-2 space-x-2 bg-gray-lightest group-hover:bg-white">
+      <span
+        className={css(({ theme }) => ({
+          display: 'flex',
+          alignItems: 'center',
+          padding: 4,
+          paddingLeft: 8,
+          paddingRight: 8,
+          gap: 8,
+          background: theme.colors.gray.lightest,
+
+          '&:hover': {
+            background: theme.colors.white,
+          },
+        }))}
+      >
         <IconGithub width={18} />
         <span>Star on Github</span>
       </span>
       {stars > 0 && (
-        <span className="border-l border-gray-lighter bg-white p-1 px-2 flex items-center">
+        <span
+          className={css(({ theme }) => ({
+            display: 'flex',
+            alignItems: 'center',
+            padding: 4,
+            paddingLeft: 8,
+            paddingRight: 8,
+            border: `1px solid ${theme.colors.gray.lighter}`,
+            background: theme.colors.white,
+          }))}
+        >
           {stars}
         </span>
       )}

@@ -5,6 +5,7 @@ import NextLink from 'next/link'
 import IconNewTab from 'common/Icons/IconNewTab'
 import IconDownload from 'common/Icons/IconDownload'
 
+import { css } from '@pigment-css/react'
 import { classnames } from 'utils/helpers'
 
 interface ILinkProps {
@@ -31,14 +32,22 @@ const Link = ({
 }: ILinkProps) => {
   const target = propTarget || external ? '_blank' : ''
   const iconClassName = classnames(
-    'text-gray ml-2',
-    showIcon === 'hover' ? 'opacity-0 group-hover:opacity-100' : '',
+    css(({ theme }) => ({ color: theme.colors.gray, marginLeft: 8 })),
+    showIcon === 'hover'
+      ? css({
+          opacity: 0,
+
+          '&:hover': {
+            opacity: 1,
+          },
+        })
+      : '',
   )
 
   const icon = download ? (
-    <IconDownload className={classnames(iconClassName, 'w-3')} />
+    <IconDownload className={classnames(iconClassName, css({ width: 12 }))} />
   ) : target === '_blank' ? (
-    <IconNewTab className={classnames(iconClassName, 'w-4')} />
+    <IconNewTab className={classnames(iconClassName, css({ width: 16 }))} />
   ) : null
 
   return (
@@ -48,7 +57,17 @@ const Link = ({
       target={target}
       download={download}
       rel={rel || external ? 'noreferrer noopener nofollow' : ''}
-      className={classnames('group inline-flex items-center hover:underline', className || '')}
+      className={classnames(
+        css({
+          display: 'inline-flex',
+          alignItems: 'center',
+
+          '&:hover': {
+            textDecoration: 'underline',
+          },
+        }),
+        className || '',
+      )}
       prefetch={!external}
     >
       {children}

@@ -5,16 +5,63 @@ import OpenSourceProject from 'components/OpenSourceProjects/OpenSourceProject'
 
 import { OPEN_SOURCE_PROJECTS } from 'utils/projects'
 
+import { css } from '@pigment-css/react'
+
 const OpenSourceProjects = () => (
-  <section className="w-full max-w-3xl mx-auto py-4">
-    <h2 className="w-full max-w-lg mx-auto text-lg font-semibold mb-8 md:px-6">
+  <section
+    className={css(({ theme }) => ({
+      width: '100%',
+      maxWidth: 768,
+      marginLeft: 'auto',
+      marginRight: 'auto',
+      paddingTop: 16,
+      paddingBottom: 16,
+    }))}
+  >
+    <h2
+      className={css(({ theme }) => ({
+        width: '100%',
+        maxWidth: 512,
+
+        marginLeft: 'auto',
+        marginRight: 'auto',
+
+        fontSize: 18,
+        lineHeight: 1.1,
+        fontWeight: 600,
+
+        marginBottom: 32,
+
+        paddingLeft: 24,
+        paddingRight: 24,
+      }))}
+    >
       My Open Source Projects
     </h2>
 
     <OpenSourceProject {...OPEN_SOURCE_PROJECTS[0]} />
 
-    <div className="text-center">
-      <Link href="/open-source" className="my-4 text-sm underline hover:text-black">
+    <div
+      className={css(({ theme }) => ({
+        textAlign: 'center',
+      }))}
+    >
+      <Link
+        href="/open-source"
+        className={css(({ theme }) => ({
+          marginTop: 16,
+          marginBottom: 16,
+
+          fontSize: 14,
+          lineHeight: 1.1,
+
+          textDecoration: 'underline',
+
+          '&:hover': {
+            color: theme.colors.black,
+          },
+        }))}
+      >
         See all my open source projects...
       </Link>
     </div>
