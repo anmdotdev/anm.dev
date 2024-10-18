@@ -58,14 +58,16 @@ const Link = ({
       download={download}
       rel={rel || external ? 'noreferrer noopener nofollow' : ''}
       className={classnames(
-        css({
+        css(({ theme }) => ({
           display: 'inline-flex',
           alignItems: 'center',
+          textDecoration: 'none',
+          color: theme.colors.black,
 
           '&:hover': {
             textDecoration: 'underline',
           },
-        }),
+        })),
         className || '',
       )}
       prefetch={!external}

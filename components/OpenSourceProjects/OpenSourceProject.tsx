@@ -70,8 +70,8 @@ const OpenSourceProject = ({
       <p
         className={css(({ theme }) => ({
           color: theme.colors.black,
-          fontSize: 18,
-          lineHeight: 1.1,
+          fontSize: 14,
+          lineHeight: 1.5,
           marginBottom: 16,
         }))}
       >

@@ -7,6 +7,7 @@ import Layout from 'components/Layout/Layout'
 import defaultMetadata from 'utils/defaultMetadata'
 
 import 'tippy.js/dist/tippy.css'
+import './globals.css'
 
 import { Raleway } from 'next/font/google'
 

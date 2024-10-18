@@ -11,8 +11,7 @@ const Intro = () => (
       maxWidth: 512,
       marginLeft: 'auto',
       marginRight: 'auto',
-      paddingTop: 40,
-      paddingBottom: 32,
+      paddingBottom: 8,
 
       '@media (max-width: 540px)': {
         paddingLeft: 24,
@@ -25,7 +24,7 @@ const Intro = () => (
         textAlign: 'center',
         fontWeight: 700,
         fontSize: 36,
-        lineHeight: 1.1,
+        lineHeight: 1.5,
         marginBottom: 32,
       }))}
     >
@@ -34,6 +33,7 @@ const Intro = () => (
     <p
       className={css(({ theme }) => ({
         marginBottom: 24,
+        lineHeight: 1.5,
       }))}
     >
       I am a Frontend Engineer from India, and I love JavaScript and React. I currently work as a{' '}
@@ -75,7 +75,7 @@ const Intro = () => (
       </strong>{' '}
       as an engineer.
     </p>
-    <p className={css(({ theme }) => ({ marginBottom: 24 }))}>
+    <p className={css(({ theme }) => ({ marginBottom: 24, lineHeight: 1.5 }))}>
       Over the span of 10 years, I have worked with a{' '}
       <strong className={css(({ theme }) => ({ fontWeight: 500 }))}>
         range of Frontend initiatives
@@ -89,7 +89,7 @@ const Intro = () => (
         frontend across multiple different product areas.
       </strong>
     </p>
-    <p>
+    <p className={css({ lineHeight: 1.5 })}>
       When I am not working, you would find me playing Age of Empires 2 on my PC. I also like to
       play chess, and think about the mysteries of the human mind, sometimes.
     </p>

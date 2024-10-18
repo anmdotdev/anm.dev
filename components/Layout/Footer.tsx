@@ -85,7 +85,7 @@ const Footer = () => (
         >
           About
         </h2>
-        <p>
+        <p className={css({ lineHeight: 1.5 })}>
           {`Welcome to my personal website! I'm Anmol Mahatpurkar, a Staff Frontend Engineer from India 🇮🇳 and I love JavaScript and React.`}
         </p>
       </div>
@@ -112,6 +112,7 @@ const Footer = () => (
               gap: 12,
               color: theme.colors.black,
               marginBottom: 4,
+              lineHeight: 1.5,
             }))}
             external
             download={download}
