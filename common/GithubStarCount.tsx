@@ -1,6 +1,8 @@
 import Image from 'next/image'
 import Link from 'common/Link'
 
+import githubIcon from 'public/icons/github.svg'
+
 import { getGithubStars } from 'utils/projects'
 
 const GithubStarCount = async ({ githubOrgName, githubRepoName }) => {
@@ -14,7 +16,7 @@ const GithubStarCount = async ({ githubOrgName, githubRepoName }) => {
       showIcon="never"
     >
       <span className="flex items-center p-1 px-2 space-x-2 bg-gray-lightest group-hover:bg-white">
-        <Image src="/icons/github.svg" width={18} height={18} alt="" />
+        <Image src={githubIcon} width={18} height={18} alt="" />
         <span>Star on Github</span>
       </span>
       {githubStars > 0 && (

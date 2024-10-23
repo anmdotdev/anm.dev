@@ -2,30 +2,36 @@ import Image from 'next/image'
 
 import Link from 'common/Link'
 
+import githubIcon from 'public/icons/github.svg'
+import twitterIcon from 'public/icons/twitter.svg'
+import linkedinIcon from 'public/icons/linkedin.svg'
+import resumeIcon from 'public/icons/resume.svg'
+import emailIcon from 'public/icons/email.svg'
+
 const links = [
   {
-    icon: '/icons/github.svg',
+    icon: githubIcon,
     link: 'https://github.com/anmdotdev',
     text: 'See my work on Github',
   },
   {
-    icon: '/icons/twitter.svg',
+    icon: twitterIcon,
     link: 'https://twitter.com/anmdotdev',
     text: 'Follow me on Twitter',
   },
   {
-    icon: '/icons/linkedin.svg',
+    icon: linkedinIcon,
     link: 'https://linkedin.com/in/anmolmahatpurkar',
     text: 'View Linkedin Profile',
   },
   {
-    icon: '/icons/resume.svg',
+    icon: resumeIcon,
     link: '/resume-anmol-mahatpurkar.pdf',
     text: 'Download my Resume',
     download: 'Resume - Anmol Mahatpurkar',
   },
   {
-    icon: '/icons/email.svg',
+    icon: emailIcon,
     link: 'mailto:hey@anm.dev',
     text: 'Email at hey@anm.dev',
   },

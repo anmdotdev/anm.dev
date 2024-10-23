@@ -3,6 +3,9 @@ import Image from 'next/image'
 
 import { classnames } from 'utils/helpers'
 
+import downloadIcon from 'public/icons/download.svg'
+import newTabIcon from 'public/icons/new-tab.svg'
+
 interface ILinkProps {
   href: string
   children?: React.ReactNode
@@ -33,7 +36,7 @@ export default ({
 
   const icon = download ? (
     <Image
-      src="/icons/download.svg"
+      src={downloadIcon}
       className={classnames(iconClassName, 'w-3')}
       width={12}
       height={12}
@@ -41,7 +44,7 @@ export default ({
     />
   ) : target === '_blank' ? (
     <Image
-      src="/icons/new-tab.svg"
+      src={newTabIcon}
       className={classnames(iconClassName, 'w-4')}
       width={16}
       height={16}
