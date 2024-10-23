@@ -1,4 +1,5 @@
 import OpenSourceProject from 'components/OpenSourceProjects/OpenSourceProject'
+
 import { OPEN_SOURCE_PROJECTS } from 'utils/projects'
 
 const OpenSourcePage = () => (

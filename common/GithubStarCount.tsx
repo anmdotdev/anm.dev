@@ -1,31 +1,14 @@
-'use client'
-
-import { useEffect, useState } from 'react'
-import Link from './Link'
 import Image from 'next/image'
+import Link from 'common/Link'
 
-const githubUrl = 'https://github.com'
-const githubApi = 'https://api.github.com/repos'
+import { getGithubStars } from 'utils/projects'
 
-interface IGithubStarCountProps {
-  orgName: string
-  repoName: string
-}
-
-const GithubStarCount = ({ orgName, repoName }: IGithubStarCountProps) => {
-  const [stars, setStars] = useState(0)
-
-  useEffect(() => {
-    fetch(`${githubApi}/${orgName}/${repoName}`)
-      .then((response) => response.json())
-      .then((data) => {
-        setStars(data.stargazers_count)
-      })
-  }, [orgName, repoName])
+const GithubStarCount = async ({ githubOrgName, githubRepoName }) => {
+  const githubStars = await getGithubStars({ githubOrgName, githubRepoName })
 
   return (
     <Link
-      href={`${githubUrl}/${orgName}/${repoName}`}
+      href={`https://github.com/${githubOrgName}/${githubRepoName}`}
       external
       className="border border-gray-lighter text-xs rounded-sm bg-white"
       showIcon="never"
@@ -34,9 +17,9 @@ const GithubStarCount = ({ orgName, repoName }: IGithubStarCountProps) => {
         <Image src="/icons/github.svg" width={18} height={18} alt="" />
         <span>Star on Github</span>
       </span>
-      {stars > 0 && (
+      {githubStars > 0 && (
         <span className="border-l border-gray-lighter bg-white p-1 px-2 flex items-center">
-          {stars}
+          {githubStars}
         </span>
       )}
     </Link>

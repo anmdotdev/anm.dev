@@ -1,5 +1,6 @@
-import Link from 'common/Link'
 import Image from 'next/image'
+
+import Link from 'common/Link'
 
 const links = [
   {

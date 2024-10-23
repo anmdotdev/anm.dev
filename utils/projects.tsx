@@ -1,4 +1,16 @@
-export const OPEN_SOURCE_PROJECTS = [
+export interface IOpenSourceProject {
+  image: string
+
+  name: string
+  description: string
+  tags: { label: string; color: string }[]
+
+  githubOrgName: string
+  githubRepoName: string
+  githubStars?: number
+}
+
+export const OPEN_SOURCE_PROJECTS: IOpenSourceProject[] = [
   {
     image: '/images/cogo-toast.png',
     name: 'CogoToast',
@@ -54,3 +66,15 @@ export const OPEN_SOURCE_PROJECTS = [
     githubRepoName: 'grids-and-tables',
   },
 ]
+
+interface IGithubStarsParams {
+  githubOrgName: string
+  githubRepoName: string
+}
+
+export async function getGithubStars({ githubOrgName, githubRepoName }: IGithubStarsParams) {
+  const res = await fetch(`https://api.github.com/repos/${githubOrgName}/${githubRepoName}`)
+  const { stargazers_count } = await res.json()
+
+  return stargazers_count
+}

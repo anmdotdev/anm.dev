@@ -1,9 +1,8 @@
-import { ReactNode } from 'react'
 import { classnames } from 'utils/helpers'
 
 interface IChipProps {
   color?: string
-  children: ReactNode
+  children: React.ReactNode
 }
 
 export const Chip = ({ children }: IChipProps) => {
@@ -16,7 +15,7 @@ export const Chip = ({ children }: IChipProps) => {
 
 interface IChipsProps {
   chips: {
-    label: ReactNode
+    label: React.ReactNode
     color?: string
   }[]
   className?: string

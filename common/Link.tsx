@@ -1,5 +1,3 @@
-import { ReactNode } from 'react'
-
 import Link from 'next/link'
 import Image from 'next/image'
 
@@ -7,7 +5,7 @@ import { classnames } from 'utils/helpers'
 
 interface ILinkProps {
   href: string
-  children?: ReactNode
+  children?: React.ReactNode
   target?: string
   external?: boolean
   download?: string

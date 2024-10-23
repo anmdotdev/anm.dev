@@ -1,21 +1,11 @@
-import React from 'react'
-
 import { Metadata } from 'next'
+import { Raleway } from 'next/font/google'
+
+import 'tailwindcss/tailwind.css'
 
 import Layout from 'components/Layout/Layout'
 
 import defaultMetadata from 'utils/defaultMetadata'
-
-import 'tailwindcss/tailwind.css'
-import 'tippy.js/dist/tippy.css'
-
-import { Raleway } from 'next/font/google'
-
-declare global {
-  interface Window {
-    firebase: any
-  }
-}
 
 const raleway = Raleway({
   subsets: ['latin'],
