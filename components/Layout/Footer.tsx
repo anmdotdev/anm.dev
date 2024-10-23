@@ -1,35 +1,30 @@
 import Link from 'common/Link'
-
-import IconGithub from 'common/Icons/IconGithub'
-import IconTwitter from 'common/Icons/IconTwitter'
-import IconLinkedIn from 'common/Icons/IconLinkedIn'
-import IconResume from 'common/Icons/IconResume'
-import IconEmail from 'common/Icons/IconEmail'
+import Image from 'next/image'
 
 const links = [
   {
-    icon: IconGithub,
+    icon: '/icons/github.svg',
     link: 'https://github.com/anmdotdev',
     text: 'See my work on Github',
   },
   {
-    icon: IconTwitter,
+    icon: '/icons/twitter.svg',
     link: 'https://twitter.com/anmdotdev',
     text: 'Follow me on Twitter',
   },
   {
-    icon: IconLinkedIn,
+    icon: '/icons/linkedin.svg',
     link: 'https://linkedin.com/in/anmolmahatpurkar',
     text: 'View Linkedin Profile',
   },
   {
-    icon: IconResume,
+    icon: '/icons/resume.svg',
     link: '/resume-anmol-mahatpurkar.pdf',
     text: 'Download my Resume',
     download: 'Resume - Anmol Mahatpurkar',
   },
   {
-    icon: IconEmail,
+    icon: '/icons/email.svg',
     link: 'mailto:hey@anm.dev',
     text: 'Email at hey@anm.dev',
   },
@@ -46,7 +41,7 @@ const Footer = () => (
       </div>
       <div className="flex-1">
         <h2 className="text-lg font-semibold mb-4">Social</h2>
-        {links.map(({ icon: Icon, link, text, download }) => (
+        {links.map(({ icon, link, text, download }) => (
           <Link
             key={link}
             href={link}
@@ -54,7 +49,7 @@ const Footer = () => (
             external
             download={download}
           >
-            <Icon className="text-black w-4" />
+            <Image src={icon} alt="" width={16} height={16} className="text-black w-4" />
             <span>{text}</span>
           </Link>
         ))}

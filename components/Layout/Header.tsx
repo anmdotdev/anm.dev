@@ -1,5 +1,5 @@
 import Link from 'common/Link'
-import Tippy from '@tippyjs/react'
+import Tooltip from 'common/Tooltip'
 
 const siteName = 'anmdotdev'
 
@@ -17,9 +17,9 @@ const Header = () => (
     <nav className="space-x-4 flex items-center">
       {navLinks.map(({ link, text, wip }) =>
         wip ? (
-          <Tippy key={link} content="Work in Progress">
+          <Tooltip key={link} content="Work in Progress">
             <span className="text-black cursor-pointer hover:underline">{text}</span>
-          </Tippy>
+          </Tooltip>
         ) : (
           <Link key={link} href={link} className="text-black hover:underline" showIcon="never">
             {text}

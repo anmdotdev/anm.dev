@@ -1,8 +1,8 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import IconGithub from './Icons/IconGithub'
 import Link from './Link'
+import Image from 'next/image'
 
 const githubUrl = 'https://github.com'
 const githubApi = 'https://api.github.com/repos'
@@ -31,7 +31,7 @@ const GithubStarCount = ({ orgName, repoName }: IGithubStarCountProps) => {
       showIcon="never"
     >
       <span className="flex items-center p-1 px-2 space-x-2 bg-gray-lightest group-hover:bg-white">
-        <IconGithub width={18} />
+        <Image src="/icons/github.svg" width={18} height={18} alt="" />
         <span>Star on Github</span>
       </span>
       {stars > 0 && (

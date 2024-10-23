@@ -1,4 +1,4 @@
-import { ReactNode, FC } from 'react'
+import { ReactNode } from 'react'
 import { classnames } from 'utils/helpers'
 
 interface IChipProps {

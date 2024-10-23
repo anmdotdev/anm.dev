@@ -1,9 +1,7 @@
 import { ReactNode } from 'react'
 
-import NextLink from 'next/link'
-
-import IconNewTab from 'common/Icons/IconNewTab'
-import IconDownload from 'common/Icons/IconDownload'
+import Link from 'next/link'
+import Image from 'next/image'
 
 import { classnames } from 'utils/helpers'
 
@@ -18,7 +16,7 @@ interface ILinkProps {
   showIcon?: 'always' | 'hover' | 'never'
 }
 
-const Link = ({
+export default ({
   href,
   target: propTarget,
   external,
@@ -36,13 +34,25 @@ const Link = ({
   )
 
   const icon = download ? (
-    <IconDownload className={classnames(iconClassName, 'w-3')} />
+    <Image
+      src="/icons/download.svg"
+      className={classnames(iconClassName, 'w-3')}
+      width={12}
+      height={12}
+      alt=""
+    />
   ) : target === '_blank' ? (
-    <IconNewTab className={classnames(iconClassName, 'w-4')} />
+    <Image
+      src="/icons/new-tab.svg"
+      className={classnames(iconClassName, 'w-4')}
+      width={16}
+      height={16}
+      alt=""
+    />
   ) : null
 
   return (
-    <NextLink
+    <Link
       {...rest}
       href={href}
       target={target}
@@ -54,8 +64,6 @@ const Link = ({
       {children}
 
       {showIcon !== 'never' ? icon : null}
-    </NextLink>
+    </Link>
   )
 }
-
-export default Link
