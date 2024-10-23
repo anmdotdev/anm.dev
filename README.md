@@ -2,6 +2,8 @@
 
 My personal website, built using React, TypeScript, NextJS, and TailwindCSS.
 
+![Perfect LightHouse Score](public/images/readme.png 'Perfect LightHouse Score')
+
 ## Features
 
 - 📱 **Responsive** - Works on mobile, tablets and desktops.
@@ -17,11 +19,11 @@ My personal website, built using React, TypeScript, NextJS, and TailwindCSS.
 ```bash
 git clone
 
-cd anmdotdev
+cd anm.dev
 
-yarn install
+pnpm i
 
-yarn dev
+pnpm dev
 ```
 
 App runs on [http://localhost:3000](http://localhost:3000)
@@ -29,7 +31,7 @@ App runs on [http://localhost:3000](http://localhost:3000)
 ### For Running a Production Ready Build
 
 ```bash
-yarn start
+pnpm start
 ```
 
 App runs on [http://localhost:3000](http://localhost:3000)
