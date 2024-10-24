@@ -80,8 +80,9 @@ interface IGithubStarsParams {
 }
 
 export async function getGithubStars({ githubOrgName, githubRepoName }: IGithubStarsParams) {
-  const res = await fetch(`https://api.github.com/repos/${githubOrgName}/${githubRepoName}`)
+  const res = await fetch(`https://api.github.com/repos/${githubOrgName}/${githubRepoName}`, {
+    cache: 'force-cache',
+  })
   const { stargazers_count } = await res.json()
-
   return stargazers_count
 }
