@@ -4,7 +4,7 @@ const defaultMetadata: Metadata = {
   metadataBase: new URL('https://anm.dev'),
   title: 'Anmol Mahatpurkar - A Frontend Engineer from India 🇮🇳 - @anmdotdev',
   description:
-    'I often publish Blogs and Open Source work related to JavaScript, React, and the Modern Web. Say hi 👋 at hey@anm.dev. Follow this space and become a part of my developer journey.',
+    'I am a remote Staff Frontend Engineer, and I love JavaScript and React. I currently work at at Airbase Inc., recently acquired by Paylocity, and have a total of about 10 years of experience as an engineer. Say hi 👋 at hey@anm.dev. ',
   authors: [{ name: 'Anmol Mahatpurkar', url: 'https://anm.dev' }],
   creator: 'Anmol Mahatpurkar',
   publisher: 'Anmol Mahatpurkar',
@@ -13,7 +13,7 @@ const defaultMetadata: Metadata = {
     url: 'https://anm.dev',
     title: 'Anmol Mahatpurkar - A Frontend Engineer from India 🇮🇳 - @anmdotdev',
     description:
-      'I often publish Blogs and Open Source work related to JavaScript, React, and the Modern Web. Say hi 👋 at hey@anm.dev. Follow this space and become a part of my developer journey.',
+      'I am a remote Staff Frontend Engineer, and I love JavaScript and React. I currently work at at Airbase Inc., recently acquired by Paylocity, and have a total of about 10 years of experience as an engineer. Say hi 👋 at hey@anm.dev. ',
     images: [{ url: 'https://avatars.githubusercontent.com/u/36692003?v=4' }],
   },
   applicationName: 'anmdotdev',
