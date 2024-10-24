@@ -27,8 +27,7 @@ const links = [
   {
     icon: resumeIcon,
     link: '/resume-anmol-mahatpurkar.pdf',
-    text: 'Download my Resume',
-    download: 'Resume - Anmol Mahatpurkar',
+    text: 'See my Resume',
   },
   {
     icon: emailIcon,
@@ -48,14 +47,8 @@ const Footer = () => (
       </div>
       <div className="flex-1">
         <h2 className="text-lg font-semibold mb-4">Social</h2>
-        {links.map(({ icon, link, text, download }) => (
-          <Link
-            key={link}
-            href={link}
-            className="space-x-3 mb-1 text-black"
-            external
-            download={download}
-          >
+        {links.map(({ icon, link, text }) => (
+          <Link key={link} href={link} className="space-x-3 mb-1 text-black" external>
             <Image src={icon} alt="" width={16} height={16} className="text-black w-4" />
             <span>{text}</span>
           </Link>
