@@ -7,7 +7,7 @@ interface IChipProps {
 
 export const Chip = ({ children }: IChipProps) => {
   return (
-    <span className="rounded border border-gray-lighter bg-gray-lightest p-1 text-gray-darker text-xs">
+    <span className="rounded border border-gray-lighter bg-gray-lightest p-1 text-gray-darker text-xs dark:border-dark-border dark:bg-dark-surface dark:text-dark-text-secondary">
       {children}
     </span>
   )

@@ -24,8 +24,8 @@ const OpenSourceProject = ({
       <Image alt={name} height={250} priority src={image} width={400} />
     </div>
     <div className="flex-1 py-4">
-      <h3 className="mb-3 font-semibold text-lg">{name}</h3>
-      <p className="mb-4 text-black text-sm">{description}</p>
+      <h3 className="mb-3 font-semibold text-lg dark:text-dark-text">{name}</h3>
+      <p className="mb-4 text-black text-sm dark:text-dark-text-secondary">{description}</p>
       <Chips chips={tags} className="mb-4 text-sm" />
       <div className="mt-2">
         <Suspense fallback={null}>

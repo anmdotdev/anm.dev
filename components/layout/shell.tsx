@@ -2,7 +2,7 @@ import Footer from './footer'
 import Header from './header'
 
 const Shell = ({ children }) => (
-  <main className="relative min-h-screen w-full bg-gray-lightest pb-64 max-sm:pb-96">
+  <main className="relative min-h-screen w-full bg-gray-lightest pb-52 max-sm:pb-76 dark:bg-dark-bg">
     <Header />
     {children}
     <Footer />
