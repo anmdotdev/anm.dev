@@ -1,0 +1,45 @@
+import { getBlogPosts } from 'lib/blog'
+
+export const GET = () => {
+  const posts = getBlogPosts()
+
+  const items = posts
+    .map(
+      (post) => `
+    <item>
+      <title>${escapeXml(post.title)}</title>
+      <link>https://anm.dev/blog/${post.slug}</link>
+      <guid isPermaLink="true">https://anm.dev/blog/${post.slug}</guid>
+      <pubDate>${new Date(post.date).toUTCString()}</pubDate>
+      <description>${escapeXml(post.summary)}</description>
+    </item>`,
+    )
+    .join('')
+
+  const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Anmol Mahatpurkar - Blog</title>
+    <link>https://anm.dev/blog</link>
+    <description>Thoughts on frontend engineering, TypeScript, React, developer tools, and building for the web.</description>
+    <language>en</language>
+    <atom:link href="https://anm.dev/feed.xml" rel="self" type="application/rss+xml"/>
+    ${items}
+  </channel>
+</rss>`
+
+  return new Response(xml, {
+    headers: {
+      'Content-Type': 'application/xml',
+      'Cache-Control': 'public, max-age=3600',
+    },
+  })
+}
+
+const escapeXml = (str: string): string =>
+  str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')

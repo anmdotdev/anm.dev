@@ -1,6 +1,19 @@
 import OpenSourceProject from 'components/open-source/open-source-project'
-
 import { OPEN_SOURCE_PROJECTS } from 'lib/projects'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Open Source Projects',
+  description:
+    'Open source projects by Anmol Mahatpurkar — React libraries, developer tools, and more.',
+  alternates: { canonical: '/open-source' },
+  openGraph: {
+    title: 'Open Source Projects - Anmol Mahatpurkar',
+    description:
+      'Open source projects by Anmol Mahatpurkar — React libraries, developer tools, and more.',
+    url: 'https://anm.dev/open-source',
+  },
+}
 
 const OpenSourcePage = () => (
   <section className="mx-auto w-full max-w-3xl py-4">
