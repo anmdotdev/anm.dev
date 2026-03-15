@@ -63,7 +63,7 @@ export default ({
       download={download}
       href={href}
       prefetch={!external}
-      rel={rel || external ? 'noreferrer noopener nofollow' : ''}
+      rel={rel || external ? 'noreferrer noopener' : ''}
       target={target}
     >
       {children}

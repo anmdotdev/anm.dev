@@ -60,8 +60,13 @@ const BlogPage = () => {
                     <span className="font-medium text-black text-sm dark:text-dark-text">
                       {post.title}
                     </span>
+                    {post.summary && (
+                      <span className="line-clamp-2 text-gray-dark text-xs dark:text-dark-text-secondary">
+                        {post.summary}
+                      </span>
+                    )}
                     <span className="text-gray text-xs tabular-nums dark:text-dark-text-muted">
-                      {formatDate(post.date)}
+                      {formatDate(post.date)} · {post.readingTime}
                     </span>
                   </Link>
                 ))}

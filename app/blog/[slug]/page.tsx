@@ -1,3 +1,4 @@
+import CopyPageMenu from 'components/blog/copy-page-menu'
 import mdxComponents from 'components/mdx/mdx-components'
 import Link from 'components/ui/link'
 import { formatDate, getBlogPost, getBlogPosts } from 'lib/blog'
@@ -5,6 +6,8 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { compileMDX } from 'next-mdx-remote/rsc'
 import rehypePrettyCode from 'rehype-pretty-code'
+
+const WHITESPACE_REGEX = /\s+/
 
 interface BlogPostPageProps {
   params: Promise<{ slug: string }>
@@ -35,7 +38,7 @@ export const generateMetadata = async ({ params }: BlogPostPageProps): Promise<M
       authors: ['Anmol Mahatpurkar'],
     },
     twitter: {
-      card: 'summary',
+      card: 'summary_large_image',
       title: post.title,
       description: post.summary || `${post.title} - A blog post by Anmol Mahatpurkar`,
     },
@@ -72,15 +75,22 @@ const BlogPostPage = async ({ params }: BlogPostPageProps) => {
 
   return (
     <article className="mx-auto mt-4 max-w-5xl border-gray-lighter border-t px-6 pt-10 pb-16 dark:border-dark-border">
-      <nav aria-label="Breadcrumb" className="mb-6 text-gray text-xs dark:text-dark-text-muted">
-        <Link className="hover:text-black dark:hover:text-dark-text" href="/blog" showIcon="never">
-          Blogs
-        </Link>
-        <span aria-hidden="true" className="mx-1.5">
-          /
-        </span>
-        <span className="text-black dark:text-dark-text">{post.title}</span>
-      </nav>
+      <div className="mb-6 flex items-center justify-between">
+        <nav aria-label="Breadcrumb" className="text-gray text-xs dark:text-dark-text-muted">
+          <Link
+            className="hover:text-black dark:hover:text-dark-text"
+            href="/blog"
+            showIcon="never"
+          >
+            Blogs
+          </Link>
+          <span aria-hidden="true" className="mx-1.5">
+            /
+          </span>
+          <span className="text-black dark:text-dark-text">{post.title}</span>
+        </nav>
+        <CopyPageMenu slug={slug} title={post.title} />
+      </div>
 
       <header className="mb-10 border-gray-lighter border-b pb-8 dark:border-dark-border">
         <h1 className="mb-3 font-semibold text-2xl text-black leading-tight dark:text-dark-text">
@@ -117,8 +127,49 @@ const BlogPostPage = async ({ params }: BlogPostPageProps) => {
               name: 'Anmol Mahatpurkar',
               url: 'https://anm.dev',
             },
+            publisher: {
+              '@type': 'Person',
+              name: 'Anmol Mahatpurkar',
+              url: 'https://anm.dev',
+            },
             description: post.summary,
             url: `https://anm.dev/blog/${slug}`,
+            mainEntityOfPage: {
+              '@type': 'WebPage',
+              '@id': `https://anm.dev/blog/${slug}`,
+            },
+            image: `https://anm.dev/blog/${slug}/opengraph-image`,
+            wordCount: post.content.split(WHITESPACE_REGEX).length,
+          }),
+        }}
+        type="application/ld+json"
+      />
+      <script
+        /* biome-ignore lint/security/noDangerouslySetInnerHtml: JSON-LD structured data */
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'BreadcrumbList',
+            itemListElement: [
+              {
+                '@type': 'ListItem',
+                position: 1,
+                name: 'Home',
+                item: 'https://anm.dev',
+              },
+              {
+                '@type': 'ListItem',
+                position: 2,
+                name: 'Blog',
+                item: 'https://anm.dev/blog',
+              },
+              {
+                '@type': 'ListItem',
+                position: 3,
+                name: post.title,
+                item: `https://anm.dev/blog/${slug}`,
+              },
+            ],
           }),
         }}
         type="application/ld+json"

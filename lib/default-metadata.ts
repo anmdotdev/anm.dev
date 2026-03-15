@@ -15,6 +15,7 @@ const defaultMetadata: Metadata = {
     canonical: '/',
     types: {
       'application/rss+xml': '/feed.xml',
+      'application/feed+json': '/feed.json',
     },
   },
   openGraph: {
@@ -25,7 +26,14 @@ const defaultMetadata: Metadata = {
     siteName: 'anmdotdev',
     locale: 'en_US',
     type: 'website',
-    images: [{ url: 'https://avatars.githubusercontent.com/u/36692003?v=4' }],
+    images: [
+      {
+        url: 'https://anm.dev/opengraph-image',
+        width: 1200,
+        height: 630,
+        alt: 'anmdotdev - Anmol Mahatpurkar',
+      },
+    ],
   },
   applicationName: 'anmdotdev',
   twitter: {
@@ -34,7 +42,14 @@ const defaultMetadata: Metadata = {
     site: '@anmdotdev',
     card: 'summary_large_image',
     creator: '@anmdotdev',
-    images: [{ url: 'https://avatars.githubusercontent.com/u/36692003?v=4' }],
+    images: [
+      {
+        url: 'https://anm.dev/opengraph-image',
+        width: 1200,
+        height: 630,
+        alt: 'anmdotdev - Anmol Mahatpurkar',
+      },
+    ],
   },
   robots: {
     index: true,

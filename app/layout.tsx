@@ -28,7 +28,7 @@ const themeScript = `
 })();
 `
 
-const jsonLd = {
+const personJsonLd = {
   '@context': 'https://schema.org',
   '@type': 'Person',
   name: 'Anmol Mahatpurkar',
@@ -45,20 +45,48 @@ const jsonLd = {
   ],
 }
 
+const websiteJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'anmdotdev',
+  url: 'https://anm.dev',
+  description:
+    'Staff Frontend Engineer with 10+ years of experience building design systems, web & mobile apps with React and TypeScript.',
+  author: {
+    '@type': 'Person',
+    name: 'Anmol Mahatpurkar',
+  },
+}
+
 const RootLayout = ({ children }: IRootLayoutProps) => (
   <html className={jetbrainsMono.variable} lang="en" suppressHydrationWarning>
     <head>
       {/* biome-ignore lint/security/noDangerouslySetInnerHtml: static script to prevent theme flash */}
       <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+      <meta content="#6a35ff" name="theme-color" />
       <link
         href="/feed.xml"
         rel="alternate"
         title="Anmol Mahatpurkar - Blog"
         type="application/rss+xml"
       />
+      <link
+        href="/feed.json"
+        rel="alternate"
+        title="Anmol Mahatpurkar - Blog"
+        type="application/feed+json"
+      />
+      <link href="https://github.com/anmdotdev" rel="me" />
+      <link href="https://x.com/anmdotdev" rel="me" />
+      <link href="https://linkedin.com/in/anmolmahatpurkar" rel="me" />
       <script
         /* biome-ignore lint/security/noDangerouslySetInnerHtml: JSON-LD structured data */
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
+        type="application/ld+json"
+      />
+      <script
+        /* biome-ignore lint/security/noDangerouslySetInnerHtml: JSON-LD structured data */
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
         type="application/ld+json"
       />
     </head>
