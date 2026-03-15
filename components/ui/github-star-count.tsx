@@ -8,17 +8,17 @@ const GithubStarCount = async ({ githubOrgName, githubRepoName }) => {
 
   return (
     <Link
-      href={`https://github.com/${githubOrgName}/${githubRepoName}`}
+      className="rounded-xs border border-gray-lighter bg-white text-xs"
       external
-      className="border border-gray-lighter text-xs rounded-xs bg-white"
+      href={`https://github.com/${githubOrgName}/${githubRepoName}`}
       showIcon="never"
     >
-      <span className="flex items-center p-1 px-2 space-x-2 bg-gray-lightest group-hover:bg-white">
-        <Image src={githubIcon} width={18} height={18} alt="" />
+      <span className="flex items-center space-x-2 bg-gray-lightest p-1 px-2 group-hover:bg-white">
+        <Image alt="" height={18} src={githubIcon} width={18} />
         <span>Star on Github</span>
       </span>
       {githubStars > 0 && (
-        <span className="border-l border-gray-lighter bg-white p-1 px-2 flex items-center">
+        <span className="flex items-center border-gray-lighter border-l bg-white p-1 px-2">
           {githubStars}
         </span>
       )}

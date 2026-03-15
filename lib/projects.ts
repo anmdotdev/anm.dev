@@ -5,15 +5,15 @@ import cogoToastImage from 'public/images/cogo-toast.png'
 import gridsAndTablesImage from 'public/images/grids-and-tables.png'
 
 export interface IOpenSourceProject {
-  image: StaticImageData
-
-  name: string
   description: string
-  tags: { label: string; color: string }[]
 
   githubOrgName: string
   githubRepoName: string
   githubStars?: number
+  image: StaticImageData
+
+  name: string
+  tags: { label: string; color: string }[]
 }
 
 export const OPEN_SOURCE_PROJECTS: IOpenSourceProject[] = [

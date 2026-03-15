@@ -35,19 +35,19 @@ const links = [
 ]
 
 const Footer = () => (
-  <footer className="w-full bg-white border-t border-gray-lighter absolute bottom-0 max-md:text-center">
-    <div className="max-w-lg mx-auto flex py-8 space-x-6 max-sm:flex-col max-sm:space-x-0 max-sm:space-y-6 max-sm:px-6">
+  <footer className="absolute bottom-0 w-full border-gray-lighter border-t bg-white max-md:text-center">
+    <div className="mx-auto flex max-w-lg space-x-6 py-8 max-sm:flex-col max-sm:space-x-0 max-sm:space-y-6 max-sm:px-6">
       <div className="flex-1">
-        <h2 className="text-lg font-semibold mb-4">About</h2>
+        <h2 className="mb-4 font-semibold text-lg">About</h2>
         <p>
           {`Welcome to my personal website! I'm Anmol Mahatpurkar, a Staff Frontend Engineer from India 🇮🇳 and I love JavaScript and React.`}
         </p>
       </div>
       <div className="flex-1">
-        <h2 className="text-lg font-semibold mb-4">Social</h2>
+        <h2 className="mb-4 font-semibold text-lg">Social</h2>
         {links.map(({ icon, link, text }) => (
-          <Link key={link} href={link} className="space-x-3 mb-1 text-black" external>
-            <Image src={icon} alt="" width={16} height={16} className="text-black w-4" />
+          <Link className="mb-1 space-x-3 text-black" external href={link} key={link}>
+            <Image alt="" className="w-4 text-black" height={16} src={icon} width={16} />
             <span>{text}</span>
           </Link>
         ))}

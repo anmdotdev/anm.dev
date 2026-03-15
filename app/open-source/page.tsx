@@ -3,8 +3,8 @@ import OpenSourceProject from 'components/open-source/open-source-project'
 import { OPEN_SOURCE_PROJECTS } from 'lib/projects'
 
 const OpenSourcePage = () => (
-  <section className="w-full max-w-3xl mx-auto py-4 ">
-    <h2 className="w-full max-w-lg mx-auto text-lg text-center font-semibold mb-2">
+  <section className="mx-auto w-full max-w-3xl py-4">
+    <h2 className="mx-auto mb-2 w-full max-w-lg text-center font-semibold text-lg">
       My Open Source Projects
     </h2>
 
@@ -12,7 +12,7 @@ const OpenSourcePage = () => (
       <OpenSourceProject
         key={project.name}
         {...project}
-        className="py-6 border-b border-gray-lighter last:border-b-0"
+        className="border-gray-lighter border-b py-6 last:border-b-0"
       />
     ))}
   </section>

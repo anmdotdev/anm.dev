@@ -20,7 +20,7 @@ interface IRootLayoutProps {
 }
 
 const RootLayout = ({ children }: IRootLayoutProps) => (
-  <html lang="en" className={`${raleway.variable}`}>
+  <html className={`${raleway.variable}`} lang="en">
     <body>
       <Shell>{children}</Shell>
     </body>

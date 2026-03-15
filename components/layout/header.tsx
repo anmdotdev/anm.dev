@@ -10,18 +10,18 @@ const navLinks = [
 ]
 
 const Header = () => (
-  <header className="w-full mx-auto max-w-lg py-5 flex justify-between items-center max-sm:px-6">
-    <Link href="/" className="text-lg text-black font-semibold">
+  <header className="mx-auto flex w-full max-w-lg items-center justify-between py-5 max-sm:px-6">
+    <Link className="font-semibold text-black text-lg" href="/">
       {siteName}
     </Link>
-    <nav className="space-x-4 flex items-center">
+    <nav className="flex items-center space-x-4">
       {navLinks.map(({ link, text, wip }) =>
         wip ? (
-          <Tooltip key={link} content="Work in Progress">
-            <span className="text-black cursor-pointer hover:underline">{text}</span>
+          <Tooltip content="Work in Progress" key={link}>
+            <span className="cursor-pointer text-black hover:underline">{text}</span>
           </Tooltip>
         ) : (
-          <Link key={link} href={link} className="text-black hover:underline" showIcon="never">
+          <Link className="text-black hover:underline" href={link} key={link} showIcon="never">
             {text}
           </Link>
         ),

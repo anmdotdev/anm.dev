@@ -1,13 +1,13 @@
 import { classnames } from 'lib/helpers'
 
 interface IChipProps {
-  color?: string
   children: React.ReactNode
+  color?: string
 }
 
 export const Chip = ({ children }: IChipProps) => {
   return (
-    <span className="border p-1 rounded border-gray-lighter bg-gray-lightest text-gray-darker text-xs">
+    <span className="rounded border border-gray-lighter bg-gray-lightest p-1 text-gray-darker text-xs">
       {children}
     </span>
   )
@@ -24,7 +24,7 @@ interface IChipsProps {
 const Chips = ({ chips, className }: IChipsProps) => (
   <div className={classnames('space-x-3', className)}>
     {chips.map((chip) => (
-      <Chip key={String(chip.label)} color={chip.color}>
+      <Chip color={chip.color} key={String(chip.label)}>
         {chip.label}
       </Chip>
     ))}

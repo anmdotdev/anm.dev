@@ -6,14 +6,14 @@ import downloadIcon from 'public/icons/download.svg'
 import newTabIcon from 'public/icons/new-tab.svg'
 
 interface ILinkProps {
-  href: string
   children?: React.ReactNode
-  target?: string
-  external?: boolean
-  download?: string
-  rel?: string
   className?: string
+  download?: string
+  external?: boolean
+  href: string
+  rel?: string
   showIcon?: 'always' | 'hover' | 'never'
+  target?: string
 }
 
 export default ({
@@ -33,37 +33,42 @@ export default ({
     showIcon === 'hover' ? 'opacity-0 group-hover:opacity-100' : '',
   )
 
-  const icon = download ? (
-    <Image
-      src={downloadIcon}
-      className={classnames(iconClassName, 'w-3')}
-      width={12}
-      height={12}
-      alt=""
-    />
-  ) : target === '_blank' ? (
-    <Image
-      src={newTabIcon}
-      className={classnames(iconClassName, 'w-4')}
-      width={16}
-      height={16}
-      alt=""
-    />
-  ) : null
+  let icon: React.ReactNode = null
+  if (download) {
+    icon = (
+      <Image
+        alt=""
+        className={classnames(iconClassName, 'w-3')}
+        height={12}
+        src={downloadIcon}
+        width={12}
+      />
+    )
+  } else if (target === '_blank') {
+    icon = (
+      <Image
+        alt=""
+        className={classnames(iconClassName, 'w-4')}
+        height={16}
+        src={newTabIcon}
+        width={16}
+      />
+    )
+  }
 
   return (
     <Link
       {...rest}
-      href={href}
-      target={target}
-      download={download}
-      rel={rel || external ? 'noreferrer noopener nofollow' : ''}
       className={classnames('group inline-flex items-center hover:underline', className || '')}
+      download={download}
+      href={href}
       prefetch={!external}
+      rel={rel || external ? 'noreferrer noopener nofollow' : ''}
+      target={target}
     >
       {children}
 
-      {showIcon !== 'never' ? icon : null}
+      {showIcon === 'never' ? null : icon}
     </Link>
   )
 }

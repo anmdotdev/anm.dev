@@ -16,17 +16,17 @@ const OpenSourceProject = ({
 }: IOpenSourceProject & { className?: string }) => (
   <div
     className={classnames(
-      'w-full flex space-x-5 max-md:flex-col max-md:space-x-0 max-md:space-y-5 max-md:items-center max-md:px-6 max-md:text-center',
+      'flex w-full space-x-5 max-md:flex-col max-md:items-center max-md:space-x-0 max-md:space-y-5 max-md:px-6 max-md:text-center',
       className,
     )}
   >
     <div className="flex-1">
-      <Image src={image} alt={name} width={400} height={250} priority />
+      <Image alt={name} height={250} priority src={image} width={400} />
     </div>
     <div className="flex-1 py-4">
-      <h3 className="text-lg font-semibold mb-3">{name}</h3>
-      <p className="text-black text-sm mb-4">{description}</p>
-      <Chips className="text-sm mb-4" chips={tags} />
+      <h3 className="mb-3 font-semibold text-lg">{name}</h3>
+      <p className="mb-4 text-black text-sm">{description}</p>
+      <Chips chips={tags} className="mb-4 text-sm" />
       <div className="mt-2">
         <Suspense fallback={null}>
           <GithubStarCount githubOrgName={githubOrgName} githubRepoName={githubRepoName} />

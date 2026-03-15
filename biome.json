@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.4.7/schema.json",
+  "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
   "vcs": {
     "enabled": true,
     "clientKind": "git",
@@ -7,7 +7,7 @@
   },
   "files": {
     "ignoreUnknown": true,
-    "includes": ["**", "!next-env.d.ts"]
+    "includes": ["!next-env.d.ts"]
   },
   "formatter": {
     "enabled": true,
@@ -40,5 +40,10 @@
   },
   "assist": {
     "enabled": true
-  }
+  },
+  "extends": [
+    "ultracite/biome/core",
+    "ultracite/biome/react",
+    "ultracite/biome/next"
+  ]
 }

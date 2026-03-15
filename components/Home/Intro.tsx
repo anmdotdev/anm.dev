@@ -1,24 +1,24 @@
 import Link from 'components/ui/link'
 
 const Intro = () => (
-  <section className="w-full max-w-lg mx-auto pt-10 pb-8 max-sm:px-6">
-    <h1 className="text-center font-bold text-4xl mb-8">Hey, I'm Anmol 👋</h1>
+  <section className="mx-auto w-full max-w-lg pt-10 pb-8 max-sm:px-6">
+    <h1 className="mb-8 text-center font-bold text-4xl">Hey, I'm Anmol 👋</h1>
     <p className="mb-6">
       I am a remote <strong className="font-medium">Staff Frontend Engineer</strong>, based in
       Mumbai, India, and I love JavaScript and React. I currently work at{' '}
       <Link
-        href="https://airbase.com"
-        className="text-link font-semibold"
+        className="font-semibold text-link"
         external
+        href="https://airbase.com"
         showIcon="never"
       >
         Airbase Inc.
       </Link>
       , recently acquired by{' '}
       <Link
-        href="https://www.paylocity.com/resources/resource-library/press-release/paylocity-announces-completion-of-acquisition-of-airbase-inc/"
-        className="text-link font-semibold"
+        className="font-semibold text-link"
         external
+        href="https://www.paylocity.com/resources/resource-library/press-release/paylocity-announces-completion-of-acquisition-of-airbase-inc/"
         showIcon="never"
       >
         Paylocity
