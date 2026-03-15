@@ -1,8 +1,7 @@
-import { StaticImageData } from 'next/image'
-
-import cogoToastImage from 'public/images/cogo-toast.png'
+import type { StaticImageData } from 'next/image'
 import aashayDedhiaImage from 'public/images/aashay-dedhia.png'
 import anmdotdevImage from 'public/images/anmdotdev.png'
+import cogoToastImage from 'public/images/cogo-toast.png'
 import gridsAndTablesImage from 'public/images/grids-and-tables.png'
 
 export interface IOpenSourceProject {

@@ -1,13 +1,11 @@
-import React from 'react'
+import OpenSourceProject from 'components/open-source/open-source-project'
 
-import Link from 'common/Link'
-import OpenSourceProject from 'components/OpenSourceProjects/OpenSourceProject'
-
-import { OPEN_SOURCE_PROJECTS } from 'utils/projects'
+import Link from 'components/ui/link'
+import { OPEN_SOURCE_PROJECTS } from 'lib/projects'
 
 const OpenSourceProjects = () => (
   <section className="w-full max-w-3xl mx-auto py-4">
-    <h2 className="w-full max-w-lg mx-auto text-lg font-semibold mb-8 md:px-6">
+    <h2 className="w-full max-w-lg mx-auto text-lg font-semibold mb-8 max-md:px-6">
       My Open Source Projects
     </h2>
 

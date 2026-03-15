@@ -1,4 +1,4 @@
-import { Metadata } from 'next'
+import type { Metadata } from 'next'
 
 const defaultMetadata: Metadata = {
   metadataBase: new URL('https://anm.dev'),

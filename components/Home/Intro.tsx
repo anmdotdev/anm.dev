@@ -1,9 +1,7 @@
-import React from 'react'
-
-import Link from 'common/Link'
+import Link from 'components/ui/link'
 
 const Intro = () => (
-  <section className="w-full max-w-lg mx-auto pt-10 pb-8 sm:px-6">
+  <section className="w-full max-w-lg mx-auto pt-10 pb-8 max-sm:px-6">
     <h1 className="text-center font-bold text-4xl mb-8">Hey, I'm Anmol 👋</h1>
     <p className="mb-6">
       I am a remote <strong className="font-medium">Staff Frontend Engineer</strong>, based in

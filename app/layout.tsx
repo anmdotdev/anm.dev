@@ -1,11 +1,11 @@
-import { Metadata } from 'next'
+import type { Metadata } from 'next'
 import { Raleway } from 'next/font/google'
 
-import 'tailwindcss/tailwind.css'
+import './globals.css'
 
-import Layout from 'components/Layout/Layout'
+import Shell from 'components/layout/shell'
 
-import defaultMetadata from 'utils/defaultMetadata'
+import defaultMetadata from 'lib/default-metadata'
 
 const raleway = Raleway({
   subsets: ['latin'],
@@ -22,7 +22,7 @@ interface IRootLayoutProps {
 const RootLayout = ({ children }: IRootLayoutProps) => (
   <html lang="en" className={`${raleway.variable}`}>
     <body>
-      <Layout>{children}</Layout>
+      <Shell>{children}</Shell>
     </body>
   </html>
 )

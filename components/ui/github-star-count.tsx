@@ -1,9 +1,7 @@
+import Link from 'components/ui/link'
+import { getGithubStars } from 'lib/projects'
 import Image from 'next/image'
-import Link from 'common/Link'
-
 import githubIcon from 'public/icons/github.svg'
-
-import { getGithubStars } from 'utils/projects'
 
 const GithubStarCount = async ({ githubOrgName, githubRepoName }) => {
   const githubStars = await getGithubStars({ githubOrgName, githubRepoName })
@@ -12,7 +10,7 @@ const GithubStarCount = async ({ githubOrgName, githubRepoName }) => {
     <Link
       href={`https://github.com/${githubOrgName}/${githubRepoName}`}
       external
-      className="border border-gray-lighter text-xs rounded-sm bg-white"
+      className="border border-gray-lighter text-xs rounded-xs bg-white"
       showIcon="never"
     >
       <span className="flex items-center p-1 px-2 space-x-2 bg-gray-lightest group-hover:bg-white">

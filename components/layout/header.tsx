@@ -1,5 +1,5 @@
-import Link from 'common/Link'
-import Tooltip from 'common/Tooltip'
+import Link from 'components/ui/link'
+import Tooltip from 'components/ui/tooltip'
 
 const siteName = 'anmdotdev'
 
@@ -10,7 +10,7 @@ const navLinks = [
 ]
 
 const Header = () => (
-  <header className="w-full mx-auto max-w-lg py-5 flex justify-between items-center sm:px-6">
+  <header className="w-full mx-auto max-w-lg py-5 flex justify-between items-center max-sm:px-6">
     <Link href="/" className="text-lg text-black font-semibold">
       {siteName}
     </Link>

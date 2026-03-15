@@ -1,7 +1,6 @@
-import Link from 'next/link'
+import { classnames } from 'lib/helpers'
 import Image from 'next/image'
-
-import { classnames } from 'utils/helpers'
+import Link from 'next/link'
 
 import downloadIcon from 'public/icons/download.svg'
 import newTabIcon from 'public/icons/new-tab.svg'

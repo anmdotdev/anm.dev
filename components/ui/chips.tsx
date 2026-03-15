@@ -1,4 +1,4 @@
-import { classnames } from 'utils/helpers'
+import { classnames } from 'lib/helpers'
 
 interface IChipProps {
   color?: string
@@ -23,8 +23,8 @@ interface IChipsProps {
 
 const Chips = ({ chips, className }: IChipsProps) => (
   <div className={classnames('space-x-3', className)}>
-    {chips.map((chip, id: number) => (
-      <Chip key={id} color={chip.color}>
+    {chips.map((chip) => (
+      <Chip key={String(chip.label)} color={chip.color}>
         {chip.label}
       </Chip>
     ))}

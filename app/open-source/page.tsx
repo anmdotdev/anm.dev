@@ -1,6 +1,6 @@
-import OpenSourceProject from 'components/OpenSourceProjects/OpenSourceProject'
+import OpenSourceProject from 'components/open-source/open-source-project'
 
-import { OPEN_SOURCE_PROJECTS } from 'utils/projects'
+import { OPEN_SOURCE_PROJECTS } from 'lib/projects'
 
 const OpenSourcePage = () => (
   <section className="w-full max-w-3xl mx-auto py-4 ">

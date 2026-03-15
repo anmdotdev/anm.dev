@@ -1,5 +1,5 @@
-import Intro from 'components/Home/Intro'
-import OpenSourceProjects from 'components/Home/OpenSourceProjects'
+import Intro from 'components/home/intro'
+import OpenSourceProjects from 'components/home/open-source-projects'
 
 const HomePage = () => (
   <>

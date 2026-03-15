@@ -1,12 +1,10 @@
+import Link from 'components/ui/link'
 import Image from 'next/image'
-
-import Link from 'common/Link'
-
+import emailIcon from 'public/icons/email.svg'
 import githubIcon from 'public/icons/github.svg'
-import twitterIcon from 'public/icons/twitter.svg'
 import linkedinIcon from 'public/icons/linkedin.svg'
 import resumeIcon from 'public/icons/resume.svg'
-import emailIcon from 'public/icons/email.svg'
+import twitterIcon from 'public/icons/twitter.svg'
 
 const links = [
   {
@@ -37,8 +35,8 @@ const links = [
 ]
 
 const Footer = () => (
-  <footer className="w-full bg-white border-t border-gray-lighter absolute bottom-0 md:text-center">
-    <div className="max-w-lg mx-auto flex py-8 space-x-6 sm:flex-col sm:space-x-0 sm:space-y-6 sm:px-6">
+  <footer className="w-full bg-white border-t border-gray-lighter absolute bottom-0 max-md:text-center">
+    <div className="max-w-lg mx-auto flex py-8 space-x-6 max-sm:flex-col max-sm:space-x-0 max-sm:space-y-6 max-sm:px-6">
       <div className="flex-1">
         <h2 className="text-lg font-semibold mb-4">About</h2>
         <p>
