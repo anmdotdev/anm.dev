@@ -23,19 +23,19 @@ const sitemap = (): MetadataRoute.Sitemap => {
   return [
     {
       url: 'https://anm.dev',
-      lastModified: new Date(),
+      lastModified: latestPostDate,
       changeFrequency: 'monthly',
       priority: 1,
     },
     {
       url: 'https://anm.dev/open-source',
-      lastModified: new Date(),
+      lastModified: new Date('2026-03-10'),
       changeFrequency: 'monthly',
       priority: 0.8,
     },
     {
       url: 'https://anm.dev/journey',
-      lastModified: new Date(),
+      lastModified: new Date('2026-03-10'),
       changeFrequency: 'monthly',
       priority: 0.8,
     },

@@ -13,6 +13,9 @@ const defaultMetadata: Metadata = {
   publisher: 'Anmol Mahatpurkar',
   alternates: {
     canonical: '/',
+    languages: {
+      'en-US': '/',
+    },
     types: {
       'application/rss+xml': '/feed.xml',
       'application/feed+json': '/feed.json',

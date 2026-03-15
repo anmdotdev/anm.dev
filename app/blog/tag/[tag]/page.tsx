@@ -56,11 +56,18 @@ const TagPage = async ({ params }: TagPageProps) => {
   const collectionJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
+    '@id': `https://anm.dev/blog/tag/${tag}#collection`,
     name: `Articles tagged "${decodedTag}"`,
     description: `Blog posts about ${decodedTag} by Anmol Mahatpurkar.`,
     url: `https://anm.dev/blog/tag/${tag}`,
+    inLanguage: 'en-US',
+    isPartOf: {
+      '@type': 'WebSite',
+      '@id': 'https://anm.dev/#website',
+    },
     author: {
       '@type': 'Person',
+      '@id': 'https://anm.dev/#person',
       name: 'Anmol Mahatpurkar',
       url: 'https://anm.dev',
     },

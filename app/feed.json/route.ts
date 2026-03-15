@@ -10,6 +10,8 @@ export const GET = () => {
     feed_url: 'https://anm.dev/feed.json',
     description:
       'Thoughts on frontend engineering, TypeScript, React, developer tools, and building for the web.',
+    icon: 'https://anm.dev/apple-icon',
+    favicon: 'https://anm.dev/favicon.ico',
     language: 'en',
     authors: [
       {

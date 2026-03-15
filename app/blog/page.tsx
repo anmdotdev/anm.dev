@@ -32,24 +32,33 @@ const BlogPage = () => {
   const blogJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Blog',
+    '@id': 'https://anm.dev/blog#blog',
     name: 'Blog - Anmol Mahatpurkar',
     description:
       'Thoughts on frontend engineering, TypeScript, React, developer tools, AI prompts, and building for the web.',
     url: 'https://anm.dev/blog',
+    inLanguage: 'en-US',
+    isPartOf: {
+      '@type': 'WebSite',
+      '@id': 'https://anm.dev/#website',
+    },
     author: {
       '@type': 'Person',
+      '@id': 'https://anm.dev/#person',
       name: 'Anmol Mahatpurkar',
       url: 'https://anm.dev',
     },
     blogPost: posts.map((post) => ({
       '@type': 'BlogPosting',
+      '@id': `https://anm.dev/blog/${post.slug}#article`,
       headline: post.title,
       datePublished: post.date,
       url: `https://anm.dev/blog/${post.slug}`,
       description: post.summary,
+      inLanguage: 'en-US',
       author: {
         '@type': 'Person',
-        name: 'Anmol Mahatpurkar',
+        '@id': 'https://anm.dev/#person',
       },
     })),
   }

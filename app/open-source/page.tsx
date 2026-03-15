@@ -18,12 +18,19 @@ export const metadata: Metadata = {
 const projectsJsonLd = {
   '@context': 'https://schema.org',
   '@type': 'CollectionPage',
+  '@id': 'https://anm.dev/open-source#collection',
   name: 'Open Source Projects by Anmol Mahatpurkar',
   description:
     'Open source projects by Anmol Mahatpurkar — React libraries, developer tools, and more.',
   url: 'https://anm.dev/open-source',
+  inLanguage: 'en-US',
+  isPartOf: {
+    '@type': 'WebSite',
+    '@id': 'https://anm.dev/#website',
+  },
   author: {
     '@type': 'Person',
+    '@id': 'https://anm.dev/#person',
     name: 'Anmol Mahatpurkar',
     url: 'https://anm.dev',
   },
@@ -64,6 +71,30 @@ const OpenSourcePage = () => (
     <script
       /* biome-ignore lint/security/noDangerouslySetInnerHtml: JSON-LD structured data */
       dangerouslySetInnerHTML={{ __html: JSON.stringify(projectsJsonLd) }}
+      type="application/ld+json"
+    />
+    <script
+      /* biome-ignore lint/security/noDangerouslySetInnerHtml: JSON-LD structured data */
+      dangerouslySetInnerHTML={{
+        __html: JSON.stringify({
+          '@context': 'https://schema.org',
+          '@type': 'BreadcrumbList',
+          itemListElement: [
+            {
+              '@type': 'ListItem',
+              position: 1,
+              name: 'Home',
+              item: 'https://anm.dev',
+            },
+            {
+              '@type': 'ListItem',
+              position: 2,
+              name: 'Open Source',
+              item: 'https://anm.dev/open-source',
+            },
+          ],
+        }),
+      }}
       type="application/ld+json"
     />
   </section>

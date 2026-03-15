@@ -10,6 +10,7 @@ const securityHeaders = [
 ]
 
 const nextConfig: NextConfig = {
+  trailingSlash: false,
   headers: async () => [
     {
       source: '/(.*)',
@@ -25,6 +26,11 @@ const nextConfig: NextConfig = {
     {
       source: '/.well-known/llms.txt',
       destination: '/llms.txt',
+      permanent: true,
+    },
+    {
+      source: '/.well-known/ai.txt',
+      destination: '/ai.txt',
       permanent: true,
     },
   ],

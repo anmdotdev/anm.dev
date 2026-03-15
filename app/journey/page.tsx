@@ -17,12 +17,19 @@ export const metadata: Metadata = {
 const journeyJsonLd = {
   '@context': 'https://schema.org',
   '@type': 'ProfilePage',
+  '@id': 'https://anm.dev/journey#profile',
   name: 'Professional Journey - Anmol Mahatpurkar',
   description:
     'My professional journey — 10+ years of frontend engineering, from game development to staff engineer at Airbase (Paylocity).',
   url: 'https://anm.dev/journey',
+  inLanguage: 'en-US',
+  isPartOf: {
+    '@type': 'WebSite',
+    '@id': 'https://anm.dev/#website',
+  },
   mainEntity: {
     '@type': 'Person',
+    '@id': 'https://anm.dev/#person',
     name: 'Anmol Mahatpurkar',
     jobTitle: 'Staff Frontend Engineer',
     url: 'https://anm.dev',

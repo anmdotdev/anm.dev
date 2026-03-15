@@ -64,6 +64,8 @@ export const generateMetadata = async ({ params }: BlogPostPageProps): Promise<M
       url: `https://anm.dev/blog/${slug}`,
       authors: ['Anmol Mahatpurkar'],
       tags: post.tags,
+      section: 'Frontend Engineering',
+      locale: 'en_US',
     },
     twitter: {
       card: 'summary_large_image',
@@ -112,10 +114,13 @@ const BlogPostPage = async ({ params }: BlogPostPageProps) => {
       <article
         className="mx-auto mt-4 max-w-5xl border-gray-lighter border-t px-6 pt-10 pb-24 dark:border-dark-border"
         data-article-date={post.date}
+        data-article-reading-time={post.readingTime}
         data-article-slug={slug}
+        data-article-tags={post.tags.join(',')}
         data-article-type="blog-post"
+        data-article-word-count={post.content.split(WHITESPACE_REGEX).length}
       >
-        <div className="mb-6 flex items-center justify-between">
+        <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <nav aria-label="Breadcrumb" className="text-gray text-xs dark:text-dark-text-muted">
             <Link
               className="hover:text-black dark:hover:text-dark-text"
@@ -143,7 +148,20 @@ const BlogPostPage = async ({ params }: BlogPostPageProps) => {
             {post.tags.length > 0 && (
               <>
                 <span aria-hidden="true">·</span>
-                <span>{post.tags.join(', ')}</span>
+                <span>
+                  {post.tags.map((tag, index) => (
+                    <span key={tag}>
+                      <Link
+                        className="hover:text-black dark:hover:text-dark-text"
+                        href={`/blog/tag/${encodeURIComponent(tag.toLowerCase())}`}
+                        showIcon="never"
+                      >
+                        {tag}
+                      </Link>
+                      {index < post.tags.length - 1 && ', '}
+                    </span>
+                  ))}
+                </span>
               </>
             )}
             <span aria-hidden="true">·</span>
@@ -163,16 +181,19 @@ const BlogPostPage = async ({ params }: BlogPostPageProps) => {
             __html: JSON.stringify({
               '@context': 'https://schema.org',
               '@type': 'BlogPosting',
+              '@id': `https://anm.dev/blog/${slug}#article`,
               headline: post.title,
               datePublished: post.date,
               dateModified,
               author: {
                 '@type': 'Person',
+                '@id': 'https://anm.dev/#person',
                 name: 'Anmol Mahatpurkar',
                 url: 'https://anm.dev',
               },
               publisher: {
                 '@type': 'Person',
+                '@id': 'https://anm.dev/#person',
                 name: 'Anmol Mahatpurkar',
                 url: 'https://anm.dev',
               },
@@ -182,9 +203,20 @@ const BlogPostPage = async ({ params }: BlogPostPageProps) => {
                 '@type': 'WebPage',
                 '@id': `https://anm.dev/blog/${slug}`,
               },
+              isPartOf: {
+                '@type': 'WebSite',
+                '@id': 'https://anm.dev/#website',
+              },
               image: `https://anm.dev/blog/${slug}/opengraph-image`,
+              thumbnailUrl: `https://anm.dev/blog/${slug}/opengraph-image`,
               wordCount: post.content.split(WHITESPACE_REGEX).length,
               keywords: post.tags,
+              inLanguage: 'en-US',
+              articleSection: 'Frontend Engineering',
+              speakable: {
+                '@type': 'SpeakableSpecification',
+                cssSelector: ['article h1', 'article header', '.prose'],
+              },
             }),
           }}
           type="application/ld+json"

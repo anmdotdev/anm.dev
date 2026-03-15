@@ -31,6 +31,7 @@ const themeScript = `
 const personJsonLd = {
   '@context': 'https://schema.org',
   '@type': 'Person',
+  '@id': 'https://anm.dev/#person',
   name: 'Anmol Mahatpurkar',
   url: 'https://anm.dev',
   jobTitle: 'Staff Frontend Engineer',
@@ -43,18 +44,34 @@ const personJsonLd = {
     'https://x.com/anmdotdev',
     'https://linkedin.com/in/anmolmahatpurkar',
   ],
+  knowsAbout: [
+    'React',
+    'TypeScript',
+    'JavaScript',
+    'Design Systems',
+    'Frontend Architecture',
+    'Web Development',
+    'AI-Assisted Development',
+    'Prompt Engineering',
+  ],
 }
 
 const websiteJsonLd = {
   '@context': 'https://schema.org',
   '@type': 'WebSite',
+  '@id': 'https://anm.dev/#website',
   name: 'anmdotdev',
   url: 'https://anm.dev',
   description:
     'Staff Frontend Engineer with 10+ years of experience building design systems, web & mobile apps with React and TypeScript.',
+  inLanguage: 'en-US',
   author: {
     '@type': 'Person',
-    name: 'Anmol Mahatpurkar',
+    '@id': 'https://anm.dev/#person',
+  },
+  publisher: {
+    '@type': 'Person',
+    '@id': 'https://anm.dev/#person',
   },
 }
 

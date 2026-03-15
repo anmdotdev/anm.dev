@@ -7,7 +7,7 @@ interface CopyPageMenuProps {
   title: string
 }
 
-const CopyPageMenu = ({ slug }: CopyPageMenuProps) => {
+const CopyPageMenu = ({ slug, title }: CopyPageMenuProps) => {
   const [open, setOpen] = useState(false)
   const [copied, setCopied] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
@@ -38,6 +38,52 @@ const CopyPageMenu = ({ slug }: CopyPageMenuProps) => {
     const res = await fetch(`/api/blog/${slug}/raw`)
     const markdown = await res.text()
     await navigator.clipboard.writeText(markdown)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+    setOpen(false)
+  }
+
+  const downloadAsMarkdown = async () => {
+    const res = await fetch(`/api/blog/${slug}/raw`)
+    const markdown = await res.text()
+    const blob = new Blob([markdown], { type: 'text/markdown' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `${slug}.md`
+    a.click()
+    URL.revokeObjectURL(url)
+    setOpen(false)
+  }
+
+  const copyAsJson = async () => {
+    const articleEl = document.querySelector('article')
+    const json = JSON.stringify(
+      {
+        title,
+        url: blogUrl,
+        slug,
+        date: articleEl?.getAttribute('data-article-date') ?? '',
+        readingTime: articleEl?.getAttribute('data-article-reading-time') ?? '',
+        tags: articleEl?.getAttribute('data-article-tags')?.split(',') ?? [],
+        wordCount: articleEl?.getAttribute('data-article-word-count') ?? '',
+        content: articleEl?.innerText ?? '',
+      },
+      null,
+      2,
+    )
+    await navigator.clipboard.writeText(json)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+    setOpen(false)
+  }
+
+  const copyCitation = async () => {
+    const articleEl = document.querySelector('article')
+    const date = articleEl?.getAttribute('data-article-date') ?? ''
+    const year = date ? new Date(date).getFullYear() : new Date().getFullYear()
+    const citation = `Mahatpurkar, A. (${year}). ${title}. anm.dev. ${blogUrl}`
+    await navigator.clipboard.writeText(citation)
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
     setOpen(false)
@@ -152,6 +198,95 @@ const CopyPageMenu = ({ slug }: CopyPageMenuProps) => {
                 <span className="text-gray dark:text-dark-text-muted">
                   Copy page content as Markdown
                 </span>
+              </span>
+            </button>
+
+            <button
+              className="flex w-full items-center gap-3 px-3 py-2.5 text-left text-xs transition-colors hover:bg-gray-lightest dark:hover:bg-dark-surface-hover"
+              onClick={downloadAsMarkdown}
+              type="button"
+            >
+              <span className="flex h-8 w-8 items-center justify-center rounded-md bg-gray-lightest dark:bg-dark-border">
+                <svg
+                  aria-hidden="true"
+                  className="h-4 w-4 text-gray-dark dark:text-dark-text-muted"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    d="M12 10v6m0 0l-3-3m3 3l3-3M3 17v3a2 2 0 002 2h14a2 2 0 002-2v-3"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={1.5}
+                  />
+                </svg>
+              </span>
+              <span>
+                <span className="block font-medium text-black dark:text-dark-text">
+                  Download as .md
+                </span>
+                <span className="text-gray dark:text-dark-text-muted">Save Markdown file</span>
+              </span>
+            </button>
+
+            <button
+              className="flex w-full items-center gap-3 px-3 py-2.5 text-left text-xs transition-colors hover:bg-gray-lightest dark:hover:bg-dark-surface-hover"
+              onClick={copyAsJson}
+              type="button"
+            >
+              <span className="flex h-8 w-8 items-center justify-center rounded-md bg-gray-lightest dark:bg-dark-border">
+                <svg
+                  aria-hidden="true"
+                  className="h-4 w-4 text-gray-dark dark:text-dark-text-muted"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    d="M17 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V5a2 2 0 00-2-2zM9 7h6M9 11h6M9 15h4"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={1.5}
+                  />
+                </svg>
+              </span>
+              <span>
+                <span className="block font-medium text-black dark:text-dark-text">
+                  Copy as JSON
+                </span>
+                <span className="text-gray dark:text-dark-text-muted">
+                  Structured data for AI pipelines
+                </span>
+              </span>
+            </button>
+
+            <button
+              className="flex w-full items-center gap-3 px-3 py-2.5 text-left text-xs transition-colors hover:bg-gray-lightest dark:hover:bg-dark-surface-hover"
+              onClick={copyCitation}
+              type="button"
+            >
+              <span className="flex h-8 w-8 items-center justify-center rounded-md bg-gray-lightest dark:bg-dark-border">
+                <svg
+                  aria-hidden="true"
+                  className="h-4 w-4 text-gray-dark dark:text-dark-text-muted"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    d="M6 6h.01M6 12h.01M6 18h.01M10 6h8M10 12h8M10 18h8"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={1.5}
+                  />
+                </svg>
+              </span>
+              <span>
+                <span className="block font-medium text-black dark:text-dark-text">
+                  Copy citation
+                </span>
+                <span className="text-gray dark:text-dark-text-muted">APA format reference</span>
               </span>
             </button>
 

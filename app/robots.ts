@@ -5,6 +5,7 @@ const robots = (): MetadataRoute.Robots => ({
     {
       userAgent: '*',
       allow: '/',
+      disallow: '/api/',
     },
     {
       userAgent: 'GPTBot',

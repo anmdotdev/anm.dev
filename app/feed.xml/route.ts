@@ -28,6 +28,13 @@ ${post.tags.map((tag) => `      <category>${escapeXml(tag)}</category>`).join('\
     <description>Thoughts on frontend engineering, TypeScript, React, developer tools, and building for the web.</description>
     <language>en</language>
     <lastBuildDate>${lastBuildDate}</lastBuildDate>
+    <image>
+      <url>https://anm.dev/opengraph-image</url>
+      <title>Anmol Mahatpurkar - Blog</title>
+      <link>https://anm.dev/blog</link>
+      <width>144</width>
+      <height>144</height>
+    </image>
     <atom:link href="https://anm.dev/feed.xml" rel="self" type="application/rss+xml"/>
     ${items}
   </channel>
