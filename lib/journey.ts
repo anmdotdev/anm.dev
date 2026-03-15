@@ -191,7 +191,7 @@ export const JOURNEY_ACHIEVEMENTS: IJourneyAchievement[] = [
 
 export const JOURNEY_ERAS = [
   {
-    description: 'Scaling frontend teams and systems at a growing fintech company.',
+    description: 'Scaling frontend teams and systems at growing product organizations.',
     endIndex: 3,
     label: 'The Staff Engineer Path',
     startIndex: 0,

@@ -3,7 +3,7 @@ import { JOURNEY_ENTRIES, JOURNEY_ERAS } from 'lib/journey'
 import TimelineEntry from './timeline-entry'
 
 const Timeline = () => (
-  <section className="mx-auto w-full max-w-3xl px-6 pt-10 pb-16">
+  <section className="mx-auto w-full max-w-5xl px-6 pt-10 pb-16">
     {/* Header */}
     <h1 className="mb-12 text-center font-bold text-4xl text-black dark:text-dark-text">
       My Journey
@@ -30,9 +30,11 @@ const Timeline = () => (
             </div>
 
             {/* Era description */}
-            <p className="relative z-10 mb-8 text-center text-gray-dark text-sm italic max-md:ml-12 max-md:text-left dark:text-dark-text-muted">
-              {era.description}
-            </p>
+            <div className="relative z-10 mb-8 flex max-md:ml-12 md:justify-center">
+              <p className="bg-gray-lightest px-4 text-center text-gray-dark text-sm italic max-md:text-left dark:bg-dark-bg dark:text-dark-text-muted">
+                {era.description}
+              </p>
+            </div>
 
             {/* Entries */}
             <div className="space-y-8">
