@@ -46,10 +46,15 @@ export const generateMetadata = async ({ params }: BlogPostPageProps): Promise<M
   }
 
   return {
-    title: `${post.title} - Anmol Mahatpurkar`,
+    title: post.title,
     description: post.summary || `${post.title} - A blog post by Anmol Mahatpurkar`,
     keywords: post.tags,
-    alternates: { canonical: `/blog/${slug}` },
+    alternates: {
+      canonical: `/blog/${slug}`,
+      types: {
+        'text/markdown': `/api/blog/${slug}/raw`,
+      },
+    },
     openGraph: {
       title: post.title,
       description: post.summary || `${post.title} - A blog post by Anmol Mahatpurkar`,

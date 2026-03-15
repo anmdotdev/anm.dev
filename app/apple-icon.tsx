@@ -1,12 +1,14 @@
+import fs from 'node:fs'
+import path from 'node:path'
+
 import { ImageResponse } from 'next/og'
 
 export const size = { width: 180, height: 180 }
 export const contentType = 'image/png'
 
-const AppleIcon = async () => {
-  const fontData = await fetch(
-    'https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbY2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8L6tjPQ.ttf',
-  ).then((res) => res.arrayBuffer())
+const AppleIcon = () => {
+  const fontPath = path.join(process.cwd(), 'public', 'fonts', 'JetBrainsMono-Bold.ttf')
+  const fontData = fs.readFileSync(fontPath)
 
   return new ImageResponse(
     <div

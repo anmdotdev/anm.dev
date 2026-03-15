@@ -29,6 +29,50 @@ const BlogPage = () => {
 
   const years = Object.keys(postsByYear).sort((a, b) => Number(b) - Number(a))
 
+  const blogJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Blog',
+    name: 'Blog - Anmol Mahatpurkar',
+    description:
+      'Thoughts on frontend engineering, TypeScript, React, developer tools, AI prompts, and building for the web.',
+    url: 'https://anm.dev/blog',
+    author: {
+      '@type': 'Person',
+      name: 'Anmol Mahatpurkar',
+      url: 'https://anm.dev',
+    },
+    blogPost: posts.map((post) => ({
+      '@type': 'BlogPosting',
+      headline: post.title,
+      datePublished: post.date,
+      url: `https://anm.dev/blog/${post.slug}`,
+      description: post.summary,
+      author: {
+        '@type': 'Person',
+        name: 'Anmol Mahatpurkar',
+      },
+    })),
+  }
+
+  const breadcrumbJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Home',
+        item: 'https://anm.dev',
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: 'Blog',
+        item: 'https://anm.dev/blog',
+      },
+    ],
+  }
+
   return (
     <section className="mx-auto max-w-3xl px-6 pt-8 pb-16">
       <h1 className="mb-2 font-semibold text-2xl text-black dark:text-dark-text">Blog</h1>
@@ -51,30 +95,45 @@ const BlogPage = () => {
               </h2>
               <div className="divide-y divide-gray-lighter dark:divide-dark-border">
                 {postsByYear[year].map((post) => (
-                  <Link
-                    className="group/post !flex !items-start !no-underline flex-col gap-1 py-4"
-                    href={`/blog/${post.slug}`}
-                    key={post.slug}
-                    showIcon="never"
-                  >
-                    <span className="font-medium text-black text-sm group-hover/post:underline dark:text-dark-text">
-                      {post.title}
-                    </span>
-                    {post.summary && (
-                      <span className="line-clamp-2 text-gray-dark text-xs dark:text-dark-text-secondary">
-                        {post.summary}
+                  <article key={post.slug}>
+                    <Link
+                      className="group/post !flex !items-start !no-underline flex-col gap-1 py-4"
+                      href={`/blog/${post.slug}`}
+                      showIcon="never"
+                    >
+                      <span className="font-medium text-black text-sm group-hover/post:underline dark:text-dark-text">
+                        {post.title}
                       </span>
-                    )}
-                    <span className="text-gray text-xs tabular-nums dark:text-dark-text-muted">
-                      {formatDate(post.date)} · {post.readingTime}
-                    </span>
-                  </Link>
+                      {post.summary && (
+                        <span className="line-clamp-2 text-gray-dark text-xs dark:text-dark-text-secondary">
+                          {post.summary}
+                        </span>
+                      )}
+                      <span className="text-gray text-xs tabular-nums dark:text-dark-text-muted">
+                        {formatDate(post.date)} · {post.readingTime}
+                      </span>
+                    </Link>
+                  </article>
                 ))}
               </div>
             </div>
           ))}
         </div>
       )}
+      <script
+        /* biome-ignore lint/security/noDangerouslySetInnerHtml: JSON-LD structured data */
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(blogJsonLd),
+        }}
+        type="application/ld+json"
+      />
+      <script
+        /* biome-ignore lint/security/noDangerouslySetInnerHtml: JSON-LD structured data */
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(breadcrumbJsonLd),
+        }}
+        type="application/ld+json"
+      />
     </section>
   )
 }

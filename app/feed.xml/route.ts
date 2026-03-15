@@ -14,6 +14,7 @@ export const GET = () => {
       <guid isPermaLink="true">https://anm.dev/blog/${post.slug}</guid>
       <pubDate>${new Date(post.date).toUTCString()}</pubDate>
       <description>${escapeXml(post.summary)}</description>
+${post.tags.map((tag) => `      <category>${escapeXml(tag)}</category>`).join('\n')}
       <content:encoded><![CDATA[${post.content}]]></content:encoded>
     </item>`,
     )

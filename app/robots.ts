@@ -30,6 +30,38 @@ const robots = (): MetadataRoute.Robots => ({
       userAgent: 'Bytespider',
       allow: '/',
     },
+    {
+      userAgent: 'ClaudeBot',
+      allow: '/',
+    },
+    {
+      userAgent: 'Applebot-Extended',
+      allow: '/',
+    },
+    {
+      userAgent: 'cohere-ai',
+      allow: '/',
+    },
+    {
+      userAgent: 'Meta-ExternalAgent',
+      allow: '/',
+    },
+    {
+      userAgent: 'Amazonbot',
+      allow: '/',
+    },
+    {
+      userAgent: 'FacebookBot',
+      allow: '/',
+    },
+    {
+      userAgent: 'YouBot',
+      allow: '/',
+    },
+    {
+      userAgent: 'Diffbot',
+      allow: '/',
+    },
   ],
   sitemap: 'https://anm.dev/sitemap.xml',
 })

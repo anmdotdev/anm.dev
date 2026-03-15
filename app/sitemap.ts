@@ -1,14 +1,23 @@
-import { getBlogPosts } from 'lib/blog'
+import { getAllTags, getBlogPosts } from 'lib/blog'
 import type { MetadataRoute } from 'next'
 
 const sitemap = (): MetadataRoute.Sitemap => {
   const posts = getBlogPosts()
+
+  const latestPostDate = posts.length > 0 ? new Date(posts[0].date) : new Date()
 
   const blogEntries = posts.map((post) => ({
     url: `https://anm.dev/blog/${post.slug}`,
     lastModified: new Date(post.lastModified || post.date),
     changeFrequency: 'monthly' as const,
     priority: 0.7,
+  }))
+
+  const tagEntries = getAllTags().map((tag) => ({
+    url: `https://anm.dev/blog/tag/${encodeURIComponent(tag.toLowerCase())}`,
+    lastModified: latestPostDate,
+    changeFrequency: 'weekly' as const,
+    priority: 0.5,
   }))
 
   return [
@@ -32,11 +41,12 @@ const sitemap = (): MetadataRoute.Sitemap => {
     },
     {
       url: 'https://anm.dev/blog',
-      lastModified: new Date(),
+      lastModified: latestPostDate,
       changeFrequency: 'weekly',
       priority: 0.9,
     },
     ...blogEntries,
+    ...tagEntries,
   ]
 }
 

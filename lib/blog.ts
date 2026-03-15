@@ -98,6 +98,17 @@ export const getRelatedPosts = (
     .map((item) => item.post)
 }
 
+export const getAllTags = (): string[] => {
+  const posts = getBlogPosts()
+  const tagSet = new Set<string>()
+  for (const post of posts) {
+    for (const tag of post.tags) {
+      tagSet.add(tag)
+    }
+  }
+  return Array.from(tagSet).sort()
+}
+
 export const formatDate = (dateStr: string): string => {
   const date = new Date(dateStr)
   return date.toLocaleDateString('en-US', {

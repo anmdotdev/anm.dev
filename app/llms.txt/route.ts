@@ -4,7 +4,10 @@ export const GET = () => {
   const posts = getBlogPosts()
 
   const blogList = posts
-    .map((post) => `- [${post.title}](https://anm.dev/blog/${post.slug}): ${post.summary}`)
+    .map(
+      (post) =>
+        `- [${post.title}](https://anm.dev/blog/${post.slug}): ${post.summary}\n  - [Raw Markdown](https://anm.dev/api/blog/${post.slug}/raw)`,
+    )
     .join('\n')
 
   const content = `# anm.dev
