@@ -48,7 +48,7 @@ const projectsJsonLd = {
 }
 
 const OpenSourcePage = () => (
-  <section className="mx-auto w-full max-w-3xl py-4">
+  <section className="mx-auto w-full max-w-3xl pt-4 pb-16">
     <h1 className="mx-auto mb-2 w-full max-w-lg text-center font-semibold text-lg dark:text-dark-text">
       My Open Source Projects
     </h1>

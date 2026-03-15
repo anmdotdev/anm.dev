@@ -110,7 +110,7 @@ const BlogPostPage = async ({ params }: BlogPostPageProps) => {
     <>
       <ReadingProgress />
       <article
-        className="mx-auto mt-4 max-w-5xl border-gray-lighter border-t px-6 pt-10 pb-16 dark:border-dark-border"
+        className="mx-auto mt-4 max-w-5xl border-gray-lighter border-t px-6 pt-10 pb-24 dark:border-dark-border"
         data-article-date={post.date}
         data-article-slug={slug}
         data-article-type="blog-post"

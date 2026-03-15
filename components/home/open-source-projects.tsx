@@ -4,7 +4,7 @@ import Link from 'components/ui/link'
 import { OPEN_SOURCE_PROJECTS } from 'lib/projects'
 
 const OpenSourceProjects = () => (
-  <section className="mx-auto w-full max-w-3xl py-4">
+  <section className="mx-auto w-full max-w-3xl pt-4 pb-16">
     <h2 className="mx-auto mb-8 w-full max-w-lg font-semibold text-lg max-md:px-6 dark:text-dark-text">
       My Open Source Projects
     </h2>

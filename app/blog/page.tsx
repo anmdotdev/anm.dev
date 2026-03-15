@@ -74,7 +74,7 @@ const BlogPage = () => {
   }
 
   return (
-    <section className="mx-auto max-w-3xl px-6 pt-8 pb-16">
+    <section className="mx-auto max-w-3xl px-6 pt-8 pb-24">
       <h1 className="mb-2 font-semibold text-2xl text-black dark:text-dark-text">Blog</h1>
       <p className="mb-12 text-gray-dark text-sm dark:text-dark-text-secondary">
         Writing about web dev, developer tools, and building in the modern AI era.
