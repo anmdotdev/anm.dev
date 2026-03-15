@@ -52,12 +52,12 @@ const BlogPage = () => {
               <div className="divide-y divide-gray-lighter dark:divide-dark-border">
                 {postsByYear[year].map((post) => (
                   <Link
-                    className="!flex !items-start flex-col gap-1 py-4 no-underline hover:no-underline"
+                    className="group/post !flex !items-start !no-underline flex-col gap-1 py-4"
                     href={`/blog/${post.slug}`}
                     key={post.slug}
                     showIcon="never"
                   >
-                    <span className="font-medium text-black text-sm dark:text-dark-text">
+                    <span className="font-medium text-black text-sm group-hover/post:underline dark:text-dark-text">
                       {post.title}
                     </span>
                     {post.summary && (

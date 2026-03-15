@@ -2,6 +2,8 @@ import { getBlogPosts } from 'lib/blog'
 
 export const GET = () => {
   const posts = getBlogPosts()
+  const lastBuildDate =
+    posts.length > 0 ? new Date(posts[0].date).toUTCString() : new Date().toUTCString()
 
   const items = posts
     .map(
@@ -24,6 +26,7 @@ export const GET = () => {
     <link>https://anm.dev/blog</link>
     <description>Thoughts on frontend engineering, TypeScript, React, developer tools, and building for the web.</description>
     <language>en</language>
+    <lastBuildDate>${lastBuildDate}</lastBuildDate>
     <atom:link href="https://anm.dev/feed.xml" rel="self" type="application/rss+xml"/>
     ${items}
   </channel>
@@ -31,7 +34,7 @@ export const GET = () => {
 
   return new Response(xml, {
     headers: {
-      'Content-Type': 'application/xml',
+      'Content-Type': 'application/rss+xml; charset=utf-8',
       'Cache-Control': 'public, max-age=3600',
     },
   })

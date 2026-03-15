@@ -6,7 +6,7 @@ const sitemap = (): MetadataRoute.Sitemap => {
 
   const blogEntries = posts.map((post) => ({
     url: `https://anm.dev/blog/${post.slug}`,
-    lastModified: new Date(post.date),
+    lastModified: new Date(post.lastModified || post.date),
     changeFrequency: 'monthly' as const,
     priority: 0.7,
   }))

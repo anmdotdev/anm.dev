@@ -11,6 +11,8 @@ export const GET = () => {
 
 > Personal website and blog by Anmol Mahatpurkar, a Staff Frontend Engineer with 10+ years of experience building design systems, web & mobile apps with React and TypeScript. Currently at Airbase (Paylocity).
 
+> Optional: [Full site content](https://anm.dev/llms-full.txt)
+
 ## About
 
 Anmol Mahatpurkar is a Staff Frontend Engineer based in Mumbai, India. He specializes in React, TypeScript, design systems, and frontend architecture. He has worked at companies including Airbase (Paylocity), Cogoport, and Emotix.
@@ -25,6 +27,11 @@ Anmol Mahatpurkar is a Staff Frontend Engineer based in Mumbai, India. He specia
 ## Blog Posts
 
 ${blogList || 'No blog posts published yet.'}
+
+## Raw Content Access
+
+- Raw markdown for any blog post: \`https://anm.dev/api/blog/{slug}/raw\`
+- Full site content: https://anm.dev/llms-full.txt
 
 ## Feeds
 

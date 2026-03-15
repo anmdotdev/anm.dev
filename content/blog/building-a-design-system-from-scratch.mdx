@@ -1,0 +1,276 @@
+---
+title: "Building a Design System from Scratch"
+date: "2026-03-10"
+summary: "How to architect a scalable design system with tokens, primitives, and composable components — from folder structure to theming."
+tags: ["design-systems", "typescript", "css"]
+draft: false
+---
+
+A design system isn't a component library. It's a shared language between design and engineering — a set of constraints that make consistency the default. Here's how I think about building one.
+
+## The Architecture
+
+A well-structured design system has clear layers, each building on the one below:
+
+<Mermaid chart="graph TD | A[Design Tokens] --> B[Primitives] | B --> C[Components] | C --> D[Patterns] | D --> E[Pages] | A -.->|colors, spacing, typography| B | B -.->|Box, Text, Stack| C | C -.->|Button, Input, Card| D | D -.->|Form, DataTable, Modal| E" />
+
+Each layer has a single responsibility:
+
+- **Tokens** define the raw values — colors, spacing, font sizes.
+- **Primitives** are unstyled building blocks — layout and typography.
+- **Components** are the reusable UI pieces — buttons, inputs, cards.
+- **Patterns** combine components into recurring UI — forms, tables, dialogs.
+
+## Design Tokens
+
+Tokens are the foundation. They're platform-agnostic values that drive every visual decision:
+
+```tsx
+const tokens = {
+  color: {
+    gray: {
+      50: '#fafafa',
+      100: '#f4f4f5',
+      200: '#e4e4e7',
+      300: '#d4d4d8',
+      400: '#a1a1aa',
+      500: '#71717a',
+      600: '#52525b',
+      700: '#3f3f46',
+      800: '#27272a',
+      900: '#18181b',
+    },
+    blue: {
+      500: '#3b82f6',
+      600: '#2563eb',
+      700: '#1d4ed8',
+    },
+  },
+  spacing: {
+    xs: '0.25rem',
+    sm: '0.5rem',
+    md: '0.75rem',
+    lg: '1rem',
+    xl: '1.5rem',
+    '2xl': '2rem',
+    '3xl': '3rem',
+  },
+  radius: {
+    sm: '0.25rem',
+    md: '0.5rem',
+    lg: '0.75rem',
+    full: '9999px',
+  },
+  font: {
+    sans: 'Inter, system-ui, sans-serif',
+    mono: 'JetBrains Mono, monospace',
+  },
+} as const
+```
+
+The `as const` assertion is critical — it gives us literal types, so `tokens.color.gray[50]` is `'#fafafa'`, not `string`. This enables autocomplete everywhere tokens are used.
+
+## Primitive Components
+
+Primitives handle layout and typography without any visual opinion:
+
+```tsx
+import type { CSSProperties, ReactNode } from 'react'
+
+interface StackProps {
+  children: ReactNode
+  gap?: keyof typeof tokens.spacing
+  direction?: 'row' | 'column'
+  align?: CSSProperties['alignItems']
+  justify?: CSSProperties['justifyContent']
+  className?: string
+}
+
+const Stack = ({
+  children,
+  gap = 'md',
+  direction = 'column',
+  align,
+  justify,
+  className,
+}: StackProps) => (
+  <div
+    className={className}
+    style={{
+      display: 'flex',
+      flexDirection: direction,
+      gap: tokens.spacing[gap],
+      alignItems: align,
+      justifyContent: justify,
+    }}
+  >
+    {children}
+  </div>
+)
+```
+
+Notice the `gap` prop accepts token keys, not arbitrary values. This is how you enforce consistency — the API only allows values from your system.
+
+## Component Variants
+
+For components with multiple visual styles, use a variant pattern:
+
+```tsx
+const buttonVariants = {
+  solid: 'bg-blue-600 text-white hover:bg-blue-700',
+  outline: 'border border-gray-300 text-gray-700 hover:bg-gray-50',
+  ghost: 'text-gray-600 hover:bg-gray-100',
+} as const
+
+type ButtonVariant = keyof typeof buttonVariants
+
+interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  variant?: ButtonVariant
+  size?: 'sm' | 'md' | 'lg'
+}
+
+const sizeClasses = {
+  sm: 'h-8 px-3 text-xs',
+  md: 'h-9 px-4 text-sm',
+  lg: 'h-11 px-6 text-base',
+} as const
+
+const Button = ({
+  variant = 'solid',
+  size = 'md',
+  className,
+  children,
+  ...props
+}: ButtonProps) => (
+  <button
+    className={`inline-flex items-center justify-center rounded-md font-medium transition-colors ${buttonVariants[variant]} ${sizeClasses[size]} ${className ?? ''}`}
+    type="button"
+    {...props}
+  >
+    {children}
+  </button>
+)
+```
+
+The variant map is a plain object — no complex abstractions, fully type-safe, and easy to extend.
+
+## Theming with CSS Variables
+
+The cleanest way to handle theming is CSS custom properties. Tokens become variables at the root, and themes override them:
+
+```css
+:root {
+  --color-bg: #ffffff;
+  --color-text: #18181b;
+  --color-border: #e4e4e7;
+  --color-surface: #fafafa;
+  --color-primary: #2563eb;
+  --color-primary-hover: #1d4ed8;
+}
+
+[data-theme='dark'] {
+  --color-bg: #09090b;
+  --color-text: #fafafa;
+  --color-border: #27272a;
+  --color-surface: #18181b;
+  --color-primary: #3b82f6;
+  --color-primary-hover: #60a5fa;
+}
+```
+
+Components reference variables, never raw values:
+
+```tsx
+const Card = ({ children }: { children: ReactNode }) => (
+  <div
+    style={{
+      backgroundColor: 'var(--color-surface)',
+      border: '1px solid var(--color-border)',
+      borderRadius: tokens.radius.lg,
+      padding: tokens.spacing.xl,
+    }}
+  >
+    {children}
+  </div>
+)
+```
+
+Theme switching is a single attribute change — no re-render, no prop drilling.
+
+## The Token Pipeline
+
+Here's how tokens flow from definition to consumption:
+
+<Mermaid chart="graph LR | A[Token Definition] --> B[Build Step] | B --> C[CSS Variables] | B --> D[TypeScript Constants] | B --> E[Figma Tokens] | C --> F[Runtime Theming] | D --> G[Type-Safe Props] | E --> H[Design Files]" />
+
+A build step transforms your source tokens into platform-specific outputs. Tools like Style Dictionary handle this, but even a simple Node script works for smaller systems.
+
+## Component Dependency Graph
+
+As your system grows, understanding dependencies becomes critical:
+
+<Mermaid chart="graph TD | subgraph Primitives | Box[Box] | Text[Text] | Stack[Stack] | end | subgraph Components | Button[Button] | Input[Input] | Badge[Badge] | Avatar[Avatar] | end | subgraph Patterns | FormField[FormField] | Dialog[Dialog] | Dropdown[Dropdown] | end | Box --> Button | Box --> Input | Box --> Badge | Box --> Avatar | Text --> Button | Text --> Badge | Stack --> FormField | Stack --> Dialog | Button --> FormField | Input --> FormField | Button --> Dialog | Box --> Dropdown | Button --> Dropdown" />
+
+Every pattern is composed of components, every component of primitives. If you can trace any piece of UI back to a primitive, your system is well-structured.
+
+## File Structure
+
+Keep it flat and predictable:
+
+```plaintext
+design-system/
+├── tokens/
+│   ├── colors.ts
+│   ├── spacing.ts
+│   ├── typography.ts
+│   └── index.ts
+├── primitives/
+│   ├── box.tsx
+│   ├── text.tsx
+│   ├── stack.tsx
+│   └── index.ts
+├── components/
+│   ├── button.tsx
+│   ├── input.tsx
+│   ├── card.tsx
+│   └── index.ts
+└── patterns/
+    ├── form-field.tsx
+    ├── dialog.tsx
+    └── index.ts
+```
+
+One component per file, named exports, no barrel files re-exporting everything. Import what you need directly.
+
+## Testing Strategy
+
+Test behavior, not implementation. A button test shouldn't check class names — it should check that clicking it fires the callback:
+
+```tsx
+import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import { expect, test } from 'vitest'
+
+test('button calls onClick when clicked', async () => {
+  const user = userEvent.setup()
+  let clicked = false
+
+  render(
+    <Button onClick={() => { clicked = true }}>
+      Save
+    </Button>
+  )
+
+  await user.click(screen.getByRole('button', { name: 'Save' }))
+  expect(clicked).toBe(true)
+})
+
+test('button is disabled when disabled prop is set', () => {
+  render(<Button disabled>Save</Button>)
+  expect(screen.getByRole('button')).toBeDisabled()
+})
+```
+
+## Wrapping Up
+
+A design system is an investment in consistency. Start with tokens, build primitives, compose components, and let TypeScript enforce the contracts. The best systems aren't the most clever — they're the most predictable.

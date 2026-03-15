@@ -1,0 +1,160 @@
+---
+title: "Anatomy of a React Component"
+date: "2026-03-16"
+summary: "A visual walkthrough of how React components are structured, rendered, and composed — with code examples and architecture diagrams."
+tags: ["react", "typescript", "architecture"]
+draft: false
+---
+
+Every React application is a tree of components. But how do they actually work under the hood? Let's break it down with code and diagrams.
+
+## The Component Lifecycle
+
+A React component goes through distinct phases during its lifetime. Here's the high-level flow:
+
+<Mermaid chart="graph TD | A[Mount] --> B[Render] | B --> C{State Change?} | C -->|Yes| D[Re-render] | D --> C | C -->|No| E[Unmount]" />
+
+When a component mounts, React calls your function, takes the returned JSX, and reconciles it into the DOM. Every state update triggers this cycle again.
+
+## A Minimal Component
+
+Here's the simplest useful component — a button that tracks its own click count:
+
+```tsx
+import { useState } from 'react'
+
+interface CounterProps {
+  label?: string
+  initialCount?: number
+}
+
+const Counter = ({ label = 'Clicks', initialCount = 0 }: CounterProps) => {
+  const [count, setCount] = useState(initialCount)
+
+  return (
+    <button
+      className="rounded-lg bg-blue-600 px-4 py-2 text-white"
+      onClick={() => setCount((prev) => prev + 1)}
+      type="button"
+    >
+      {label}: {count}
+    </button>
+  )
+}
+
+export default Counter
+```
+
+A few things to note:
+
+- **Props are typed** with an interface, giving us autocompletion and compile-time safety.
+- **Default values** are destructured inline — no `defaultProps` needed.
+- **State updates use the callback form** of `setCount` to avoid stale closures.
+
+## Data Flow
+
+React enforces a unidirectional data flow. Data moves down through props, and events bubble up through callbacks:
+
+<Mermaid chart="graph TD | App[App] --> Header[Header] | App --> Main[Main] | App --> Footer[Footer] | Main --> List[ItemList] | List --> Item1[Item] | List --> Item2[Item] | List --> Item3[Item] | Item1 -.->|onClick| List | List -.->|onUpdate| Main | Main -.->|onNavigate| App" />
+
+Solid lines represent prop flow (parent → child). Dotted lines represent event callbacks (child → parent). This constraint is what makes React apps predictable.
+
+## Custom Hooks
+
+When logic is shared across components, extract it into a custom hook:
+
+```tsx
+import { useCallback, useEffect, useState } from 'react'
+
+interface FetchState<T> {
+  data: T | null
+  error: string | null
+  isLoading: boolean
+}
+
+const useFetch = <T,>(url: string): FetchState<T> => {
+  const [state, setState] = useState<FetchState<T>>({
+    data: null,
+    error: null,
+    isLoading: true,
+  })
+
+  const fetchData = useCallback(async () => {
+    setState((prev) => ({ ...prev, isLoading: true }))
+
+    try {
+      const response = await fetch(url)
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`)
+      }
+
+      const data: T = await response.json()
+      setState({ data, error: null, isLoading: false })
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Unknown error'
+      setState({ data: null, error: message, isLoading: false })
+    }
+  }, [url])
+
+  useEffect(() => {
+    fetchData()
+  }, [fetchData])
+
+  return state
+}
+```
+
+This hook encapsulates the entire fetch lifecycle — loading, success, and error states — into a single reusable unit.
+
+## Component Composition
+
+The real power of React is composition. Here's how a typical page might be structured:
+
+<Mermaid chart="graph LR | subgraph Page | A[Layout] --> B[Sidebar] | A --> C[Content] | C --> D[SearchBar] | C --> E[Results] | E --> F[Card] | E --> G[Card] | E --> H[Card] | B --> I[NavLinks] | B --> J[Filters] | end" />
+
+Each box is an independent component with its own props, state, and tests. The `Layout` component orchestrates the structure, while leaf components like `Card` handle rendering.
+
+## Server vs Client Components
+
+In Next.js App Router, components are server components by default. Here's how to decide:
+
+```tsx
+// Server Component (default) — runs on the server, no JS shipped to client
+const BlogPost = async ({ slug }: { slug: string }) => {
+  const post = await getPost(slug) // Direct database/API access
+
+  return (
+    <article>
+      <h1>{post.title}</h1>
+      <div>{post.content}</div>
+      <LikeButton postId={post.id} /> {/* Client component for interactivity */}
+    </article>
+  )
+}
+```
+
+```tsx
+'use client'
+
+// Client Component — runs in the browser, supports hooks and event handlers
+import { useState } from 'react'
+
+const LikeButton = ({ postId }: { postId: string }) => {
+  const [liked, setLiked] = useState(false)
+
+  return (
+    <button onClick={() => setLiked(!liked)} type="button">
+      {liked ? '❤️' : '🤍'}
+    </button>
+  )
+}
+```
+
+The decision tree:
+
+<Mermaid chart="graph TD | A{Need interactivity?} | A -->|Yes| B{Need hooks or events?} | A -->|No| C[Server Component] | B -->|Yes| D[Client Component] | B -->|No| C | C --> E[Zero JS to client] | D --> F[Hydrated on client]" />
+
+## Wrapping Up
+
+React components are just functions that return UI. The patterns — props for data flow, hooks for state and effects, composition for structure — are what make them powerful. Start simple, compose small pieces, and let the type system guide you.

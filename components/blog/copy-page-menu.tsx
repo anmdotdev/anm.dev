@@ -209,6 +209,56 @@ const CopyPageMenu = ({ slug }: CopyPageMenuProps) => {
                 </span>
               </span>
             </a>
+
+            <a
+              className="flex w-full items-center gap-3 px-3 py-2.5 text-left text-xs transition-colors hover:bg-gray-lightest dark:hover:bg-dark-surface-hover"
+              href={`https://www.perplexity.ai/?q=${encodeURIComponent(`Summarize this article: ${blogUrl}`)}`}
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              <span className="flex h-8 w-8 items-center justify-center rounded-md bg-gray-lightest dark:bg-dark-border">
+                <svg aria-hidden="true" className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 0L17.09 4.545V8.18L20.727 4.545V12H17.09v6.545L12 24l-5.09-5.455V12H3.272V4.545L6.909 8.18V4.545L12 0zm-.545 13.09H7.91v4.365l3.545 3.8V13.09zm1.09 8.165l3.546-3.8V13.09h-3.545v8.165zM7.91 11.454h3.545V6.545L7.909 2.89v8.564zm4.636-4.909v4.91h3.545V2.89l-3.545 3.655zM4.363 5.818v5.636h2.545V7.09L4.363 5.818zm12.727-1.091v5.727h2.546V5.818l-2.546 1.636z" />
+                </svg>
+              </span>
+              <span>
+                <span className="block font-medium text-black dark:text-dark-text">
+                  Open in Perplexity
+                </span>
+                <span className="text-gray dark:text-dark-text-muted">Research this article</span>
+              </span>
+            </a>
+
+            <a
+              className="flex w-full items-center gap-3 px-3 py-2.5 text-left text-xs transition-colors hover:bg-gray-lightest dark:hover:bg-dark-surface-hover"
+              href={`https://gemini.google.com/app?q=${encodeURIComponent(`Read and summarize this article: ${blogUrl}`)}`}
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              <span className="flex h-8 w-8 items-center justify-center rounded-md bg-gray-lightest dark:bg-dark-border">
+                <svg aria-hidden="true" className="h-4 w-4" viewBox="0 0 24 24">
+                  <path
+                    d="M12 24C12 22.4 11.6 20.9 10.9 19.5C10.1 18.1 9.1 16.9 7.8 15.9C6.6 14.9 5.2 14.2 3.6 13.7C2.1 13.2 0.5 13 0 13C0.5 13 2.1 12.7 3.6 12.2C5.2 11.7 6.6 11 7.8 10C9.1 9.1 10.1 7.9 10.9 6.5C11.6 5.1 12 3.6 12 2C12 3.6 12.3 5.1 12.9 6.5C13.6 7.9 14.6 9.1 15.8 10C17.1 11 18.5 11.7 20.1 12.2C21.6 12.7 23.2 13 24 13C23.2 13 21.6 13.2 20.1 13.7C18.5 14.2 17.1 14.9 15.8 15.9C14.6 16.9 13.6 18.1 12.9 19.5C12.3 20.9 12 22.4 12 24Z"
+                    fill="url(#gemini-gradient)"
+                  />
+                  <defs>
+                    <linearGradient id="gemini-gradient" x1="0" x2="24" y1="0" y2="24">
+                      <stop offset="0%" stopColor="#4285F4" />
+                      <stop offset="50%" stopColor="#9B72CB" />
+                      <stop offset="100%" stopColor="#D96570" />
+                    </linearGradient>
+                  </defs>
+                </svg>
+              </span>
+              <span>
+                <span className="block font-medium text-black dark:text-dark-text">
+                  Open in Gemini
+                </span>
+                <span className="text-gray dark:text-dark-text-muted">
+                  Ask questions about this page
+                </span>
+              </span>
+            </a>
           </div>
         </div>
       )}

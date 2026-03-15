@@ -1,4 +1,10 @@
 import Link from 'components/ui/link'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Page Not Found',
+  robots: { index: false, follow: false },
+}
 
 const NotFound = () => (
   <section className="mx-auto flex max-w-lg flex-col items-center px-6 py-24 text-center">

@@ -11,6 +11,7 @@ export interface BlogPost {
   content: string
   date: string
   draft: boolean
+  lastModified?: string
   readingTime: string
   slug: string
   summary: string
@@ -42,6 +43,7 @@ export const getBlogPosts = (): BlogPost[] => {
         slug,
         title: data.title || slug,
         date: data.date || '',
+        lastModified: data.lastModified || undefined,
         tags: data.tags || [],
         summary: data.summary || '',
         draft: data.draft,
@@ -68,12 +70,32 @@ export const getBlogPost = (slug: string): BlogPost | null => {
     slug,
     title: data.title || slug,
     date: data.date || '',
+    lastModified: data.lastModified || undefined,
     tags: data.tags || [],
     summary: data.summary || '',
     draft: data.draft,
     readingTime: stats.text,
     content,
   }
+}
+
+export const getRelatedPosts = (
+  currentSlug: string,
+  currentTags: string[],
+  limit = 3,
+): BlogPost[] => {
+  const posts = getBlogPosts().filter((post) => post.slug !== currentSlug)
+
+  const scored = posts.map((post) => {
+    const sharedTags = post.tags.filter((tag) => currentTags.includes(tag)).length
+    return { post, score: sharedTags }
+  })
+
+  return scored
+    .filter((item) => item.score > 0)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, limit)
+    .map((item) => item.post)
 }
 
 export const formatDate = (dateStr: string): string => {
