@@ -29,13 +29,13 @@ const sitemap = (): MetadataRoute.Sitemap => {
     },
     {
       url: 'https://anm.dev/open-source',
-      lastModified: new Date('2026-03-10'),
+      lastModified: latestPostDate,
       changeFrequency: 'monthly',
       priority: 0.8,
     },
     {
       url: 'https://anm.dev/journey',
-      lastModified: new Date('2026-03-10'),
+      lastModified: latestPostDate,
       changeFrequency: 'monthly',
       priority: 0.8,
     },

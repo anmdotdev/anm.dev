@@ -1,0 +1,335 @@
+---
+title: "TypeScript Patterns That Actually Scale"
+date: "2026-02-20"
+summary: "Battle-tested TypeScript patterns from large codebases: discriminated unions, branded types, the builder pattern, and more. These aren't toy examples - they're patterns I reach for daily."
+tags: ["TypeScript", "Architecture", "Patterns"]
+---
+
+After years of writing TypeScript in production, I've settled on a handful of patterns that consistently earn their keep. These aren't theoretical exercises; they solve real problems at scale.
+
+## Discriminated Unions for State Machines
+
+This is the single most impactful TypeScript pattern I know. Instead of modeling state with a bag of optional fields, use a discriminated union:
+
+```typescript
+// The "bag of optionals" approach - don't do this
+interface RequestState {
+  isLoading: boolean
+  isError: boolean
+  data?: User[]
+  error?: Error
+}
+// Problem: nothing prevents { isLoading: true, isError: true, data: [...] }
+```
+
+```typescript
+// Discriminated union - impossible states are unrepresentable
+type RequestState =
+  | { status: 'idle' }
+  | { status: 'loading' }
+  | { status: 'success'; data: User[] }
+  | { status: 'error'; error: Error }
+
+function renderUsers(state: RequestState) {
+  switch (state.status) {
+    case 'idle':
+      return <p>Enter a search term</p>
+    case 'loading':
+      return <Spinner />
+    case 'success':
+      return <UserList users={state.data} /> // TypeScript knows data exists here
+    case 'error':
+      return <ErrorBanner message={state.error.message} />
+  }
+}
+```
+
+The compiler enforces that you handle every state, and within each branch, only the relevant fields are accessible. This eliminates an enormous category of bugs.
+
+<Mermaid chart="stateDiagram-v2 | [*] --> Idle | Idle --> Loading: fetch() | Loading --> Success: resolve | Loading --> Error: reject | Success --> Loading: refetch() | Error --> Loading: retry() | Success --> Idle: reset() | Error --> Idle: reset()" />
+
+## Branded Types for Semantic Safety
+
+TypeScript's structural type system means that `string` is `string`, even when those strings mean completely different things. Branded types fix this:
+
+```typescript
+// Create distinct types that are structurally incompatible
+type UserId = string & { readonly __brand: 'UserId' }
+type PostId = string & { readonly __brand: 'PostId' }
+type Email = string & { readonly __brand: 'Email' }
+
+// Constructor functions with validation
+function UserId(id: string): UserId {
+  if (!id.startsWith('usr_')) throw new Error(`Invalid user ID: ${id}`)
+  return id as UserId
+}
+
+function PostId(id: string): PostId {
+  if (!id.startsWith('post_')) throw new Error(`Invalid post ID: ${id}`)
+  return id as PostId
+}
+
+function Email(value: string): Email {
+  if (!value.includes('@')) throw new Error(`Invalid email: ${value}`)
+  return value as Email
+}
+
+// Now the compiler prevents mixing them up
+async function getPost(postId: PostId): Promise<Post> {
+  return db.post.findUniqueOrThrow({ where: { id: postId } })
+}
+
+const userId = UserId('usr_abc123')
+const postId = PostId('post_xyz789')
+
+getPost(postId)  // Compiles
+getPost(userId)  // Type error: UserId is not assignable to PostId
+```
+
+This catches a class of bugs where you accidentally pass the wrong ID to the wrong function. In a codebase with dozens of entity types, this is invaluable.
+
+## The Builder Pattern for Complex Objects
+
+When you need to construct objects with many optional fields and validation rules, the builder pattern provides a fluent API with type safety at each step:
+
+```typescript
+interface QueryConfig {
+  table: string
+  select: string[]
+  where: Record<string, unknown>[]
+  orderBy: { field: string; direction: 'asc' | 'desc' }[]
+  limit: number
+  offset: number
+}
+
+class QueryBuilder {
+  private config: Partial<QueryConfig> = {}
+
+  from(table: string): this {
+    this.config.table = table
+    return this
+  }
+
+  select(...fields: string[]): this {
+    this.config.select = fields
+    return this
+  }
+
+  where(condition: Record<string, unknown>): this {
+    this.config.where = [...(this.config.where ?? []), condition]
+    return this
+  }
+
+  orderBy(field: string, direction: 'asc' | 'desc' = 'asc'): this {
+    this.config.orderBy = [
+      ...(this.config.orderBy ?? []),
+      { field, direction },
+    ]
+    return this
+  }
+
+  limit(n: number): this {
+    this.config.limit = n
+    return this
+  }
+
+  offset(n: number): this {
+    this.config.offset = n
+    return this
+  }
+
+  build(): QueryConfig {
+    if (!this.config.table) throw new Error('Table is required')
+    if (!this.config.select?.length) throw new Error('Select at least one field')
+
+    return {
+      table: this.config.table,
+      select: this.config.select,
+      where: this.config.where ?? [],
+      orderBy: this.config.orderBy ?? [],
+      limit: this.config.limit ?? 50,
+      offset: this.config.offset ?? 0,
+    }
+  }
+}
+
+// Usage
+const query = new QueryBuilder()
+  .from('posts')
+  .select('id', 'title', 'publishedAt')
+  .where({ status: 'published' })
+  .where({ authorId: 'usr_abc123' })
+  .orderBy('publishedAt', 'desc')
+  .limit(20)
+  .build()
+```
+
+## Type-Safe Event Emitters
+
+Event systems are notoriously hard to type. Here's a pattern that gives you full type safety for both emitting and listening:
+
+```typescript
+type EventMap = {
+  'user:login': { userId: string; timestamp: number }
+  'user:logout': { userId: string }
+  'post:created': { postId: string; authorId: string }
+  'post:deleted': { postId: string }
+}
+
+class TypedEmitter<T extends Record<string, unknown>> {
+  private listeners = new Map<keyof T, Set<(payload: unknown) => void>>()
+
+  on<K extends keyof T>(event: K, handler: (payload: T[K]) => void): () => void {
+    if (!this.listeners.has(event)) {
+      this.listeners.set(event, new Set())
+    }
+    const handlers = this.listeners.get(event) as Set<(payload: T[K]) => void>
+    handlers.add(handler)
+
+    // Return unsubscribe function
+    return () => handlers.delete(handler)
+  }
+
+  emit<K extends keyof T>(event: K, payload: T[K]): void {
+    const handlers = this.listeners.get(event)
+    if (!handlers) return
+    for (const handler of handlers) {
+      handler(payload)
+    }
+  }
+}
+
+const events = new TypedEmitter<EventMap>()
+
+// Fully typed - handler knows the exact payload shape
+events.on('user:login', ({ userId, timestamp }) => {
+  console.log(`User ${userId} logged in at ${new Date(timestamp)}`)
+})
+
+// Type error: 'user:login' payload requires timestamp
+events.emit('user:login', { userId: 'usr_123' })
+
+// Correct
+events.emit('user:login', { userId: 'usr_123', timestamp: Date.now() })
+```
+
+## The `satisfies` Operator for Config Objects
+
+`satisfies` is the most underrated TypeScript 4.9+ feature. It validates a value against a type while preserving the narrower literal type:
+
+```typescript
+interface RouteConfig {
+  path: string
+  auth: boolean
+  roles?: string[]
+}
+
+// With `as const satisfies` you get both validation AND narrow types
+const routes = {
+  home: { path: '/', auth: false },
+  dashboard: { path: '/dashboard', auth: true, roles: ['admin', 'editor'] },
+  settings: { path: '/settings', auth: true },
+  profile: { path: '/profile/:id', auth: true },
+} as const satisfies Record<string, RouteConfig>
+
+// TypeScript knows the exact literal types
+type RouteName = keyof typeof routes // 'home' | 'dashboard' | 'settings' | 'profile'
+
+// And the exact values
+routes.dashboard.path // type is '/dashboard', not string
+routes.dashboard.roles // type is readonly ['admin', 'editor'], not string[] | undefined
+```
+
+Compare this to a plain type annotation, which would widen everything to `string` and `string[]`.
+
+## Exhaustive Pattern Matching
+
+TypeScript's `never` type lets you build compile-time exhaustiveness checks:
+
+```typescript
+function assertNever(value: never): never {
+  throw new Error(`Unexpected value: ${JSON.stringify(value)}`)
+}
+
+type Theme = 'light' | 'dark' | 'system'
+
+function getBackground(theme: Theme): string {
+  switch (theme) {
+    case 'light':
+      return '#ffffff'
+    case 'dark':
+      return '#0a0a0a'
+    case 'system':
+      return window.matchMedia('(prefers-color-scheme: dark)').matches
+        ? '#0a0a0a'
+        : '#ffffff'
+    default:
+      return assertNever(theme) // Compile error if a case is missing
+  }
+}
+```
+
+If someone adds `'high-contrast'` to the `Theme` union later, the compiler forces them to handle it everywhere.
+
+## Mapped Types for API Layers
+
+When your API responses don't match your internal domain types, mapped types create clean transformations:
+
+```typescript
+// What the API returns
+interface ApiUser {
+  user_id: string
+  first_name: string
+  last_name: string
+  email_address: string
+  created_at: string
+  is_active: boolean
+}
+
+// Convert snake_case API types to camelCase domain types
+type CamelCase<S extends string> = S extends `${infer P}_${infer R}`
+  ? `${P}${Capitalize<CamelCase<R>>}`
+  : S
+
+type CamelCaseKeys<T> = {
+  [K in keyof T as K extends string ? CamelCase<K> : K]: T[K]
+}
+
+type User = CamelCaseKeys<ApiUser>
+// Result: { userId: string; firstName: string; lastName: string; ... }
+```
+
+<Mermaid chart="graph LR | A[API Response - snake_case] -->|CamelCaseKeys transform| B[Domain Type - camelCase] | B -->|Component props| C[React UI] | A -->|Raw type| D[ApiUser] | B -->|Mapped type| E[User] | style A fill:#ef4444,stroke:#dc2626,color:#fff | style B fill:#10b981,stroke:#059669,color:#fff | style C fill:#3b82f6,stroke:#2563eb,color:#fff" />
+
+## The Extract/Exclude Utility Dance
+
+TypeScript's built-in utility types compose beautifully for filtering union types:
+
+```typescript
+type Event =
+  | { type: 'click'; x: number; y: number }
+  | { type: 'keydown'; key: string; code: string }
+  | { type: 'scroll'; deltaX: number; deltaY: number }
+  | { type: 'resize'; width: number; height: number }
+
+// Extract only mouse-related events
+type MouseEvent = Extract<Event, { type: 'click' }>
+// { type: 'click'; x: number; y: number }
+
+// All events except scroll
+type NonScrollEvent = Exclude<Event, { type: 'scroll' }>
+
+// Extract the type field values
+type EventType = Event['type']
+// 'click' | 'keydown' | 'scroll' | 'resize'
+
+// Create a handler map from the union
+type EventHandlers = {
+  [E in Event as E['type']]: (event: E) => void
+}
+// { click: (event: { type: 'click'; x: number; y: number }) => void; ... }
+```
+
+## Closing Thought
+
+The best TypeScript patterns share a common trait: they move invariants from runtime checks to compile-time guarantees. Every bug the compiler catches is a bug that never reaches your users. Start with discriminated unions and branded types. They'll cover 80% of the cases where "just use `string`" leads to pain down the road.

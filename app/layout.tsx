@@ -78,7 +78,7 @@ const websiteJsonLd = {
     '@type': 'SearchAction',
     target: {
       '@type': 'EntryPoint',
-      urlTemplate: 'https://anm.dev/blog?q={search_term_string}',
+      urlTemplate: 'https://anm.dev/api/search?q={search_term_string}',
     },
     'query-input': 'required name=search_term_string',
   },
@@ -90,6 +90,8 @@ const RootLayout = ({ children }: IRootLayoutProps) => (
       {/* biome-ignore lint/security/noDangerouslySetInnerHtml: static script to prevent theme flash */}
       <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       <meta content="#6a35ff" name="theme-color" />
+      <link href="https://api.github.com" rel="dns-prefetch" />
+      <link href="https://github.com" rel="dns-prefetch" />
       <link
         href="/feed.xml"
         rel="alternate"

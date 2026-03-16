@@ -1,0 +1,196 @@
+---
+title: "Building Type-Safe APIs with tRPC and Next.js"
+date: "2026-03-10"
+summary: "A deep dive into end-to-end type safety using tRPC, from router definitions to client consumption, with practical patterns for real-world applications."
+tags: ["TypeScript", "tRPC", "Next.js", "API Design"]
+---
+
+If you've ever been burned by a mismatched API contract between your frontend and backend, you know the pain. You rename a field on the server, everything compiles, and then your app breaks at runtime because the client still expects the old shape. tRPC eliminates this entire class of bugs.
+
+## What Makes tRPC Different
+
+Traditional REST APIs require you to maintain types on both sides of the wire. GraphQL gives you a schema, but you still need codegen to get TypeScript types. tRPC skips all of that by sharing types directly between your server and client through TypeScript's type system.
+
+<Mermaid chart="graph LR | A[Server Router] -->|TypeScript Types| B[tRPC Client] | B -->|Inferred Input/Output| C[React Components] | A -->|Zod Validation| D[Runtime Safety] | style A fill:#8b5cf6,stroke:#6d28d9,color:#fff | style B fill:#3b82f6,stroke:#2563eb,color:#fff | style C fill:#10b981,stroke:#059669,color:#fff | style D fill:#f59e0b,stroke:#d97706,color:#fff" />
+
+## Setting Up the Router
+
+The router is where you define your API surface. Each procedure is a function with validated inputs and typed outputs.
+
+```typescript
+import { initTRPC, TRPCError } from '@trpc/server'
+import { z } from 'zod'
+
+const t = initTRPC.context<Context>().create()
+
+const isAuthed = t.middleware(({ ctx, next }) => {
+  if (!ctx.session?.user) {
+    throw new TRPCError({ code: 'UNAUTHORIZED' })
+  }
+  return next({
+    ctx: { user: ctx.session.user },
+  })
+})
+
+const protectedProcedure = t.procedure.use(isAuthed)
+
+export const postRouter = t.router({
+  list: t.procedure
+    .input(
+      z.object({
+        cursor: z.string().optional(),
+        limit: z.number().min(1).max(100).default(20),
+        status: z.enum(['draft', 'published', 'archived']).optional(),
+      })
+    )
+    .query(async ({ input, ctx }) => {
+      const posts = await ctx.db.post.findMany({
+        take: input.limit + 1,
+        cursor: input.cursor ? { id: input.cursor } : undefined,
+        where: { status: input.status },
+        orderBy: { createdAt: 'desc' },
+      })
+
+      let nextCursor: string | undefined
+      if (posts.length > input.limit) {
+        const next = posts.pop()
+        nextCursor = next?.id
+      }
+
+      return { posts, nextCursor }
+    }),
+
+  create: protectedProcedure
+    .input(
+      z.object({
+        title: z.string().min(1).max(200),
+        content: z.string().min(1),
+        tags: z.array(z.string()).max(10).default([]),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      return ctx.db.post.create({
+        data: {
+          ...input,
+          authorId: ctx.user.id,
+          slug: slugify(input.title),
+        },
+      })
+    }),
+})
+```
+
+Notice how the `protectedProcedure` middleware narrows the context type. After the middleware runs, `ctx.user` is guaranteed to exist, and TypeScript knows this.
+
+## Consuming on the Client
+
+The real magic happens on the client side. Every procedure call is fully typed, including inputs, outputs, and error states.
+
+```typescript
+import { trpc } from '@/lib/trpc'
+
+function PostList() {
+  const { data, fetchNextPage, hasNextPage } = trpc.post.list.useInfiniteQuery(
+    { limit: 20, status: 'published' },
+    { getNextPageParam: (lastPage) => lastPage.nextCursor }
+  )
+
+  const createPost = trpc.post.create.useMutation({
+    onSuccess: () => {
+      // Invalidate the list query to refetch
+      utils.post.list.invalidate()
+    },
+  })
+
+  const handleCreate = async (formData: FormData) => {
+    await createPost.mutateAsync({
+      title: formData.get('title') as string,
+      content: formData.get('content') as string,
+      tags: ['typescript', 'tutorial'],
+    })
+  }
+
+  return (
+    <div>
+      {data?.pages.flatMap((page) =>
+        page.posts.map((post) => (
+          <article key={post.id}>
+            <h2>{post.title}</h2>
+            <p>{post.content}</p>
+          </article>
+        ))
+      )}
+      {hasNextPage && (
+        <button onClick={() => fetchNextPage()} type="button">
+          Load more
+        </button>
+      )}
+    </div>
+  )
+}
+```
+
+If you rename `title` to `name` on the server, the client immediately shows a type error. No runtime surprises.
+
+## The Request Lifecycle
+
+Understanding how a tRPC request flows through the system helps when debugging and optimizing.
+
+<Mermaid chart="sequenceDiagram | participant C as Client | participant M as Middleware | participant P as Procedure | participant D as Database | C->>M: HTTP Request (batched) | M->>M: Parse & validate context | M->>P: Validated context | P->>P: Zod input validation | P->>D: Query/Mutation | D-->>P: Result | P-->>M: Typed output | M-->>C: JSON response" />
+
+## Error Handling Patterns
+
+tRPC has a well-designed error system that plays nicely with TypeScript. Here's a pattern I use for domain-specific errors:
+
+```typescript
+import { TRPCError } from '@trpc/server'
+
+const ERROR_CODES = {
+  POST_NOT_FOUND: 'POST_NOT_FOUND',
+  SLUG_TAKEN: 'SLUG_TAKEN',
+  RATE_LIMITED: 'RATE_LIMITED',
+} as const
+
+type DomainError = keyof typeof ERROR_CODES
+
+function throwDomainError(code: DomainError, message: string): never {
+  const httpCode = {
+    POST_NOT_FOUND: 'NOT_FOUND',
+    SLUG_TAKEN: 'CONFLICT',
+    RATE_LIMITED: 'TOO_MANY_REQUESTS',
+  } as const satisfies Record<DomainError, string>
+
+  throw new TRPCError({
+    code: httpCode[code],
+    message,
+    cause: { domain: code },
+  })
+}
+
+// Usage in a procedure
+export const postRouter = t.router({
+  bySlug: t.procedure
+    .input(z.object({ slug: z.string() }))
+    .query(async ({ input, ctx }) => {
+      const post = await ctx.db.post.findUnique({
+        where: { slug: input.slug },
+      })
+
+      if (!post) {
+        throwDomainError('POST_NOT_FOUND', `No post with slug "${input.slug}"`)
+      }
+
+      return post
+    }),
+})
+```
+
+## When Not to Use tRPC
+
+tRPC shines when your client and server share a TypeScript codebase. It's less ideal when:
+
+- **You need a public API** consumed by third parties. REST or GraphQL with proper documentation wins here.
+- **Your backend isn't TypeScript.** The whole point is shared types.
+- **You need fine-grained HTTP control** like specific status codes, headers, or caching directives.
+
+For internal APIs in a Next.js monorepo, though, it's hard to beat. The developer experience of catching contract mismatches at compile time rather than in production is worth the setup.

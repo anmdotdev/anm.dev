@@ -51,7 +51,10 @@ Access blog content in machine-readable formats:
 - Raw markdown for any blog post: \`GET https://anm.dev/api/blog/{slug}/raw\` → \`text/markdown\`
 - Search blog posts: \`GET https://anm.dev/api/search?q={query}\` → \`application/json\`
 - Full site content: \`GET https://anm.dev/llms-full.txt\` → \`text/plain\`
+- OpenAPI specification: \`GET https://anm.dev/api/openapi.json\` → \`application/json\`
+- AI plugin manifest: \`GET https://anm.dev/.well-known/ai-plugin.json\` → \`application/json\`
 - Each blog post page includes \`<link rel="alternate" type="text/markdown">\` pointing to its raw markdown
+- Blog post pages support content negotiation: send \`Accept: text/markdown\` to receive markdown directly
 
 ### Search API
 
@@ -104,6 +107,7 @@ Every page includes JSON-LD structured data (Schema.org):
     headers: {
       'Content-Type': 'text/plain; charset=utf-8',
       'Cache-Control': 'public, max-age=3600',
+      'X-Robots-Tag': 'noindex, nofollow',
     },
   })
 }

@@ -25,6 +25,8 @@ This file describes how AI systems can access and use content from anm.dev.
 ### Machine-Readable
 - LLM summary: https://anm.dev/llms.txt
 - Full site content: https://anm.dev/llms-full.txt
+- OpenAPI spec: https://anm.dev/api/openapi.json
+- AI plugin manifest: https://anm.dev/.well-known/ai-plugin.json
 - RSS Feed: https://anm.dev/feed.xml
 - JSON Feed: https://anm.dev/feed.json
 - Sitemap: https://anm.dev/sitemap.xml
@@ -40,6 +42,13 @@ This file describes how AI systems can access and use content from anm.dev.
 ### Available Topics
 ${tags.map((tag) => `- ${tag}: https://anm.dev/blog/tag/${encodeURIComponent(tag.toLowerCase())}`).join('\n')}
 
+## Content Negotiation
+
+Blog post pages support content negotiation via the Accept header:
+- \`Accept: text/html\` → HTML page (default)
+- \`Accept: text/markdown\` → Raw markdown content
+- \`Accept: text/plain\` → Raw markdown content
+
 ## Structured Data
 All pages include Schema.org JSON-LD structured data.
 
@@ -53,6 +62,7 @@ All pages include Schema.org JSON-LD structured data.
     headers: {
       'Content-Type': 'text/plain; charset=utf-8',
       'Cache-Control': 'public, max-age=3600',
+      'X-Robots-Tag': 'noindex, nofollow',
     },
   })
 }

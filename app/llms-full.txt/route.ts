@@ -65,6 +65,8 @@ ${blogContent || 'No blog posts published yet.'}
 
 - Search blog posts: GET https://anm.dev/api/search?q={query} → application/json
 - Raw markdown for any post: GET https://anm.dev/api/blog/{slug}/raw → text/markdown
+- OpenAPI specification: GET https://anm.dev/api/openapi.json → application/json
+- AI plugin manifest: GET https://anm.dev/.well-known/ai-plugin.json → application/json
 - RSS Feed: https://anm.dev/feed.xml
 - JSON Feed: https://anm.dev/feed.json
 - Sitemap: https://anm.dev/sitemap.xml
@@ -84,6 +86,7 @@ ${blogContent || 'No blog posts published yet.'}
     headers: {
       'Content-Type': 'text/plain; charset=utf-8',
       'Cache-Control': 'public, max-age=3600',
+      'X-Robots-Tag': 'noindex, nofollow',
     },
   })
 }

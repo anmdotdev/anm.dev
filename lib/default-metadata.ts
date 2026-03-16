@@ -15,6 +15,7 @@ const defaultMetadata: Metadata = {
     canonical: '/',
     languages: {
       'en-US': '/',
+      'x-default': '/',
     },
     types: {
       'application/rss+xml': '/feed.xml',
@@ -65,11 +66,6 @@ const defaultMetadata: Metadata = {
       'max-snippet': -1,
     },
   },
-  // Uncomment and add your verification codes after setting up Search Console / Bing Webmaster:
-  // verification: {
-  //   google: 'your-google-verification-code',
-  //   yandex: 'your-yandex-verification-code',
-  // },
 }
 
 export default defaultMetadata
