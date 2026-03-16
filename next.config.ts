@@ -24,6 +24,16 @@ const nextConfig: NextConfig = {
       permanent: true,
     },
     {
+      source: '/projects',
+      destination: '/open-source',
+      permanent: true,
+    },
+    {
+      source: '/resume',
+      destination: '/resume-anmol-mahatpurkar.pdf',
+      permanent: true,
+    },
+    {
       source: '/.well-known/llms.txt',
       destination: '/llms.txt',
       permanent: true,
@@ -31,6 +41,11 @@ const nextConfig: NextConfig = {
     {
       source: '/.well-known/ai.txt',
       destination: '/ai.txt',
+      permanent: true,
+    },
+    {
+      source: '/.well-known/security.txt',
+      destination: '/security.txt',
       permanent: true,
     },
   ],

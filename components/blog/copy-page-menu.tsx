@@ -394,6 +394,58 @@ const CopyPageMenu = ({ slug, title }: CopyPageMenuProps) => {
                 </span>
               </span>
             </a>
+
+            <a
+              className="flex w-full items-center gap-3 px-3 py-2.5 text-left text-xs transition-colors hover:bg-gray-lightest dark:hover:bg-dark-surface-hover"
+              href={`https://x.com/i/grok?text=${encodeURIComponent(`Read and summarize this article: ${blogUrl}`)}`}
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              <span className="flex h-8 w-8 items-center justify-center rounded-md bg-gray-lightest dark:bg-dark-border">
+                <svg
+                  aria-hidden="true"
+                  className="h-4 w-4 text-gray-dark dark:text-dark-text-muted"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path d="M2.04 3l7.45 10.58L2 21h1.68l6.56-7.42L15.52 21H22l-7.82-11.1L21.2 3h-1.68l-6.12 6.92L8.52 3H2.04zm2.5 1.25h2.63l12.35 15.5h-2.63L4.54 4.25z" />
+                </svg>
+              </span>
+              <span>
+                <span className="block font-medium text-black dark:text-dark-text">
+                  Open in Grok
+                </span>
+                <span className="text-gray dark:text-dark-text-muted">
+                  Ask questions about this page
+                </span>
+              </span>
+            </a>
+
+            <a
+              className="flex w-full items-center gap-3 px-3 py-2.5 text-left text-xs transition-colors hover:bg-gray-lightest dark:hover:bg-dark-surface-hover"
+              href={`https://chat.deepseek.com/?q=${encodeURIComponent(`Read and summarize this article: ${blogUrl}`)}`}
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              <span className="flex h-8 w-8 items-center justify-center rounded-md bg-gray-lightest dark:bg-dark-border">
+                <svg
+                  aria-hidden="true"
+                  className="h-4 w-4 text-gray-dark dark:text-dark-text-muted"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-2-13.5v9l7-4.5-7-4.5z" />
+                </svg>
+              </span>
+              <span>
+                <span className="block font-medium text-black dark:text-dark-text">
+                  Open in DeepSeek
+                </span>
+                <span className="text-gray dark:text-dark-text-muted">
+                  Ask questions about this page
+                </span>
+              </span>
+            </a>
           </div>
         </div>
       )}

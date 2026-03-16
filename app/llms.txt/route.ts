@@ -49,8 +49,35 @@ ${tagList || 'No tags yet.'}
 Access blog content in machine-readable formats:
 
 - Raw markdown for any blog post: \`GET https://anm.dev/api/blog/{slug}/raw\` → \`text/markdown\`
+- Search blog posts: \`GET https://anm.dev/api/search?q={query}\` → \`application/json\`
 - Full site content: \`GET https://anm.dev/llms-full.txt\` → \`text/plain\`
 - Each blog post page includes \`<link rel="alternate" type="text/markdown">\` pointing to its raw markdown
+
+### Search API
+
+\`GET https://anm.dev/api/search?q={query}\`
+
+Returns JSON with ranked results:
+\`\`\`json
+{
+  "query": "react",
+  "count": 2,
+  "results": [
+    {
+      "title": "Post Title",
+      "slug": "post-slug",
+      "url": "https://anm.dev/blog/post-slug",
+      "summary": "...",
+      "date": "2026-01-01",
+      "readingTime": "5 min read",
+      "tags": ["React"],
+      "markdownUrl": "https://anm.dev/api/blog/post-slug/raw",
+      "score": 10
+    }
+  ]
+}
+\`\`\`
+
 
 ## Structured Data
 

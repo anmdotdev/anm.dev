@@ -61,6 +61,15 @@ ${projectsContent}
 
 ${blogContent || 'No blog posts published yet.'}
 
+## Content API
+
+- Search blog posts: GET https://anm.dev/api/search?q={query} → application/json
+- Raw markdown for any post: GET https://anm.dev/api/blog/{slug}/raw → text/markdown
+- RSS Feed: https://anm.dev/feed.xml
+- JSON Feed: https://anm.dev/feed.json
+- Sitemap: https://anm.dev/sitemap.xml
+- LLM summary: https://anm.dev/llms.txt
+
 ## Contact & Social
 
 - Website: https://anm.dev
