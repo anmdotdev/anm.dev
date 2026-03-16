@@ -26,11 +26,20 @@ export const GET = () => {
       content_text: post.content,
       summary: post.summary,
       date_published: new Date(post.date).toISOString(),
+      ...(post.lastModified ? { date_modified: new Date(post.lastModified).toISOString() } : {}),
       tags: post.tags,
+      image: `https://anm.dev/blog/${post.slug}/opengraph-image`,
       authors: [
         {
           name: 'Anmol Mahatpurkar',
           url: 'https://anm.dev',
+        },
+      ],
+      attachments: [
+        {
+          url: `https://anm.dev/api/blog/${post.slug}/raw`,
+          mime_type: 'text/markdown',
+          title: `${post.title} (Markdown)`,
         },
       ],
     })),

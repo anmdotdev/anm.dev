@@ -4,7 +4,7 @@ const robots = (): MetadataRoute.Robots => ({
   rules: [
     {
       userAgent: '*',
-      allow: '/',
+      allow: ['/', '/api/search'],
       disallow: '/api/',
     },
     {
@@ -61,6 +61,18 @@ const robots = (): MetadataRoute.Robots => ({
     },
     {
       userAgent: 'Diffbot',
+      allow: '/',
+    },
+    {
+      userAgent: 'DeepSeekBot',
+      allow: '/',
+    },
+    {
+      userAgent: 'OAI-SearchBot',
+      allow: '/',
+    },
+    {
+      userAgent: 'Twitterbot',
       allow: '/',
     },
   ],

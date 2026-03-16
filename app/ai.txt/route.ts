@@ -33,6 +33,9 @@ This file describes how AI systems can access and use content from anm.dev.
 - Raw markdown: GET https://anm.dev/api/blog/{slug}/raw
   - Returns: text/markdown
   - Available slugs: ${posts.map((p) => p.slug).join(', ')}
+- Search: GET https://anm.dev/api/search?q={query}
+  - Returns: application/json with ranked results
+  - Searches: titles, summaries, tags, and content
 
 ### Available Topics
 ${tags.map((tag) => `- ${tag}: https://anm.dev/blog/tag/${encodeURIComponent(tag.toLowerCase())}`).join('\n')}

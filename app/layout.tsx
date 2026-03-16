@@ -34,6 +34,7 @@ const personJsonLd = {
   '@id': 'https://anm.dev/#person',
   name: 'Anmol Mahatpurkar',
   url: 'https://anm.dev',
+  image: 'https://anm.dev/images/profile.jpeg',
   jobTitle: 'Staff Frontend Engineer',
   worksFor: {
     '@type': 'Organization',
@@ -72,6 +73,14 @@ const websiteJsonLd = {
   publisher: {
     '@type': 'Person',
     '@id': 'https://anm.dev/#person',
+  },
+  potentialAction: {
+    '@type': 'SearchAction',
+    target: {
+      '@type': 'EntryPoint',
+      urlTemplate: 'https://anm.dev/blog?q={search_term_string}',
+    },
+    'query-input': 'required name=search_term_string',
   },
 }
 

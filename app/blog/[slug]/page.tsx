@@ -53,6 +53,8 @@ export const generateMetadata = async ({ params }: BlogPostPageProps): Promise<M
       canonical: `/blog/${slug}`,
       types: {
         'text/markdown': `/api/blog/${slug}/raw`,
+        'application/rss+xml': '/feed.xml',
+        'application/feed+json': '/feed.json',
       },
     },
     openGraph: {
