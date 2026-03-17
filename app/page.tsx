@@ -49,11 +49,12 @@ const homePageJsonLd = {
 
 const HomePage = () => {
   const recentPosts = getBlogPosts().slice(0, 3)
+  const hasRecentPosts = recentPosts.length > 0
 
   return (
     <>
       <Intro />
-      <OpenSourceProjects />
+      <OpenSourceProjects compactBottomSpacing={hasRecentPosts} />
       <RecentPosts posts={recentPosts} />
       <script
         /* biome-ignore lint/security/noDangerouslySetInnerHtml: JSON-LD structured data */
