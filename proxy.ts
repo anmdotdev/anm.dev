@@ -2,7 +2,7 @@ import { type NextRequest, NextResponse } from 'next/server'
 
 const BLOG_POST_REGEX = /^\/blog\/([^/]+)$/
 
-export const middleware = (request: NextRequest) => {
+export const proxy = (request: NextRequest) => {
   const { pathname } = request.nextUrl
   const accept = request.headers.get('accept') || ''
 
