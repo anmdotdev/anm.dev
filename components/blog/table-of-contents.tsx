@@ -54,7 +54,6 @@ const TocLinks = ({
 const TableOfContents = ({ headings, variant = 'mobile' }: TableOfContentsProps) => {
   const [activeId, setActiveId] = useState<string>('')
   const [isOpen, setIsOpen] = useState(false)
-  const [sidebarLeft, setSidebarLeft] = useState<number | null>(null)
   const observerRef = useRef<IntersectionObserver | null>(null)
 
   const navigate = (id: string) => {
@@ -102,46 +101,11 @@ const TableOfContents = ({ headings, variant = 'mobile' }: TableOfContentsProps)
     }
   }, [headings])
 
-  useEffect(() => {
-    if (variant !== 'desktop') {
-      return
-    }
-
-    const updatePosition = () => {
-      const article = document.querySelector('article')
-      if (!article) {
-        setSidebarLeft(null)
-        return
-      }
-
-      const rect = article.getBoundingClientRect()
-      const available = window.innerWidth - rect.right
-
-      if (available >= 248) {
-        setSidebarLeft(rect.right + 32)
-        return
-      }
-
-      setSidebarLeft(null)
-    }
-
-    updatePosition()
-    window.addEventListener('resize', updatePosition)
-    return () => {
-      window.removeEventListener('resize', updatePosition)
-    }
-  }, [variant])
-
   if (variant === 'desktop') {
-    if (sidebarLeft === null) {
-      return null
-    }
-
     return (
       <nav
         aria-label="Table of contents"
-        className="fixed top-24 hidden w-52 xl:block"
-        style={{ left: sidebarLeft }}
+        className="hidden max-h-[calc(100vh-3rem)] self-start overflow-y-auto xl:sticky xl:top-12 xl:block"
       >
         <h2 className="mb-3 font-semibold text-[11px] text-gray-dark uppercase tracking-wider dark:text-dark-text-muted">
           On this page

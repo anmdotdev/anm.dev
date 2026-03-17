@@ -249,19 +249,25 @@ const BlogPostPage = async ({ params }: BlogPostPageProps) => {
               </div>
             </header>
 
-            {hasToc && <TableOfContents headings={headings} variant="mobile" />}
+            <div className="xl:grid xl:grid-cols-[minmax(0,1fr)_13rem] xl:items-start xl:gap-10">
+              <div className="min-w-0">
+                {hasToc && <TableOfContents headings={headings} variant="mobile" />}
 
-            <div className="prose">{content}</div>
+                <div className="prose">{content}</div>
 
-            {seriesPosts.length > 0 && <SeriesNavigation currentSlug={slug} posts={seriesPosts} />}
+                {seriesPosts.length > 0 && (
+                  <SeriesNavigation currentSlug={slug} posts={seriesPosts} />
+                )}
 
-            <PostFooterActions slug={slug} />
-            <Comments slug={slug} />
+                <PostFooterActions slug={slug} />
+                <Comments slug={slug} />
 
-            {relatedPosts.length > 0 && <RelatedPosts posts={relatedPosts} />}
+                {relatedPosts.length > 0 && <RelatedPosts posts={relatedPosts} />}
+              </div>
+
+              {hasToc && <TableOfContents headings={headings} variant="desktop" />}
+            </div>
           </article>
-
-          {hasToc && <TableOfContents headings={headings} variant="desktop" />}
 
           <script
             /* biome-ignore lint/security/noDangerouslySetInnerHtml: JSON-LD structured data */
