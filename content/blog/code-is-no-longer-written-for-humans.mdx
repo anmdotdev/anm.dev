@@ -1,0 +1,296 @@
+---
+title: "Code Is No Longer Written for Humans"
+date: 2026-03-18
+summary: "Maintainability still matters. But in the AI era, the real source of truth is shifting upward: from hand-crafted code to clearly declared intent, documentation, scenarios, and tests."
+tags: [AI, Philosophy, Architecture, "Future of Development"]
+---
+
+I used to think maintainability lived mostly inside the code.
+
+Good variable names. Clean abstractions. Small functions. Predictable file structure. A tasteful amount of comments. The goal was obvious: make sure the next developer could open the file, understand it quickly, and change it without breaking everything.
+
+That instinct is still correct. It is just no longer sufficient.
+
+Over the last few months, I have spent a lot of time building software with AI coding agents. Not as autocomplete. Not as a novelty. As actual collaborators that read the codebase, propose changes, write implementation, run checks, and iterate. And that experience has changed how I think about what code is *for*.
+
+Here is the hot take:
+
+<Philosophy>
+Code is no longer written primarily for humans to read line by line. It is increasingly written as the executable output of a clearer layer above it: intent.
+</Philosophy>
+
+That does **not** mean code quality is dead. It means the center of gravity has moved.
+
+The most important question used to be: "Will another engineer understand this file?"
+
+Now it is increasingly: "Have I made the behavior so explicit that a machine can implement it, verify it, and safely change it later?"
+
+That shift sounds subtle. It is not. It changes what I optimize for, what I document, how I review work, and what I think maintainability even means.
+
+---
+
+## Maintainability Used to Live in the Code
+
+For most of modern software development, code had to do two jobs at once:
+
+- tell the machine what to execute
+- tell future humans what we were trying to do
+
+That is why we got so obsessed with readability. Readable code was not about aesthetics. It was risk management. If another developer could trace the logic, understand the abstractions, and see the intent, the system was maintainable.
+
+That worldview produced a lot of useful discipline. It gave us naming conventions, code review culture, architectural patterns, refactoring habits, and the idea that "working code" is not enough if it is miserable to change.
+
+I still believe all of that.
+
+But AI changes one assumption underneath it: the next thing reading your code may not be a human teammate. It may be an agent.
+
+And agents are good at different things than humans are.
+
+Humans struggle with large diffs, scattered context, and invisible assumptions. Agents struggle with missing intent, undocumented constraints, and behavior that only exists in somebody's head.
+
+That distinction matters a lot.
+
+An agent can read a hundred files faster than I can read five. It can follow type definitions, trace call sites, and identify repeated patterns almost instantly. But if the real rule is "do not send this email for trial accounts because legal asked us not to," and that rule only lives in Slack history or your memory, the model is guessing.
+
+What trips agents up is usually not complexity. It is ambiguity.
+
+That is the part people miss when they talk about AI coding.
+
+The problem is usually not that the agent cannot read the code.
+
+The problem is that the code is not the full source of truth anymore.
+
+---
+
+## The New Bottleneck Is Not Typing. It Is Specification.
+
+When I build a feature manually, I can carry a lot of fuzzy intent in my head while I code. I know why I am making a weird tradeoff. I know which edge case I decided to ignore. I know which part of the system is fragile, and which part is more flexible than it looks.
+
+When I hand work to an agent, that hidden context becomes a liability.
+
+If I give the model a shallow prompt, I get shallow code. If I give it vague goals, I get vague implementation. If I skip the behavior details and hope the model "understands what I mean," I am the one creating the risk.
+
+That is why I now think the highest-leverage skill in software development is becoming **declarative specification**.
+
+Not clever prompting. Not prompt tricks. Specification.
+
+That means describing:
+
+- what the feature should do
+- what must never happen
+- what edge cases matter
+- which patterns in the codebase should be followed
+- how success is verified
+
+The better I define those things in English, the better the implementation tends to be.
+
+This is what I mean when I say English is becoming the new programming language. Not because code disappears. Not because natural language is magically precise. But because natural language is increasingly the layer where we describe behavior before code exists.
+
+React did something similar for the DOM. You stopped manually telling the browser every little step and started declaring what the UI should be. The framework handled the imperative work underneath.
+
+AI-assisted development feels like the same abstraction shift, one layer higher.
+
+I describe the behavior. The agent handles more of the implementation.
+
+Code still matters. But it is no longer the only place where the real work happens.
+
+---
+
+## Code Is Becoming the Compiled Artifact of Intent
+
+That sentence is the core idea, so let me make it concrete.
+
+When I ask an agent to build a feature today, my workflow looks less like "start coding" and more like "write the contract."
+
+I will usually define:
+
+- the feature behavior
+- the constraints
+- the scenarios that must pass
+- the relevant files and patterns
+- the tests I expect to exist afterward
+
+Sometimes that looks like a short Markdown brief:
+
+```md
+## Notification Preferences
+
+### Behavior
+- Users can enable or disable email, push, and in-app notifications
+- Critical security alerts cannot be disabled
+- Saving should be optimistic, but roll back on failure
+- Changes should persist across refreshes
+
+### Constraints
+- Reuse the existing settings form components
+- Follow the API shape in `lib/api/notifications.ts`
+- Do not introduce local component state for persisted preferences
+
+### Scenarios
+1. User disables email notifications and refreshes the page
+2. User tries to disable security alerts and sees why they cannot
+3. Save fails and UI rolls back to the previous state
+4. Another tab updates preferences and this tab reflects the latest value
+```
+
+That document is doing more maintainability work than a beautifully named reducer ever could.
+
+Why? Because it captures the *behavioral contract*.
+
+If the code changes six months later, a human can read that brief and understand what must stay true. An agent can read that brief and update the implementation without reverse-engineering product intent from JSX and API calls.
+
+This is the shift I care about.
+
+We spent years treating code as the primary vessel of meaning. In AI-assisted development, code is increasingly downstream of meaning.
+
+The meaning lives in the spec.
+
+---
+
+## Documentation and Tests Are Now the Real Leverage
+
+If you buy the argument so far, two things become much more important than most teams currently treat them.
+
+### 1. Documentation
+
+Not decorative docs. Not stale wiki pages nobody reads. I mean documents that explain the feature in a way both humans and agents can use.
+
+The useful questions are:
+
+- What problem is this feature solving?
+- What are the invariants?
+- What business rules are non-negotiable?
+- Which tradeoffs were intentional?
+- Which edge cases are known and accepted?
+
+That is the material models need. It is also the material human teammates need. Good documentation is not anti-engineering overhead anymore. It is operating infrastructure.
+
+### 2. Tests
+
+Tests are what turn AI coding from an impressive demo into a reliable workflow.
+
+Without tests, the model can only guess whether the implementation is correct.
+
+With tests, the workflow changes completely:
+
+1. declare the behavior
+2. implement the code
+3. run the checks
+4. fix what fails
+5. keep iterating until the contract holds
+
+That is the loop.
+
+And once you see that loop clearly, it is hard to go back to the old idea that maintainability lives mainly in naming and formatting. Those things still help. But they are not the main safety mechanism anymore.
+
+<Callout type="important">
+In an AI-heavy workflow, docs explain what should happen and tests prove whether it actually does. That pair is a much stronger maintenance layer than style preferences alone.
+</Callout>
+
+This is also why I think intermediate web developers should care about this now, not later.
+
+If you build frontends, dashboards, internal tools, design systems, auth flows, checkout flows, admin panels, API routes, or CI setup, you are already in the zone where AI can generate a lot of the implementation. The limiting factor is not whether the model can produce React or TypeScript. It can.
+
+The limiting factor is whether your intent is explicit enough for the generated code to stay correct as the product evolves.
+
+---
+
+## What I Am Not Saying
+
+This kind of argument gets misread quickly, so let me be precise.
+
+I am **not** saying:
+
+- readability no longer matters
+- humans should stop understanding their codebases
+- abstractions and architecture are irrelevant now
+- AI should be trusted blindly
+- code style does not matter at all
+
+I am saying something more specific:
+
+<Philosophy>
+Human-readable code is still valuable. It is just no longer the primary place where maintainability begins.
+</Philosophy>
+
+Maintainability now starts earlier, at the level of intent.
+
+If the feature brief is weak, the implementation will drift.
+
+If the constraints are missing, the model will improvise.
+
+If the tests are thin, the mistakes will survive.
+
+If the product rules are undocumented, the next change will break something "obvious" that was never actually written down.
+
+That is why I think many teams are aiming at the wrong target. They are obsessing over whether AI-generated code "looks like us," instead of asking whether the behavior is clearly specified and mechanically verified.
+
+Those are not the same thing.
+
+---
+
+## A Better Standard for AI-Era Code
+
+When I review AI-generated work now, my internal checklist has changed.
+
+I still care whether the code is sane. I still want clear structure and understandable boundaries. But my main questions are now:
+
+- Is the behavior clearly defined somewhere outside the implementation?
+- Are the constraints explicit?
+- Do the tests cover the real scenarios?
+- Does the code follow the local patterns closely enough to stay predictable?
+- Can another agent or engineer safely extend this without guessing?
+
+That last question is the one I keep coming back to.
+
+The goal is not to produce code that wins a style argument.
+
+The goal is to produce a system where future change is cheap and safe.
+
+In the past, we got there mostly by hand-crafting readable code.
+
+Now we get there by combining:
+
+- good architecture
+- explicit specs
+- strong tests
+- consistent patterns
+- agents that can operate inside that structure
+
+That is a very different posture from "write elegant code and hope future you figures it out."
+
+---
+
+## What Developers Should Start Doing Differently
+
+If I had to turn this whole essay into practical advice, it would be this:
+
+**Write feature briefs before implementation.** Even short ones. Behavior, constraints, scenarios, done.
+
+**Document why, not just how.** The most valuable thing to capture is the decision logic behind the code.
+
+**Treat tests as product contracts.** Not as cleanup work after the feature is done.
+
+**Stop overvaluing cosmetic refactors.** If the code is correct, tested, and aligned with the contract, personal style preferences matter less than they used to.
+
+**Optimize for explicitness.** Hidden assumptions are poison in an AI workflow.
+
+**Get comfortable reviewing outcomes, not authorship.** "I would not have written it this way" is a much weaker objection than "this violates the spec" or "this scenario is untested."
+
+For a lot of developers, that will feel uncomfortable at first. It certainly did for me. Writing code has long been the center of our identity. Handing more of that implementation work to a machine can feel like lowering the craft.
+
+I think it is the opposite.
+
+The craft is moving up a layer.
+
+The best developers in this era will still care about clean systems, good taste, and technical rigor. But they will apply those skills through architecture, constraints, behavior design, documentation, and verification loops, not only through line-by-line authorship.
+
+That is why I believe code is no longer written for humans in the old sense.
+
+It is still read by humans. It is still reviewed by humans. It still needs to be sane.
+
+But more and more, code is being produced and maintained inside a system where the most important artifact is no longer the file.
+
+It is the intent behind the file.
+
+And if that intent is clear enough, the machine can do a surprising amount of the writing.

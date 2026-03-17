@@ -1,0 +1,259 @@
+---
+title: "Complete the Loop: Why Your AI Writes Bad Code (and How to Fix It)"
+date: 2026-03-31
+summary: "The #1 reason people get bad results from AI coding tools isn't the model -- it's the workflow. Here's how to close the feedback loop and get code that actually works."
+tags: [AI, Workflow, Developer Tools, Testing]
+---
+
+The number one complaint about AI coding tools is not about the model. It is not about hallucinations, or wrong syntax, or outdated APIs. The number one complaint, when you really dig into it, is this: "It wrote code that looks right but doesn't actually work."
+
+And the reason is almost always the same: **the feedback loop is incomplete.**
+
+The AI writes code. You paste it in. It does not work. You tell the AI it does not work. The AI *guesses* at what went wrong. It writes new code. That does not work either. Three rounds later, you are both in a worse place than where you started, and you are convinced these tools are overhyped.
+
+I have been there. I spent the first few weeks of my AI-assisted development journey in exactly this loop. Then I fixed the feedback problem, and **everything changed**. Here is what I learned.
+
+---
+
+## The Intern Analogy
+
+The best mental model I have found for working with AI coding agents is this: imagine you just hired **the most knowledgeable intern in the world**.
+
+This intern has read every programming book, every documentation page, every Stack Overflow answer, every blog post, every open source repository. Their *raw knowledge* is extraordinary. They can explain the difference between `useEffect` and `useLayoutEffect` better than most senior engineers. They know the GitHub Actions API, the Stripe API, every CSS property, every SQL optimization technique.
+
+But they have never seen *your* codebase. They do not know your file structure. They do not know your conventions. They do not know that you call your API client `fetcher` instead of `api`, or that your auth tokens are in localStorage instead of cookies, or that your date formatting utility has a bug that everyone works around.
+
+**All the knowledge in the world, zero context about your project.**
+
+What would you do with this intern? You would not hand them a one-line ticket and walk away. You would sit with them. You would show them the codebase. You would explain how things work. You would let them look at the browser, check the console, add some log statements, and trace through the code. You would give them **the same tools and access that any human developer needs** to do good work.
+
+That is exactly what you need to do with AI agents. And most people skip all of it.
+
+---
+
+## What a Complete Feedback Loop Looks Like
+
+A human developer's debugging workflow looks roughly like this: they write code, run it in the browser, check the console for errors, inspect the DOM, add some `console.log` statements, check the network tab, and iterate. They have eyes on the running application at all times. They can *see* what their code is doing.
+
+Most people use AI coding agents **blind**. The agent writes code into files. The agent cannot see what happens when that code runs. It cannot check if the page rendered correctly, if the API call returned the right data, if the button is in the right position, if the animation plays smoothly. It is working in the dark.
+
+<Mermaid chart="graph LR | subgraph Broken Loop | A1[Write code] --> A2[Hope it works] | A2 --> A3[Copy error to AI] | A3 --> A1 | end | subgraph Complete Loop | B1[Write code] --> B2[Test in browser] | B2 --> B3[See results + errors] | B3 --> B4[Agent self-corrects] | B4 --> B2 | end" />
+
+**Completing the feedback loop** means giving the AI the same sensory access that a human developer has. Here is how I do it:
+
+### Browser Access: Playwright MCP + Chrome DevTools MCP
+
+The setup that transformed my workflow is running two MCP (Model Context Protocol) servers alongside my coding agent: **Playwright MCP** and **Chrome DevTools MCP**.
+
+Playwright MCP lets the agent interact with the running application programmatically. It can navigate to pages, click buttons, fill in forms, take screenshots, and read page content. This is how the agent *sees* what its code is doing.
+
+Chrome DevTools MCP gives the agent access to the browser's developer tools. It can read the console, check the network tab, inspect the DOM, and evaluate JavaScript in the page context. This is how the agent *debugs* what its code is doing.
+
+Together, these two tools close the loop. The agent writes code, runs it, checks if it works, and **self-corrects based on what it observes**. This is not theoretical -- it is the difference between an agent that produces working code on the first try and one that produces plausible-looking code that falls apart when you actually run it.
+
+<Callout type="tip">
+Set up Playwright MCP first -- it is the single most impactful tool for closing the feedback loop. Once your agent can take screenshots and read page content, the quality of its output jumps dramatically.
+</Callout>
+
+### Console Logs as Debugging
+
+Here is something that surprised me: **AI agents debug the same way human developers do**, if you let them.
+
+When an agent encounters a bug it cannot figure out from the code alone, it will add `console.log` statements in strategic places, reload the page, read the console output, and use that information to locate the problem. It is the exact same debugging workflow you and I use every day. The difference is that most people do not give their agents this capability.
+
+I explicitly tell my agents: "If something is not working as expected, feel free to add console logs, check the console, and debug just like a human developer would." This permission, combined with the browser access tools, turns the agent from a code generator into a code *developer*.
+
+---
+
+## Scenario-Driven Development in Practice
+
+In the last post, I mentioned defining scenarios upfront. Here is where that technique *really* pays off -- in the **verification phase**.
+
+Let me walk through a concrete example. Say I am building a basic CRUD feature for managing blog posts. I start by defining scenarios:
+
+```
+The features we're building are:
+- A user should be able to create a new post with a title and body
+- A user should be able to edit an existing post
+- A user should be able to delete a post (with a confirmation dialog)
+- Posts should display in reverse chronological order on the main page
+- A user should see a loading skeleton while posts are being fetched
+- If there are no posts, a user should see an empty state with a CTA to create one
+```
+
+This is not a spec document. It is a plain-English description of what "working" looks like. I dictate this in about 20 seconds using voice.
+
+Then I ask the agent to do something that most people skip entirely: **the dry run.**
+
+### Dry Runs: Tracing Through Code Before Running It
+
+A dry run is when I ask the agent to mentally walk through the code for each scenario *without actually running anything*. The prompt sounds like this:
+
+> "Before we test in the browser, I want you to trace through the code for each scenario. Start with 'create a new post.' Walk me through what happens when the user clicks the create button -- what function gets called, what API request is made, how the response is handled, how the UI updates. Do this for every scenario and tell me if you find any logical issues."
+
+The agent reads through the code it just wrote and traces the execution path for each scenario. This is **remarkably effective at catching bugs**. The agent might discover that it forgot to invalidate the cache after a delete, or that the optimistic update does not handle the error rollback case, or that the loading state is not set correctly during the create flow.
+
+These are bugs that would have taken time to discover through manual testing. The dry run catches them in seconds, *before any code is even executed*.
+
+<Callout type="note">
+The dry run is essentially a code review that the AI performs on its own work. It catches an entire class of logical errors -- missing cache invalidation, incorrect state transitions, unhandled edge cases -- before you ever open a browser.
+</Callout>
+
+After the dry run, I have the agent fix whatever issues it found, and *then* we move to browser testing where it actually runs through each scenario with Playwright.
+
+---
+
+## A Concrete Example: The Bundle Size Analyzer
+
+Let me show you what a complete feedback loop looks like with a real example. I needed a GitHub Action that would analyze the bundle size of our application on every pull request, compare it against the main branch baseline, and leave a detailed comment on the PR with the results.
+
+This is the kind of task that, manually, would have taken me *days*. I would need to learn (or re-learn) the GitHub Actions API, figure out caching strategies, write the analysis script, handle the baseline comparison logic, format the PR comment, set up artifact uploads, and deal with all the edge cases around first runs, concurrent PRs, and cache invalidation.
+
+With an AI agent and a complete feedback loop, I built the entire thing in **about an hour**. Here are the key parts.
+
+The workflow triggers on both PRs and pushes to main, with smart path filtering so it only runs when relevant files change:
+
+```yaml
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - "apps/app/**"
+      - "packages/**"
+      - "bun.lock"
+      - "turbo.json"
+      - "package.json"
+  push:
+    branches:
+      - main
+```
+
+It uses a **dual-purpose design**: pushes to main save a baseline, while PRs restore that baseline and compare against it:
+
+```yaml
+# Push to main: save baseline
+- name: Generate baseline
+  if: github.event_name == 'push'
+  run: bun scripts/analyze-bundle.js --output ../../bundle-baseline.json
+
+- name: Save baseline to cache
+  if: github.event_name == 'push'
+  uses: actions/cache/save@v5
+  with:
+    path: bundle-baseline.json
+    key: bundle-baseline-main-${{ github.sha }}
+
+# Pull request: restore baseline and compare
+- name: Restore baseline from cache
+  if: github.event_name == 'pull_request'
+  uses: actions/cache/restore@v5
+  with:
+    path: bundle-baseline.json
+    key: bundle-baseline-main-
+    restore-keys: |
+      bundle-baseline-main-
+
+- name: Run bundle analysis
+  if: github.event_name == 'pull_request'
+  run: |
+    BASELINE_ARG=""
+    if [ -f ../../bundle-baseline.json ]; then
+      BASELINE_ARG="--baseline ../../bundle-baseline.json"
+    fi
+    bun scripts/analyze-bundle.js $BASELINE_ARG \
+      --output ../../bundle-report.json \
+      --markdown ../../bundle-comment.md
+```
+
+But here is the part that still blows my mind -- the workflow includes a second job that uses an AI agent to *review* the bundle analysis results. It downloads the bundle report, compares it against the baseline, reads the actual PR diff to understand *why* the bundle changed, and then posts a substantive PR review with actionable recommendations:
+
+```yaml
+bundle-review:
+  if: github.event_name == 'pull_request'
+  needs: bundle-analysis
+  runs-on: ubuntu-latest
+  steps:
+    - name: Run Bundle Doctor Review
+      uses: anthropics/claude-code-action@v1
+      with:
+        prompt: |
+          You are Bundle Doctor, a frontend bundle size reviewer.
+          Analyze this PR for bundle size impact.
+
+          Read the bundle report and baseline JSONs. Compare them
+          to understand what changed. Then read the PR diff to
+          understand WHY the bundle changed.
+```
+
+This is a non-trivial piece of infrastructure. It handles caching, concurrency, artifact management, conditional logic, source map analysis, and AI-powered review. Manually, this is a multi-day project with a lot of trial and error and documentation reading. With the right feedback loop -- the agent could see CI output, read error messages, iterate on the YAML syntax, and test the analysis script -- it came together in **a single focused session**.
+
+The point is not that AI is magic. The point is that **with a complete feedback loop, the AI can iterate on its own mistakes** the same way a human developer would. Without that loop, you would be the one manually copying error messages back and forth.
+
+---
+
+## Single-Shot Features Are a Myth
+
+I want to be honest about something: even with a perfect feedback loop, **AI does not produce perfect code on the first try**. Not always. Not even usually, for complex features.
+
+The pitch that a lot of AI tools make is "describe what you want and get working code instantly." This is misleading. What you actually get is a *first draft* that is often 70-80% correct. Sometimes it is 95% correct. Sometimes it is 50% correct. But it is rarely 100%.
+
+The difference between developers who get value from AI tools and those who do not is **what happens after that first draft**.
+
+Bad workflow: "The code doesn't work, AI is useless."
+
+Good workflow: "The code is mostly right but has these issues. Let me give the agent feedback, show it the errors, and let it iterate."
+
+<Philosophy>
+Steering is required. The AI does 80% of the work in 10% of the time. Your job is to steer the remaining 20%. That is still an enormous productivity gain -- and it is a skill worth developing.
+</Philosophy>
+
+You will always need to course-correct, fill in missing context, point out edge cases, and review the output. This is not a failure of the tool. This is the nature of software development. Even human developers do not write perfect code on the first try. The difference is that AI can iterate in **minutes instead of hours**.
+
+---
+
+## The Before and After
+
+Let me put some concrete numbers on this.
+
+**Before (manual development):**
+- GitHub Actions bundle analyzer: **3-5 days** of learning the API, writing YAML, debugging CI, writing the analysis script, formatting PR comments, handling edge cases.
+- Most of that time is spent reading documentation, trying things, waiting for CI to run, and fixing YAML indentation errors.
+
+**After (AI-assisted with complete feedback loop):**
+- Same GitHub Actions bundle analyzer: **~1 hour**.
+- The agent read the documentation, wrote the YAML, generated the analysis script, handled caching and concurrency, and added the AI review job.
+- I steered on architecture decisions (dual-purpose baseline/comparison design), caught one caching edge case the agent missed, and reviewed the final output.
+
+The ratio is roughly **30:1**. Three to five days down to one hour. And the output quality is comparable -- arguably *better*, because the agent was more thorough about edge cases than I would have been manually.
+
+This ratio holds across many types of tasks. Not all of them. Some tasks are simple enough that AI barely helps. Some tasks are so novel or domain-specific that the AI struggles. But for the broad category of "well-understood engineering work that requires piecing together APIs, patterns, and boilerplate" -- which is *the majority of what most of us do day to day* -- the productivity multiplier is real.
+
+---
+
+## Building Your Own Feedback Loop
+
+If you take one thing from this post, let it be this: **invest in closing the feedback loop before you invest in better prompts or better models.**
+
+<Callout type="important">
+A mediocre model with a complete feedback loop will outperform a brilliant model working blind. Every single time. The feedback loop is the highest-leverage investment you can make in your AI-assisted workflow.
+</Callout>
+
+Here is a minimal starting point:
+
+1. **Set up browser access.** Install a Playwright MCP server so your agent can interact with your running application. This alone is transformative.
+
+2. **Let the agent debug.** Explicitly tell it to use console logs, check the console, and inspect the DOM when something is not working. Give it *permission* to debug the way you would.
+
+3. **Define scenarios.** Before any feature work, list out the concrete scenarios that need to work. Use these as the acceptance criteria for the AI's output.
+
+4. **Request dry runs.** Before browser testing, ask the agent to trace through the code for each scenario. This catches logical errors early and cheaply.
+
+5. **Iterate.** When the first draft is not perfect (it will not be), give specific feedback. Show the agent what is wrong. Let it fix and re-test. The loop should be: **write, test, fix, re-test** -- the same loop human developers run, just faster.
+
+<Callout type="warning">
+Do not skip the dry run step. It is tempting to jump straight to browser testing, but having the agent trace through its own code first catches an entire class of bugs that are expensive to debug at runtime.
+</Callout>
+
+---
+
+*Next in this series: [Prompts Are the New Declarative Code](/blog/prompts-are-declarative-code) -- where I explore how prompt-driven development is the next evolution of the declarative programming paradigm, and why writing specs instead of code might be the future.*

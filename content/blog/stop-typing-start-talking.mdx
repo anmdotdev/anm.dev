@@ -1,0 +1,166 @@
+---
+title: "Stop Typing, Start Talking: Why Voice-First Changed Everything"
+date: 2026-03-24
+summary: "I was anti-dictation for 10 years. Then I tried voice-first prompting and my AI coding output tripled. Here's the workflow shift that changed how I build software."
+tags: [AI, Workflow, Productivity, Developer Tools]
+---
+
+I was anti-dictation for 10 years. I am a fast typist. I have opinions about mechanical keyboards. I once spent an afternoon configuring Vim keybindings in VS Code just to shave milliseconds off my editing workflow. The idea of *talking* to my computer to write code felt like a regression, like going back to the era of speech-to-text demos that could barely transcribe "hello world."
+
+Then I spent three months building software almost entirely with AI coding agents, and voice-first prompting became **the single biggest force multiplier** in my entire workflow. Not a marginal improvement. A *fundamental shift* in how I think about communicating intent to a machine.
+
+Let me explain why I was wrong, and why you probably are too.
+
+---
+
+## The Typing Bottleneck You Don't Know You Have
+
+Here is how most developers interact with AI coding tools: they type a short, terse prompt. Something like:
+
+```
+Add a dark mode toggle to the header
+```
+
+Then they wait. The AI does something. It is usually wrong or incomplete. They type another short correction. The AI tries again. Three rounds later they are frustrated and decide AI coding tools are overhyped.
+
+**The problem is not the model. The problem is the prompt.**
+
+Think about how you would explain this task to a new developer on your team. You would not walk up to their desk and say "add a dark mode toggle to the header" and then walk away. You would sit down and say something like:
+
+"So we have this header component in `src/components/Header.tsx`. It uses our design system's `Button` component for the nav items. I want to add a dark mode toggle on the right side, next to the user avatar. We already have a `useTheme` hook in our context providers that exposes `theme` and `setTheme`. The toggle should use the `IconButton` component, show a sun icon in dark mode and a moon icon in light mode, and it should persist the preference to localStorage. Oh, and make sure it works with the existing CSS variables setup in `globals.css` -- we already have `--bg-primary` and `--text-primary` defined for both themes."
+
+That second version contains *context*. It tells the AI where things are, what patterns to follow, what already exists, and what the expected behavior looks like. It is the difference between a one-line Slack message and a **proper brief**.
+
+The problem is that typing all of that out feels like work. And it is. Typing four paragraphs of context every time you want something done is exhausting. So people take shortcuts. They write terse prompts. They get bad results. They blame the tool.
+
+**Voice removes the bottleneck entirely.**
+
+---
+
+## How Voice-First Actually Works
+
+Let me be clear about what I mean by "voice-first." I am not talking about interactive voice mode, where you have a spoken conversation with an AI. I am not talking about Siri or Alexa. I am talking about **one-directional dictation** into a text prompt field.
+
+I use a tool called Wispr Flow for this. You press a hotkey, talk, and it transcribes your words into whatever text field has focus. That is it. No conversation. No back-and-forth audio. You dictate a prompt, review it briefly, and hit enter.
+
+<Callout type="note">
+The key insight: talking is fundamentally less work than typing. When you talk, you do not have to think about sentence structure, grammar, formatting, or typos. You just... explain what you want. The words come out in whatever order they come out.
+</Callout>
+
+You backtrack, you ramble, you circle back to a point you forgot -- and none of that matters, because the LLM on the other end is **exceptionally good at parsing messy, natural human speech**.
+
+My typical prompt is now four to five paragraphs long. It describes the context, points to specific files, explains my intent, mentions edge cases I am thinking about, and sometimes includes what I do *not* want. This level of detail would be exhausting to type every time. But talking for 60 seconds? That is nothing. I barely notice it.
+
+---
+
+## The Mindset Shift: Stop Structuring, Start Talking
+
+The hardest part of going voice-first was not the technology. It was the *mindset*.
+
+When you type a prompt, you instinctively try to be precise. You think about how to phrase things clearly, how to organize your request, how to be concise. You treat the AI like a compiler that needs exact syntax. This is wrong, and it actively hurts your results.
+
+Here is the shift: **you do not need to be structured. The LLM structures for you.**
+
+When I dictate a prompt, it sounds like this (and yes, this is roughly how messy it actually is):
+
+> "Okay so I need to update the pricing page. Right now it's in `src/app/pricing/page.tsx` and it's pulling the plans from a hardcoded array at the top of the file. I want to move that to a separate file, maybe `src/data/plans.ts` or something, and then I also want to add a toggle between monthly and annual pricing. Actually wait, before you do that, first go read the pricing page component and describe back to me what you see, because I want to make sure we're on the same page about the current structure before you start changing things."
+
+That is a messy, stream-of-consciousness prompt. I backtracked mid-thought. I changed my mind about the order of operations. I used vague language like "or something." And yet, every single AI coding agent I have used handles this *perfectly*. It extracts the intent, identifies the tasks, and either asks clarifying questions or executes exactly what I meant.
+
+This is what I mean by **talking to a colleague versus programming a machine**. You do not need to write pseudo-code in your prompt. You do not need bullet points. You do not need to be organized. You just need to be **thorough**.
+
+---
+
+## Quick Prompting Tips That Compound
+
+Over three months, I developed a handful of verbal habits that consistently produce better results. These are not revolutionary. They are small phrases that prime the model to work the way I want:
+
+**"Be thorough."** This is the single most useful phrase in my prompting vocabulary. Without it, LLMs have a tendency to take shortcuts -- generating the happy path and ignoring edge cases, or writing a simplified version of what you asked for. Adding "be thorough" tells the model to *go deep*.
+
+**"Be critical."** When I ask the AI to review something, I explicitly tell it to be critical. Without this, models tend toward agreement and approval. Telling it to be critical gives it **permission to actually find problems**.
+
+**"Feel free to ask me clarifying questions."** This one transforms the interaction from a one-shot request into a *conversation*. Instead of guessing at ambiguous details, the AI will ask. And its questions are usually good -- they surface edge cases or architectural decisions I had not thought about.
+
+**"Go look at [specific file/area] and describe what you understand."** This is how I validate comprehension before letting the AI make changes. If it describes the current state incorrectly, I know to correct its understanding *before* it starts writing code.
+
+<Callout type="tip">
+None of these are clever prompt engineering tricks. They are just the same things you would say to a human collaborator. If your prompt would sound weird said out loud to a colleague, it is probably not a great prompt.
+</Callout>
+
+---
+
+## The Two-Phase Pattern: Understand First, Then Execute
+
+The most reliable pattern I have found for AI-assisted development is splitting every task into **two distinct phases**.
+
+<Mermaid chart="graph LR | A[Phase 1: Understand] --> B[Agent reads codebase] | B --> C[Agent explains back] | C --> D{Correct?} | D -->|No| E[You correct misunderstanding] | E --> B | D -->|Yes| F[Phase 2: Execute] | F --> G[Agent makes changes] | G --> H[Review output]" />
+
+**Phase 1: Understanding.** I ask the agent to explore the codebase, read specific files, and explain back to me what it understands. I explicitly tell it *not* to make any changes yet. This phase might look like:
+
+> "I want to refactor how we handle authentication. Before you change anything, go read through `src/lib/auth.ts`, the middleware in `src/middleware.ts`, and the login page component. Then describe back to me how the current auth flow works, what the token refresh logic looks like, and where the session state is managed."
+
+The AI comes back with a summary. Sometimes it is perfect. Sometimes it misunderstands something -- maybe it thinks the refresh token is stored in a cookie when it is actually in localStorage. This is where I correct it. Better to fix a misunderstanding *before* code is written than to debug incorrect code after the fact.
+
+**Phase 2: Execution.** Only once I am confident the AI understands the current state correctly do I ask it to make changes. At this point, the AI has the full context loaded, and its changes are **almost always architecturally sound**.
+
+<Callout type="important">
+This two-phase pattern takes maybe two extra minutes per task. It saves hours of debugging wrong implementations. Never let an agent modify code it does not yet understand.
+</Callout>
+
+---
+
+## Scenario-Driven Development: Define Success Before You Start
+
+The other technique that pairs perfectly with voice-first prompting is what I call **scenario-driven development**. Before I ask the AI to build anything, I define what success looks like by listing out concrete user scenarios.
+
+Here is a real example from a feature I built recently. I dictated something like this:
+
+> "I need to build a commenting system for posts. Here are the scenarios that need to work: a user should be able to write a comment on any post. They should be able to edit their own comments. They should be able to delete their own comments. Other users should see comments in reverse chronological order. If a user is not logged in, they should see the comments but the input field should show a 'sign in to comment' prompt instead. Oh, and comments should support basic Markdown -- bold, italic, links, and code blocks. That's it for now, no threading or replies."
+
+This prompt gives the AI a **clear definition of "done."** It knows exactly what scenarios to build for, and I can later ask it to trace through each scenario to verify correctness. There is no ambiguity about scope. There is no guessing about edge cases.
+
+The scenarios become the acceptance criteria, the test plan, and the review checklist all in one. I will talk more about how to use scenarios for verification in the next post in this series.
+
+---
+
+## What a Voice-Dictated Prompt Actually Looks Like
+
+Let me give you a concrete before-and-after to drive this home.
+
+**What most people type:**
+
+```
+Create a toast notification system
+```
+
+**What I dictate (transcribed):**
+
+> "I need to build a toast notification system. We don't have one yet. I want it to work like this: there should be a `ToastProvider` that wraps the app, and a `useToast` hook that any component can call to show a toast. The hook should return a function like `showToast` that takes a message, a type which is either success, error, warning, or info, and an optional duration in milliseconds defaulting to five seconds. The toasts should appear in the bottom right corner, stack vertically, and animate in from the right. When they expire they should animate out. I want to put the implementation in `src/components/ui/toast/` with separate files for the provider, the hook, and the individual toast component. Use Framer Motion for the animations since we already have it installed. Look at how we're using it in the modal component for reference on the animation pattern. Be thorough and make sure the toasts are accessible -- they should use role alert and be announced by screen readers."
+
+The first prompt will produce something generic and probably wrong for your project. The second prompt will produce something that **fits your codebase, follows your conventions, and handles the details correctly** on the first try.
+
+The first prompt takes three seconds to type. The second prompt takes about 45 seconds to dictate. The second one saves you **30 minutes** of back-and-forth corrections.
+
+<Philosophy>
+The quality of AI output is directly proportional to the quality of your input. Voice removes the friction that prevents you from providing high-quality input.
+</Philosophy>
+
+---
+
+## Getting Started
+
+If you want to try this, here is my honest advice: it will feel weird for the first day. You will feel silly talking to your computer. You will instinctively want to type because it feels more "productive." Push through that. Give it a full week.
+
+Get a good dictation tool. I use Wispr Flow, but there are others. The key requirement is that it should be **fast** (low latency between speech and text), **accurate** enough that you do not need to constantly correct errors, and triggered by a **simple hotkey** so you can switch between typing and dictating seamlessly.
+
+<Callout type="tip">
+Start with your AI prompts only. You do not need to dictate everything. Just use it for those four-paragraph contextual prompts that you would never bother typing out. Once you see the difference in output quality, the habit builds itself.
+</Callout>
+
+The core insight is simple: the quality of AI output is directly proportional to the quality of your input, and voice removes the friction that prevents you from providing high-quality input. It is not about speaking versus typing. It is about **removing the barrier between your thoughts and the prompt**.
+
+That barrier was the bottleneck all along.
+
+---
+
+*Next in this series: [Complete the Loop: Why Your AI Writes Bad Code (and How to Fix It)](/blog/complete-the-loop) -- where I cover the feedback loop problem and show how giving AI agents the ability to see, test, and debug their own output changes everything.*

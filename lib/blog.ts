@@ -6,6 +6,29 @@ import readingTime from 'reading-time'
 
 const BLOG_DIR = path.join(process.cwd(), 'content', 'blog')
 const MDX_EXTENSION = /\.mdx$/
+const IS_DEV = process.env.NODE_ENV === 'development'
+
+// Strip MDX/JSX components, code blocks, and frontmatter artifacts so
+// reading-time only counts prose words the reader actually reads.
+const stripMdxSyntax = (content: string): string =>
+  content
+    .replace(/```[\s\S]*?```/g, '') // fenced code blocks
+    .replace(/<\w+[\s\S]*?\/>/g, '') // self-closing JSX tags
+    .replace(/<\w+[\s\S]*?>[\s\S]*?<\/\w+>/g, '') // JSX block components
+    .replace(/^>\s.*$/gm, '') // blockquotes
+    .replace(/!\[.*?\]\(.*?\)/g, '') // images
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1') // links → text only
+    .replace(/^---$/gm, '') // horizontal rules
+    .replace(/[*_~`#]+/g, '') // inline markdown syntax
+
+/** Returns true if the post's date is today or in the past */
+const isPublished = (dateStr: string): boolean => {
+  const postDate = new Date(dateStr)
+  const today = new Date()
+  // Compare dates only (ignore time)
+  today.setHours(23, 59, 59, 999)
+  return postDate.getTime() <= today.getTime()
+}
 
 export interface BlogPost {
   content: string
@@ -13,6 +36,7 @@ export interface BlogPost {
   draft: boolean
   lastModified?: string
   readingTime: string
+  scheduled: boolean
   slug: string
   summary: string
   tags: string[]
@@ -33,11 +57,21 @@ export const getBlogPosts = (): BlogPost[] => {
       const raw = fs.readFileSync(filePath, 'utf-8')
       const { data, content } = matter(raw)
 
-      if (data.draft) {
+      const isDraft = Boolean(data.draft)
+      const published = data.date ? isPublished(data.date) : false
+      const scheduled = !(isDraft || published)
+
+      // In production: skip drafts and future-dated (scheduled) posts
+      // In development: skip drafts, but show scheduled posts
+      if (isDraft && !IS_DEV) {
+        return null
+      }
+      if (scheduled && !IS_DEV) {
         return null
       }
 
-      const stats = readingTime(content)
+      const strippedContent = stripMdxSyntax(content)
+      const stats = readingTime(strippedContent)
 
       return {
         slug,
@@ -46,7 +80,8 @@ export const getBlogPosts = (): BlogPost[] => {
         lastModified: data.lastModified || undefined,
         tags: data.tags || [],
         summary: data.summary || '',
-        draft: data.draft,
+        draft: isDraft,
+        scheduled,
         readingTime: stats.text,
         content,
       }
@@ -64,7 +99,18 @@ export const getBlogPost = (slug: string): BlogPost | null => {
 
   const raw = fs.readFileSync(filePath, 'utf-8')
   const { data, content } = matter(raw)
-  const stats = readingTime(content)
+
+  const isDraft = Boolean(data.draft)
+  const published = data.date ? isPublished(data.date) : false
+  const scheduled = !(isDraft || published)
+
+  // In production: block access to drafts and scheduled posts
+  if (!IS_DEV && (isDraft || scheduled)) {
+    return null
+  }
+
+  const strippedContent = stripMdxSyntax(content)
+  const stats = readingTime(strippedContent)
 
   return {
     slug,
@@ -73,7 +119,8 @@ export const getBlogPost = (slug: string): BlogPost | null => {
     lastModified: data.lastModified || undefined,
     tags: data.tags || [],
     summary: data.summary || '',
-    draft: data.draft,
+    draft: isDraft,
+    scheduled,
     readingTime: stats.text,
     content,
   }

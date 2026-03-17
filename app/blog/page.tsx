@@ -110,8 +110,18 @@ const BlogPage = () => {
                       href={`/blog/${post.slug}`}
                       showIcon="never"
                     >
-                      <span className="font-medium text-black text-sm group-hover/post:underline dark:text-dark-text">
+                      <span className="flex items-center gap-2 font-medium text-black text-sm group-hover/post:underline dark:text-dark-text">
                         {post.title}
+                        {post.draft && (
+                          <span className="shrink-0 rounded bg-amber-100 px-1.5 py-0.5 font-medium text-[10px] text-amber-800 uppercase leading-none dark:bg-amber-900/30 dark:text-amber-400">
+                            Draft
+                          </span>
+                        )}
+                        {post.scheduled && (
+                          <span className="shrink-0 rounded bg-blue-100 px-1.5 py-0.5 font-medium text-[10px] text-blue-800 uppercase leading-none dark:bg-blue-900/30 dark:text-blue-400">
+                            Scheduled
+                          </span>
+                        )}
                       </span>
                       {post.summary && (
                         <span className="line-clamp-2 text-gray-dark text-xs dark:text-dark-text-secondary">

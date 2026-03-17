@@ -1,6 +1,8 @@
 import Link from 'components/ui/link'
 import type { MDXComponents } from 'mdx/types'
+import Callout from './callout'
 import Mermaid from './mermaid'
+import Philosophy from './philosophy'
 
 const createHeading = (level: 1 | 2 | 3 | 4 | 5 | 6) => {
   const Tag = `h${level}` as const
@@ -48,7 +50,9 @@ const mdxComponents: MDXComponents = {
       </a>
     )
   },
+  Callout,
   Mermaid,
+  Philosophy,
 }
 
 export default mdxComponents

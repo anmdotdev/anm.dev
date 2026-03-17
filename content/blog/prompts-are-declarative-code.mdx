@@ -1,0 +1,306 @@
+---
+title: "Prompts Are the New Declarative Code"
+date: 2026-04-07
+summary: "React replaced imperative DOM manipulation with declarations. Prompts are doing the same thing to software development. Here's why writing specs and scenarios might matter more than writing code."
+tags: [AI, Architecture, Developer Tools, Philosophy]
+---
+
+In 2013, React changed how we thought about building user interfaces. Before React, we manipulated the DOM imperatively. We selected elements by ID, attached event listeners, manually updated text content, toggled CSS classes, and managed the state of the UI through a tangled web of direct mutations. It worked, but it was fragile, hard to reason about, and painful to maintain.
+
+React introduced a different idea: instead of telling the browser *how* to update the UI step by step, you *declare what the UI should look like* for a given state, and the framework figures out the imperative steps to get there. You write the "what." React handles the "how."
+
+That shift -- from imperative to declarative -- was **the most important paradigm change** in frontend development in a decade. And I believe the same shift is happening right now, one layer up. Except this time, it is not about UI rendering. It is about *software development itself*.
+
+<Philosophy>
+Prompts are the new declarative code. And code is becoming the imperative implementation detail that AI handles for you.
+</Philosophy>
+
+---
+
+## The React/DOM Analogy, Extended
+
+Let me make this analogy concrete.
+
+**Before React (imperative):**
+
+```javascript
+const button = document.getElementById('submit-btn');
+const counter = document.getElementById('counter');
+let count = 0;
+
+button.addEventListener('click', () => {
+  count++;
+  counter.textContent = `Count: ${count}`;
+  if (count > 10) {
+    counter.classList.add('warning');
+  }
+});
+```
+
+You are specifying every step. Get this element. Attach this listener. When clicked, increment this number, update this text, conditionally add this class. You are managing the *how*.
+
+**After React (declarative):**
+
+```jsx
+function Counter() {
+  const [count, setCount] = useState(0);
+
+  return (
+    <div>
+      <button onClick={() => setCount(c => c + 1)}>Submit</button>
+      <p className={count > 10 ? 'warning' : ''}>Count: {count}</p>
+    </div>
+  );
+}
+```
+
+You are declaring *what* the UI should look like for any given state. React figures out the DOM operations to make it happen. The imperative code still exists -- it is running inside React's reconciler -- but you do not write it or think about it.
+
+**Now, with AI-assisted development (even more declarative):**
+
+> "Build a counter component. It should have a submit button that increments a count displayed below it. When the count exceeds 10, the count text should have a visual warning style. Use our existing design system's `Button` and `Text` components from `src/components/ui/`."
+
+You declare *what you want* in natural language. The AI generates the React code. The React code declares the UI. React generates the DOM operations. **Each layer is more declarative than the one below it**, and each layer handles the imperative details of the layer beneath it.
+
+<Mermaid chart="graph TD | A[Natural Language Prompt] -->|declares intent| B[React / Application Code] | B -->|declares UI| C[DOM Operations] | C -->|executes| D[Pixels on Screen] | style A fill:transparent,stroke:#7c3aed,color:#7c3aed | style B fill:transparent,stroke:#6366f1,color:#6366f1 | style C fill:transparent,stroke:#8b5cf6,color:#8b5cf6 | style D fill:transparent,stroke:#a78bfa,color:#a78bfa" />
+
+Prompts are not replacing code. They are becoming **the layer above code**, the same way React did not replace the DOM -- it became the layer above it.
+
+---
+
+## Interface-First Design: The Spec Before the Implementation
+
+If prompts are declarative code, then **the spec document is the source of truth**. And writing good specs is the new core skill.
+
+Here is the technique I have found most effective: before asking the AI to build anything complex, I write a short document -- usually in Markdown -- that defines the interfaces, the structure, and the behavior in pseudo-code. Not real code. Not a formal spec. Just enough structure to **constrain the solution space**.
+
+Here is a real example. I needed to build a notification system with real-time updates. Before prompting the AI, I wrote this:
+
+```markdown
+## Notification System Spec
+
+### Directory Structure
+src/
+  features/
+    notifications/
+      components/
+        NotificationBell.tsx      # Header icon with unread count badge
+        NotificationPanel.tsx     # Dropdown panel showing recent notifications
+        NotificationItem.tsx      # Individual notification row
+      hooks/
+        useNotifications.ts       # Fetches and manages notification state
+        useUnreadCount.ts         # Returns current unread count
+      types.ts                    # Notification type definitions
+      api.ts                      # API calls for notifications
+
+### Types
+Notification {
+  id: string
+  type: 'mention' | 'reply' | 'system'
+  title: string
+  body: string
+  read: boolean
+  createdAt: Date
+  actionUrl?: string            # Where clicking the notification navigates
+}
+
+### Behavior
+- Bell icon shows badge with unread count (hide badge when 0)
+- Clicking bell opens a dropdown panel
+- Panel shows last 20 notifications, most recent first
+- Clicking a notification marks it as read and navigates to actionUrl
+- "Mark all as read" button at the top of the panel
+- Real-time updates via WebSocket (use existing socket connection
+  from src/lib/socket.ts)
+- Optimistic updates for mark-as-read actions
+
+### API Endpoints (already exist)
+GET    /api/notifications?limit=20
+PATCH  /api/notifications/:id/read
+POST   /api/notifications/mark-all-read
+WS     notifications:new (real-time event)
+```
+
+This took me about five minutes to write (dictated, then lightly cleaned up). It is not code. There is no implementation logic. It is a **declaration of what the system should look like** and how it should behave.
+
+When I hand this to an AI agent, the output is remarkably good. And the reason is simple: **AI excels at pattern matching and filling in well-defined interfaces.** When you give it a clear structure to follow -- directory layout, type definitions, behavior specs, and API contracts -- it is essentially doing sophisticated pattern matching to produce an implementation that fits the constraints.
+
+Compare this to the alternative: prompting "build a notification system" with no spec. The AI will produce *something*, but it will make a hundred decisions you did not sanction. It will choose a directory structure you do not like. It will invent type shapes that do not match your API. It will implement behaviors you did not want and miss behaviors you assumed were obvious.
+
+<Callout type="important">
+The spec is not extra work. The spec *is* the work. The implementation is the part you are delegating.
+</Callout>
+
+---
+
+## The "Let It Cook" Philosophy
+
+Once you have a good spec and a detailed prompt, the next shift is **learning to let go**.
+
+My early AI-assisted development workflow looked like this: I would give the agent a task, watch it work in real-time, interrupt it when I saw something I disagreed with, correct it mid-stream, and hover over every line it wrote. I was *micromanaging*. And it was counterproductive.
+
+Here is what I do now: I write a detailed prompt (four to five paragraphs, dictated), hit enter, and **walk away**. Not metaphorically. I literally stand up, go get coffee, stretch, maybe review a pull request from a colleague. I come back 20 to 30 minutes later.
+
+When I come back, there is a diff waiting for me. I review it the same way I would review a pull request from a human team member:
+
+- I look at the **overall structure**. Does the architecture make sense?
+- I check the **edge cases**. Did it handle error states? Loading states? Empty states?
+- I ask questions. "Have we taken care of the case where the WebSocket connection drops and reconnects? Do we refetch missed notifications?"
+- I challenge decisions. "Why did you put the notification types in a separate file instead of colocating them with the components that use them?"
+
+This is a **fundamentally different relationship with the code**. I am not writing it. I am not even reading every line of it in detail. I am *reviewing* it. I am asking whether it does what it should do, not whether each individual line is written the way I would write it.
+
+<Callout type="tip">
+Try this: write a detailed prompt, hit enter, and physically leave your desk. Come back in 20 minutes and review the result as a diff. You will be surprised how much better your review quality is when you approach the code fresh, without having watched it being generated line by line.
+</Callout>
+
+And that brings us to the most controversial part of this shift.
+
+---
+
+## Code Is No Longer Written for Humans
+
+This is the part where I lose some people. Bear with me.
+
+For the entire history of programming, code has been written for two audiences: machines (to execute) and humans (to read, understand, and maintain). We have spent decades developing conventions, style guides, naming standards, and architectural patterns that make code readable by other humans. "Clean code" is fundamentally about *human readability*.
+
+But what if **humans are no longer the primary readers and maintainers of code**?
+
+I am not saying we are there yet. But I am saying the trend is clear. Here is what I am observing in my own workflow:
+
+When I review AI-generated code, I do not read it the same way I read human-written code. I do not care whether the variable names match my personal preferences. I do not care whether it uses early returns or nested conditionals. I do not care whether it extracted a helper function or inlined the logic. I care about one thing: **does it work correctly in all the scenarios I defined?**
+
+The scenarios, the tests, and the type system are what give me confidence. Not the readability of the code itself.
+
+This is a **paradigm shift in what we mean by "quality."** The old model:
+
+- Quality code = readable, well-structured, follows conventions, easy for humans to maintain
+- You verify quality by *reading the code*
+
+The emerging model:
+
+- Quality software = **correct behavior** across all defined scenarios, comprehensive tests, strong type safety
+- You verify quality by *running tests and tracing scenarios*
+
+I want to be clear: I am not advocating for unreadable code. I am not saying structure does not matter. I am saying that the *purpose* of code quality is shifting. We used to write clean code so that the next human could understand it. We are moving toward a world where the next "reader" of your code is as likely to be an AI as a human. And AI does not care about your naming conventions.
+
+---
+
+## Scenarios + Tests + AI = Maintainable Software
+
+If code readability is no longer the primary quality guarantee, what replaces it? The answer is the combination of **scenarios, tests, and AI**.
+
+Here is the workflow I use now for ensuring long-term maintainability:
+
+**1. Define scenarios as the source of truth.** For every feature, I maintain a list of concrete user scenarios that describe what "working" means. These live in the spec document or as comments in the test file.
+
+**2. Generate comprehensive tests.** I ask the AI to generate tests for every scenario. Not just happy-path tests -- tests for error states, edge cases, race conditions, boundary values. The AI is excellent at generating exhaustive test suites because it does not get bored or lazy. It will happily write 50 test cases where a human would write 10.
+
+**3. Use TypeScript strictly.** Strong types are the static equivalent of tests. They catch a huge category of errors at compile time and give both the AI and me confidence that the pieces fit together correctly.
+
+**4. Let AI maintain the code.** When I need to modify a feature, I describe what I want changed. The AI reads the existing code, understands it (remember phase 1 from the first post), makes the changes, and then verifies that all scenarios still pass. If a test breaks, it fixes the code until the tests pass again.
+
+<Callout type="note">
+In this model, the scenarios and tests are the specification. The code is the implementation. The AI is the maintainer. Your role is to define what "correct" means and to steer the direction. You are an architect and a reviewer, not a line-by-line implementer.
+</Callout>
+
+---
+
+## An Example: Writing a Spec and What the AI Produces
+
+Let me show you this in practice with a simplified example. I needed a utility for formatting relative dates (like "2 hours ago," "yesterday," "3 weeks ago") for a social feature.
+
+Here is the spec I wrote:
+
+```markdown
+## Relative Date Formatter
+
+### Interface
+formatRelativeDate(date: Date | string | number): string
+
+### Rules
+- Less than 60 seconds: "just now"
+- 1-59 minutes: "Xm ago"
+- 1-23 hours: "Xh ago"
+- 1-6 days: "Xd ago"
+- 7-29 days: "Xw ago"
+- 30-364 days: "Xmo ago"
+- 365+ days: "Xy ago"
+
+### Edge Cases
+- Future dates: return "just now" (don't show negative time)
+- Invalid input: throw a descriptive error
+- Accept Date objects, ISO strings, and Unix timestamps
+
+### Tests Should Cover
+- Each time bracket boundary (59s vs 60s, 59m vs 60m, etc.)
+- All three input types
+- Future dates
+- Invalid inputs
+```
+
+From this spec, the AI produced a clean implementation, a full test suite with 20+ test cases covering every boundary, and TypeScript types -- all matching the spec exactly. The total time was about three minutes.
+
+The implementation was not written the way I would have written it. It used `Math.floor` where I might have used `Math.round`. It organized the time brackets as an array of objects where I might have used a chain of if-else statements. **But it did not matter.** Every scenario passed. Every edge case was handled. The tests were comprehensive.
+
+That is the new definition of good code. Not "written the way I would write it." But **"correct, tested, and maintainable by the next AI that touches it."**
+
+---
+
+## What This Means for "Clean Code"
+
+I have been thinking a lot about what happens to our profession's deeply held beliefs about code quality. We have spent decades building a culture around readable code, meaningful names, small functions, single responsibility, DRY principles, and all the other tenets of clean code.
+
+I do not think these principles are wrong. I think their *purpose* is changing.
+
+Clean code principles were invented to solve a specific problem: **making code maintainable by humans who did not write it**. The "write code for the next person" ethos assumes the next person is a human with limited context and limited patience.
+
+If the next "person" is an AI with unlimited patience and the ability to read and understand the entire codebase in seconds, some of these principles become *less critical*. An AI does not care if your function is 50 lines instead of 20. It does not get confused by a deeply nested conditional. It does not need meaningful variable names to understand what the code does.
+
+What does still matter -- and arguably matters **more than ever** -- is:
+
+- **Clear specifications.** What is the software supposed to do?
+- **Comprehensive tests.** How do we verify it does what it should?
+- **Strong types.** How do we catch structural errors early?
+- **Well-defined interfaces.** How do the pieces connect?
+
+These are the things that help *both* humans and AI maintain software. And they are all **declarative in nature**. They describe *what*, not *how*.
+
+The clean code movement was about making the *how* readable. The prompt-driven development paradigm is about making the *what* explicit. Both have value. But the center of gravity is shifting.
+
+---
+
+## Where We Are and Where We Are Going
+
+I want to be careful not to overstate this. We are not in a world where developers just write prompts and never look at code. Not yet. Maybe not ever -- there will likely always be cases where understanding the implementation matters.
+
+But the direction is clear. Each generation of developer tools has moved us **one layer more abstract**:
+
+- **Assembly to C:** we stopped thinking about registers and memory addresses
+- **C to Python/JavaScript:** we stopped thinking about memory management
+- **jQuery to React:** we stopped thinking about DOM manipulation
+- **Code to Prompts:** we are starting to stop thinking about implementation details
+
+<Mermaid chart="graph LR | A[Assembly] -->|abstracted hardware| B[C] | B -->|abstracted memory| C[Python / JS] | C -->|abstracted DOM| D[React] | D -->|abstracted implementation| E[Prompts] | style A fill:transparent,stroke:#a78bfa,color:#a78bfa | style B fill:transparent,stroke:#8b5cf6,color:#8b5cf6 | style C fill:transparent,stroke:#7c3aed,color:#7c3aed | style D fill:transparent,stroke:#6d28d9,color:#6d28d9 | style E fill:transparent,stroke:#5b21b6,color:#5b21b6" />
+
+Each transition felt uncomfortable. Each transition had skeptics who said the lower level still mattered (and they were right -- it does, sometimes). But each transition also freed developers to think at a higher level and build more ambitious things.
+
+Prompts are not going to replace code overnight. But they are already **the most productive layer** for me to work at for the majority of tasks. I spend more time writing specs, defining scenarios, and reviewing diffs than I spend writing actual code. And my output has never been higher.
+
+<Callout type="tip">
+If you want to start moving in this direction, here is what I would suggest:
+
+1. Start writing short spec documents for features before you prompt the AI.
+2. Define concrete scenarios that describe what "done" looks like.
+3. Let the AI generate both the implementation and the tests from your spec.
+4. Review the output at the scenario level, not the line-of-code level.
+5. Build confidence through tests and types, not through reading every line.
+</Callout>
+
+<Philosophy>
+The code is the imperative layer. Your specs and prompts are the declarative layer. Write the declarative parts well, and the imperative parts take care of themselves.
+</Philosophy>
+
+---
+
+*Next in this series: [Power User Mode: Running 3 Agents in Parallel](/blog/power-user-mode) -- where I cover the multi-agent workflow that lets me work on three features simultaneously, plus cross-model code review that catches bugs neither model would find alone.*

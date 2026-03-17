@@ -239,6 +239,7 @@ html.theme-transition *::after {
 
 .prose pre {
   padding: 1rem;
+  margin: 1.5rem 0;
   overflow-x: auto;
   font-size: 0.825rem;
   line-height: 1.7;
@@ -361,4 +362,164 @@ html.theme-transition *::after {
 .dark .prose th {
   color: var(--color-dark-text);
   background: var(--color-dark-surface);
+}
+
+/* Callout component */
+.prose .callout {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1rem 1.25rem;
+  margin: 1.75rem 0;
+  font-size: 0.875rem;
+  line-height: 1.65;
+  border: 1px solid;
+  border-radius: 8px;
+}
+
+.prose .callout p {
+  margin-bottom: 0;
+}
+
+.prose .callout p + p {
+  margin-top: 0.5rem;
+}
+
+.prose .callout-header {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.prose .callout-icon {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+}
+
+.prose .callout-icon svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.prose .callout-label {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.prose .callout-content {
+  min-width: 0;
+}
+
+/* Note callout */
+.prose .callout-note {
+  background: var(--color-purple-lightest);
+  border-color: var(--color-purple-lighter);
+}
+
+.prose .callout-note .callout-header {
+  color: var(--color-purple-dark);
+}
+
+.dark .prose .callout-note {
+  background: rgba(106, 53, 255, 0.08);
+  border-color: rgba(106, 53, 255, 0.2);
+}
+
+.dark .prose .callout-note .callout-header {
+  color: var(--color-purple-light);
+}
+
+/* Tip callout */
+.prose .callout-tip {
+  background: var(--color-success-lightest);
+  border-color: var(--color-success-lighter);
+}
+
+.prose .callout-tip .callout-header {
+  color: var(--color-success-dark);
+}
+
+.dark .prose .callout-tip {
+  background: rgba(46, 211, 154, 0.08);
+  border-color: rgba(46, 211, 154, 0.2);
+}
+
+.dark .prose .callout-tip .callout-header {
+  color: var(--color-success-light);
+}
+
+/* Warning callout */
+.prose .callout-warning {
+  background: var(--color-warn-lightest);
+  border-color: var(--color-warn-lighter);
+}
+
+.prose .callout-warning .callout-header {
+  color: var(--color-warn-dark);
+}
+
+.dark .prose .callout-warning {
+  background: rgba(255, 159, 89, 0.08);
+  border-color: rgba(255, 159, 89, 0.2);
+}
+
+.dark .prose .callout-warning .callout-header {
+  color: var(--color-warn-light);
+}
+
+/* Important callout */
+.prose .callout-important {
+  background: var(--color-error-lightest);
+  border-color: var(--color-error-lighter);
+}
+
+.prose .callout-important .callout-header {
+  color: var(--color-error-dark);
+}
+
+.dark .prose .callout-important {
+  background: rgba(241, 74, 89, 0.08);
+  border-color: rgba(241, 74, 89, 0.2);
+}
+
+.dark .prose .callout-important .callout-header {
+  color: var(--color-error-light);
+}
+
+/* Philosophy block quote */
+.prose .philosophy {
+  padding: 1.25rem 1.5rem;
+  margin: 2rem 0;
+  background: var(--color-gray-lightest);
+  border-left: 3px solid var(--color-purple);
+  border-radius: 8px;
+}
+
+.prose .philosophy blockquote {
+  padding: 0;
+  margin: 0;
+  font-style: normal;
+  font-weight: 500;
+  color: var(--color-black);
+  border-left: none;
+}
+
+.prose .philosophy blockquote p {
+  margin-bottom: 0;
+}
+
+.prose .philosophy blockquote p + p {
+  margin-top: 0.75rem;
+}
+
+.dark .prose .philosophy {
+  background: var(--color-dark-surface);
+  border-left-color: var(--color-purple-light);
+}
+
+.dark .prose .philosophy blockquote {
+  color: var(--color-dark-text);
 }
