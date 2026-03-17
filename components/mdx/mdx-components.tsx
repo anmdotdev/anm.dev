@@ -3,6 +3,7 @@ import type { MDXComponents } from 'mdx/types'
 import Callout from './callout'
 import Mermaid from './mermaid'
 import Philosophy from './philosophy'
+import PromptBox from './prompt-box'
 
 const createHeading = (level: 1 | 2 | 3 | 4 | 5 | 6) => {
   const Tag = `h${level}` as const
@@ -53,6 +54,7 @@ const mdxComponents: MDXComponents = {
   Callout,
   Mermaid,
   Philosophy,
+  PromptBox,
 }
 
 export default mdxComponents

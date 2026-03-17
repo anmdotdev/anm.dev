@@ -1,319 +1,363 @@
 ---
 title: "My Exact AI Coding Workflow, Step by Step"
-date: 2026-04-28
-summary: "The complete, detailed walkthrough of how I use AI coding agents to build production software. Voice dictation, two-phase prompts, scenario-driven development, cross-model review, and everything in between."
+date: 2026-04-10
+series: "ai-workflows-modern-web-dev"
+seriesOrder: 7
+seriesTitle: "AI Workflows in Modern Web Development"
+summary: "The practical version of the whole system: how I go from a rough feature idea to reviewed, tested, production-ready code with AI agents in the loop."
 tags: [AI, Workflow, "Developer Tools", Productivity, Tutorial]
 ---
 
-In my previous post, I argued that [code is no longer written for humans](/blog/code-is-no-longer-written-for-humans) — that the role of the developer is shifting from typist to architect and director. That was the philosophy. This is the practice.
+The earlier posts in this series were the theory.
 
-What follows is my exact workflow for AI-assisted development, refined over three months of intensive building. I use this process every day to ship production features, and it consistently produces results that would have taken me **five to ten times longer** to build manually.
+This is the actual operating procedure.
 
-This is not theoretical. I have used this workflow to build a sync engine, a document editor, an interactive canvas, and a CI/CD pipeline that includes AI-powered bundle analysis. I am going to walk you through every step, with enough detail that you can start using it tomorrow.
+If I am building a real feature with AI today, this is roughly the sequence I follow. Not every task uses every step with the same intensity, but this is the baseline workflow I trust.
 
-<Mermaid chart="graph LR | A[1. Voice Dictation] --> B[2. Two-Phase Prompt] | B --> C[3. Interface Design] | C --> D[4. Scenarios] | D --> E[5. Browser Testing] | E --> F[6. PR Review] | F --> G[7. Cross-Model Review] | G --> H[8. Parallel Workflows] | style A fill:var(--color-purple),stroke:var(--color-gray),color:var(--color-white) | style H fill:var(--color-purple),stroke:var(--color-gray),color:var(--color-white)" />
+The point of the workflow is not to make AI look magical.
 
-## Step 1: Voice Dictation
+It is to make the output predictable enough that I can move quickly without pretending first drafts are perfect.
 
-The first thing that will surprise people: **I rarely type my prompts. I dictate them.**
+---
 
-I use Wispr Flow for voice-to-text dictation. It is not an interactive voice mode — I am not having a conversation with the AI through a microphone. I am dictating text into the prompt field, the same way you might dictate a message or an email.
+## Step 1: Pick a Bounded Task
 
-I was deeply skeptical of this at first. I am a fast typist. I have always been comfortable expressing technical ideas through text. But dictation changed the quality of my prompts in a way I did not expect.
+The workflow starts before the prompt.
 
-Here is why: **typing imposes a cognitive overhead that you do not notice until it is gone.** When you type, part of your brain is occupied with the mechanical act of translating thoughts into keystrokes. You unconsciously edit as you go. You shorten your prompts because typing is effort. You structure them prematurely because the linear nature of typing forces you to commit to an order.
+I want a task that is clear enough to hand off and review.
 
-When you dictate, all of that disappears. You just *talk*. You ramble. You describe the problem from three different angles. You mention the thing you are worried about, then circle back to the context, then add the constraint you almost forgot. It is messy and unstructured and that is exactly the point.
+That means I avoid starting with something like:
 
-The AI does not care about structure. It is excellent at taking a five-paragraph stream of consciousness and extracting the intent. Your job is to convey as much context and nuance as possible. Dictation lets you do that with dramatically less effort.
+> "rethink the entire editor architecture"
 
-My typical prompt is four to five paragraphs long. It describes what I am trying to build, points to specific files in the codebase, explains the current state of things, mentions constraints and edge cases I am thinking about, and states what I want the agent to do. Writing that by hand would take five to ten minutes and feel like work. **Dictating it takes sixty seconds and feels like thinking out loud.**
+Instead I want something more like:
+
+> "add slash-command insertion for image and code blocks to the editor"
+
+If the task is too broad, the model improvises too much and I lose control of the review surface.
+
+Bounded tasks make everything else easier:
+
+- the prompt is clearer
+- the scenarios are clearer
+- the diff is clearer
+- the review is faster
+
+This sounds mundane, but bad task definition poisons the whole chain.
+
+---
+
+## Step 2: Dump Context Fast
+
+Once the task is scoped, I front-load context.
+
+Usually I dictate this rather than typing it, because dictation makes it much easier to include all the details I would otherwise trim.
+
+I will mention things like:
+
+- where the relevant files probably are
+- what the current UX does
+- what I want changed
+- what edge cases I am already worried about
+- what should definitely not regress
+
+The goal is not elegance.
+
+The goal is transmission.
+
+If I know something that would help the model make a better decision, I want it in the prompt instead of in my head.
+
+---
+
+## Step 3: Ask for Understanding Before Changes
+
+This is still one of the most important steps in the whole process.
+
+Before I let the model write code, I want it to inspect the relevant part of the codebase and explain it back to me.
+
+A typical first prompt sounds like:
+
+<PromptBox>
+Go inspect the editor block system before making changes.
+Read the current block renderer, the slash command menu, and the existing block operations.
+Then explain back how insertion currently works, what files are involved, and where you think image/code block insertion should plug in.
+Feel free to ask clarifying questions before implementing anything.
+</PromptBox>
+
+This gives me two things:
+
+- the model builds context before acting
+- I can verify its understanding before trusting the implementation
+
+If the explanation is wrong, I correct it early.
+
+That is far cheaper than correcting a bad implementation later.
+
+---
+
+## Step 4: Write a Thin Spec When the Task Deserves It
+
+For small changes, I skip this.
+
+For anything with moving parts, I usually write a short spec or structured note first.
+
+Not a giant document.
+
+Just enough to define:
+
+- files or modules
+- interfaces
+- key behaviors
+- non-negotiable constraints
+
+For example:
+
+```md
+## Slash Command Insertions
+
+### Scope
+- Add slash-command insertion for image and code blocks
+- Reuse existing insertion flow for text and heading blocks
+
+### Constraints
+- Do not change persisted block schema
+- Follow the current command menu component
+- Keep keyboard flow identical to existing commands
+
+### Scenarios
+1. Typing `/image` inserts an image block below the current block
+2. Typing `/code` inserts a code block and focuses it
+3. Escape closes the command menu without changing content
+4. Existing slash commands still behave exactly the same
+```
+
+This is usually enough to keep the model inside the right boundaries.
+
+---
+
+## Step 5: Define the Scenarios Explicitly
+
+I treat scenarios as the real contract.
+
+If the scenarios are vague, the implementation will be vague.
+
+If the scenarios are sharp, the model has a concrete target and I have a concrete review standard.
+
+This is also where I often ask the model to help:
+
+> "List any edge cases or scenarios I am missing."
+
+It is usually good at finding a few that matter.
+
+By this point, the task has three layers of structure:
+
+- contextual prompt
+- current-state understanding
+- behavior contract
+
+That is a much better starting point than "build feature X."
+
+---
+
+## Step 6: Let It Implement
+
+Only after the first five steps do I actually ask for code.
+
+Then I get out of the way.
+
+I do not like hovering while the model writes. That tends to make me overreact to implementation details before I have seen the result as a whole.
+
+I would rather let it produce a coherent first pass and then review the output.
+
+This is where a lot of the leverage comes from.
+
+Once the model has enough context and enough structure, implementation becomes the comparatively easy part.
+
+---
+
+## Step 7: Dry Run the Scenarios
+
+Before runtime testing, I often ask for a dry run.
+
+That means:
+
+walk through each scenario step by step through the code and tell me where anything breaks.
+
+This catches things like:
+
+- missing rollback paths
+- stale state
+- bad focus handling
+- incomplete error handling
+- branch logic that never actually leads to the expected UI
+
+It is cheap and it works.
+
+The dry run is one of the best bug filters I have.
 
 <Callout type="tip">
-If you try nothing else from this post, try dictating your prompts for a week. It will change your relationship with AI tools.
+The dry run is the fastest way I know to turn "looks plausible" into "has at least been reasoned through."
 </Callout>
 
-## Step 2: The Two-Phase Prompt
+---
 
-This is the **single most important technique** in my workflow, and almost nobody does it.
+## Step 8: Run Real Feedback Loops
 
-When I want an AI agent to make changes to my codebase, I never start by asking for changes. I start by asking for *understanding*.
+After the dry run, I want actual feedback.
 
-**Phase 1: Explore and explain.** The first prompt is always something like:
+That means some combination of:
 
-> Go look at the authentication module in `src/auth/`. Read through the files, understand how the flow works, and describe back to me what you see. Feel free to ask me clarifying questions if anything is unclear.
+- linter
+- type checker
+- tests
+- browser interaction
+- console inspection
 
-That is it. No instructions to change anything. No feature request. Just: look at this and tell me what you understand.
+This is where the workflow stops being about generation and becomes about convergence.
 
-The agent will read the files, trace the logic, and come back with a description of how the system works. Sometimes it is spot-on. Sometimes it misses a nuance. Sometimes it asks questions that reveal it does not understand a key constraint. **This is exactly the information you need before asking it to make changes.**
+I will often give instructions like:
 
-**Phase 2: Execute with context.** Only after I am confident the agent understands the current state do I give it the actual task:
+<PromptBox>
+Run the relevant checks.
+Then test the scenarios in the browser.
+If anything fails, fix it and retest.
+Report back with what changed and anything you are still uncertain about.
+</PromptBox>
 
-> Great, that is correct. Now here is what I need: add support for OAuth providers. The user should be able to link multiple OAuth accounts to a single profile. Here are the scenarios that need to work...
+This is the difference between "the model wrote code" and "the model participated in a development loop."
 
-By this point, the agent has a mental model of the existing code. It knows where things live, how they connect, what patterns are in use. The implementation it produces is **dramatically better** than what you get from a cold start.
+That second version is the one I care about.
 
-There are a few key phrases I use constantly in Phase 1:
+---
 
-- **"Be thorough."** This prevents the agent from skimming and giving you a shallow summary.
-- **"Be critical."** This activates a self-review mode where the agent actually evaluates what it sees rather than just describing it.
-- **"Feel free to ask me clarifying questions."** This opens a dialogue. The agent will ask things like "I see two different patterns for handling errors — which one should I follow?" and those questions are *gold*.
+## Step 9: Review the Diff Like a Pull Request
 
-<Philosophy>
-The two-phase approach works because it mirrors how a good human collaborator operates. You would never hand a colleague a task without first making sure they understand the context. Extend the same courtesy to your AI agent.
-</Philosophy>
+Once the model has converged as much as it can, I review the result like I would review a PR from a teammate.
 
-## Step 3: Interface-First Design
+I am looking for:
 
-Before I ask an AI to build anything complex, I write a short specification document. Not code. A Markdown file that describes:
+- architectural weirdness
+- missed edge cases
+- places where the behavior drifted from the spec
+- unnecessary scope expansion
+- anything that feels under-tested
 
-- The directory structure for the new feature
-- The key interfaces and type signatures
-- Pseudo-code (not real code) for the core behavior
-- The patterns the implementation should follow
+I am not trying to prove I could have written it differently.
 
-Here is a simplified example of what this looks like:
+I am trying to decide whether this output is safe, correct, and aligned.
 
-```markdown
-## Feature: Notification System
+That is an important mindset shift.
 
-### Directory Structure
-src/notifications/
-  types.ts          — Notification types and interfaces
-  store.ts          — Notification state management
-  dispatcher.ts     — Core dispatch logic
-  channels/
-    in-app.ts       — In-app notification channel
-    email.ts        — Email notification channel
-    push.ts         — Push notification channel
+You get much better results from AI when you treat review as review, not as a chance to reassert authorship over every line.
 
-### Core Interface
-NotificationDispatcher receives a NotificationEvent, determines
-which channels should fire based on user preferences, and dispatches
-to each channel in parallel. Failed channels should retry up to 3 times
-with exponential backoff. All dispatches are logged.
+---
 
-### Function Signatures
-dispatchNotification(event: NotificationEvent): Promise<DispatchResult>
-resolveChannels(event: NotificationEvent, prefs: UserPrefs): Channel[]
-executeChannel(channel: Channel, event: NotificationEvent): Promise<void>
+## Step 10: Use a Second Model When It Matters
 
-### Patterns
-- Follow the same error handling pattern as src/sync/operations.ts
-- Use the existing logger from src/lib/logger.ts
-- Channel implementations should follow the adapter pattern
-  used in src/integrations/
-```
+For higher-risk work, I sometimes ask another model to review the output.
 
-Why does this work so well? Because **AI excels at pattern matching**. When you give it a clear interface, a defined directory structure, and explicit patterns to follow, you have constrained the solution space to the point where the implementation almost writes itself. The agent matches the patterns you pointed to, fills in the implementation behind your interfaces, and produces code that fits naturally into the existing codebase.
+That can be surprisingly effective.
 
-Your job is to be the architect. Define the shape of the system. Let the AI fill in the details.
+Not because the second model is always better, but because it usually has different blind spots.
 
-## Step 4: Scenario-Driven Development
+My prompt is usually direct:
 
-This is where most people go wrong with AI development. They ask for a feature, get the code, and then try to figure out if it works. **Flip it around.** Define what "works" means *before* the code is written.
+<PromptBox>
+Another model implemented this feature.
+Review the diff critically.
+Find bugs, edge cases, design issues, and anything that does not match the intended behavior.
+</PromptBox>
 
-For every feature, I define an explicit list of scenarios:
+Then I feed that review back into the original loop or handle the fixes myself.
 
-```
-The scenarios for this feature are:
-1. User creates a new notification preference
-2. User receives an in-app notification when a relevant event fires
-3. User with email enabled receives both in-app and email notifications
-4. User with a disabled channel does not receive notifications on that channel
-5. Failed notification delivery retries up to 3 times
-6. After 3 failures, the notification is marked as failed and logged
-7. Multiple notifications dispatched in parallel do not interfere with each other
-```
+I do not do this for every tiny change.
 
-Then I ask the agent to do something specific: enumerate all the scenarios it can think of (it often catches ones I missed), and then **dry-run each scenario through the code mentally**.
+But for bigger features, it is a useful extra filter.
 
-> Walk through each scenario step by step through the code. For each one, trace the execution path from entry point to completion. Tell me if any scenario would fail, and why.
+---
 
-This dry-run step is remarkably effective. The agent will trace the logic, find that scenario 5 does not work because the retry counter is not being decremented correctly, and fix it — all before I have even opened a browser.
+## Step 11: Merge, Then Reset Context
 
-Only after the dry run looks clean do we move to actual testing.
+After a feature is done, I prefer to reset cleanly.
 
-<Callout type="note">
-The dry-run step is where the agent catches most bugs. By tracing each scenario through the code *before* running it, you avoid the slow debug-fix-rerun cycle entirely.
-</Callout>
+Long-running sessions degrade.
 
-## Step 5: Browser Testing with MCP
+Context drifts.
 
-This is the step that completes the feedback loop, and it is the reason my workflow produces reliable results.
+The model starts anchoring to earlier assumptions or irrelevant history.
 
-I use two Model Context Protocol (MCP) servers: **Playwright MCP** and **Chrome DevTools MCP**. Together, they give the AI agent the ability to interact with a running application in a browser — clicking elements, filling forms, navigating pages, and reading the DOM.
+So once a task is complete, I would usually rather:
 
-Here is how I use it:
+- merge it
+- start a fresh session
+- rebrief the next task cleanly
 
-> The app is running on localhost:3000. Go through each of the notification scenarios we defined. For each scenario, perform the actions in the browser, check the console for any errors, and verify the expected behavior. Add console logs if you need them for validation. Report back on which scenarios pass and which fail.
+Fresh context with a good prompt beats stale context with accumulated noise surprisingly often.
 
-The agent opens the browser, performs the actions, reads the console output, and reports back. If something fails, it debugs the issue — often by adding console logs, checking the state, tracing the problem — exactly the way a human developer would debug.
+That is especially true once you start running multiple agents in parallel.
 
-This creates a **self-correction loop**. The agent finds a bug, fixes the code, re-runs the scenario, and continues until all scenarios pass. I am usually doing something else during this time.
+---
 
-<Callout type="important">
-The number one reason people get bad results from AI coding is an **incomplete feedback loop**. When the agent cannot see, test, or validate its own output, it is working blind. Give it the same tools a human developer uses — a browser, a console, the ability to inspect and interact — and the quality of output improves dramatically.
-</Callout>
+## What This Looks Like End to End
 
-## Step 6: Review Like a PR
+If I compress the workflow into one linear sequence, it is basically this:
 
-After the agent finishes and all scenarios pass, I do not immediately merge the changes. **I walk away.**
+1. scope the task tightly
+2. dump the relevant context
+3. ask the model to understand first
+4. write a thin spec if needed
+5. define scenarios
+6. implement
+7. dry run
+8. run checks and runtime validation
+9. review the diff
+10. optionally cross-review with another model
+11. merge and reset
 
-I come back twenty to thirty minutes later with fresh eyes and review the git diff. I treat it exactly like I would treat a pull request from a colleague. I read through the changes, and I ask questions:
+That is the workflow.
 
-- "Have we handled the case where the user has no notification preferences set?"
-- "Does this change affect the existing email integration tests?"
-- "What happens if the notification service is down when we try to dispatch?"
+It is not complicated because each step is individually clever.
 
-The agent answers these questions, sometimes revealing gaps, sometimes confirming that the edge case is already handled. If there are gaps, we fix them. If not, we are done.
+It works because each step reduces a different class of error.
 
-I call this the *"let it cook"* philosophy. Give a detailed prompt, walk away, come back and review. Just like you would not stand behind a colleague watching them type, do not sit and watch the AI generate code line by line. Trust the process, then verify the output.
+Together, they create a system that is much more reliable than simple one-shot prompting.
 
-## Step 7: Cross-Model Review
+---
 
-This is one of the more unusual parts of my workflow, and **it catches real bugs**.
+## Where the Leverage Really Comes From
 
-After Claude Code finishes a feature, I will sometimes ask a different model — OpenAI's Codex, for instance — to review the work. The prompt is deliberately framed to provoke thoroughness:
+The biggest misconception about this workflow is that the leverage comes from "AI writes code fast."
 
-> Claude wrote the following code to implement a notification dispatch system. Review it critically and point out any bugs, edge cases, or design issues.
+That is true, but it is not the whole story.
 
-There is an interesting dynamic here. The reviewing model tends to be *thorough and competitive*, finding real issues that the original model missed. Maybe it is the framing, maybe it is the different training data, but cross-model review consistently surfaces things that single-model development does not.
+The bigger leverage comes from the fact that once the workflow is stable:
 
-Then I feed the review back to the original model:
+- direction gets faster
+- iteration gets faster
+- validation gets faster
+- review gets more focused
 
-> Codex found the following issues in your notification dispatch implementation. Address each one.
+That is a much bigger shift than autocomplete.
 
-The original model takes the feedback seriously and addresses each point. I run this loop — implement, review with a different model, feed back, fix — until the issues converge to zero. Usually that takes **two to three rounds**.
+It changes what part of the job dominates your day.
 
-<Callout type="tip">
-Framing the review as "Model X wrote this, find the problems" triggers a more thorough review than asking the same model to self-review. Use the competitive dynamic to your advantage.
-</Callout>
+I spend much less time typing implementation and much more time:
 
-## Step 8: Parallel Workflows
+- defining behavior
+- shaping tasks
+- reviewing outcomes
+- making architecture decisions
 
-Once you are comfortable with the workflow above, the natural next step is **running multiple agents in parallel**.
+That is why this workflow feels like a genuine change in how software gets built, not just a new productivity trick.
 
-My setup: I clone the repository into three separate directories. I run a separate Claude Code session in each. I work on three different tasks simultaneously.
+---
 
-The rhythm works like this: I give Agent 1 a detailed prompt for Feature A. While it works, I give Agent 2 a prompt for Feature B. When Agent 1 comes back with questions, I switch to it and answer while Agent 3 starts on Feature C. It is like managing three junior developers who are all fast, knowledgeable, but need direction.
+## The Most Important Part
 
-**Three agents is the sweet spot.** Fewer and you have idle time. More and the context-switching overhead starts to hurt. With three, there is almost always one agent ready for your input while the other two are working.
+If I had to collapse everything into one sentence, it would be this:
 
-## The Codebase Hygiene Checklist
+AI becomes reliable when you stop treating it like a generator and start treating it like a participant in a full engineering loop.
 
-None of the above works without a well-maintained codebase. Here is what I consider non-negotiable for AI-assisted development:
+That is the whole system.
 
-**Linting.** I use Biome. It catches style and correctness issues automatically. More importantly, it gives the AI agent a fast signal about whether its code meets the project standards. The agent can run the linter, see the errors, and self-correct.
-
-**TypeScript in strict mode.** Type safety gives both you and the AI confidence in correctness. The compiler catches a huge class of errors before anything runs. When the agent writes code that does not type-check, it knows immediately.
-
-**Tests.** The safety net that lets you move fast. When the agent can run the test suite and see what passes and what fails, tests become part of the feedback loop.
-
-**Git.** Always. Diffs are your review tool. The ability to see exactly what changed, revert if something goes wrong, and track the evolution of the codebase is essential. I review git diffs after every AI-generated change.
-
-These tools complete the feedback loop. The AI can run the linter, check types, run tests, and self-correct based on the results. Without them, you are relying on the AI to be perfect on the first try. It will not be.
-
-## A Concrete Example: The Bundle Size Analyzer
-
-Let me walk through a real example of this workflow end to end. I needed a GitHub Action that compares bundle sizes between the main branch and a pull request, leaves a formatted comment on the PR, and adds status checks. This is the kind of infrastructure work that would have taken me days of reading GitHub Actions documentation, experimenting with YAML syntax, and debugging CI failures.
-
-**I built it in about an hour.**
-
-**The spec:** I wrote a short description of what I wanted. A workflow that triggers on pull requests and pushes to main. On pushes to main, it saves a baseline. On pull requests, it compares against the baseline and posts a comment.
-
-**The two-phase prompt:** I started by having the agent explore the existing CI setup and the project's build tooling. It understood we were using Rsbuild, that the monorepo had an `apps/app` directory, and that Bun was the package manager.
-
-**The implementation:** The agent produced a complete workflow file. Here is a fragment that shows the structure:
-
-```yaml
-on:
-  pull_request:
-    types: [opened, synchronize, reopened]
-    paths:
-      - "apps/app/**"
-      - "packages/**"
-      - "bun.lock"
-      - "turbo.json"
-      - "package.json"
-  push:
-    branches:
-      - main
-```
-
-It triggers only on relevant file changes — no wasted CI minutes. On push to main, it builds, generates a baseline, and caches it:
-
-```yaml
-- name: Generate baseline
-  if: github.event_name == 'push'
-  run: bun scripts/analyze-bundle.js --output ../../bundle-baseline.json
-
-- name: Save baseline to cache
-  if: github.event_name == 'push'
-  uses: actions/cache/save@v5
-  with:
-    path: bundle-baseline.json
-    key: bundle-baseline-main-${{ github.sha }}
-```
-
-On pull requests, it restores the baseline from cache and runs a comparison:
-
-```yaml
-- name: Restore baseline from cache
-  if: github.event_name == 'pull_request'
-  uses: actions/cache/restore@v5
-  with:
-    path: bundle-baseline.json
-    key: bundle-baseline-main-
-    restore-keys: |
-      bundle-baseline-main-
-
-- name: Run bundle analysis
-  if: github.event_name == 'pull_request'
-  run: |
-    BASELINE_ARG=""
-    if [ -f ../../bundle-baseline.json ]; then
-      BASELINE_ARG="--baseline ../../bundle-baseline.json"
-    fi
-    bun scripts/analyze-bundle.js $BASELINE_ARG \
-      --output ../../bundle-report.json \
-      --markdown ../../bundle-comment.md
-```
-
-But here is where it gets interesting. I then had the agent add a second job — an **AI-powered bundle review** — that downloads the analysis data and uses Claude to review the PR for bundle size regressions:
-
-```yaml
-bundle-review:
-  if: github.event_name == 'pull_request'
-  needs: bundle-analysis
-  runs-on: ubuntu-latest
-  steps:
-    - name: Run Bundle Doctor Review
-      uses: anthropics/claude-code-action@v1
-      with:
-        prompt: |
-          You are Bundle Doctor, a frontend bundle size reviewer.
-          Analyze this PR for bundle size impact...
-```
-
-An AI agent running inside a CI pipeline, reviewing bundle changes, leaving PR comments with optimization suggestions. The entire workflow — the YAML, the analysis script, the Rsdoctor integration, the source map explorer report, the artifact uploads, the cache strategy, the AI review step — was built in a single session.
-
-The point is not that AI wrote some YAML. The point is that **the entire system** — multiple jobs, conditional logic, artifact management, caching strategy, AI integration — came together in an hour because the workflow I described above (spec, two-phase prompt, scenario testing, review) compresses the feedback loop so dramatically.
-
-## The Honest Assessment
-
-I want to end with honesty, because the hype around AI coding is thick and not all of it is warranted.
-
-**AI still produces garbage sometimes.** This has not gone away. Single-shot features are a myth — you will always need to steer, iterate, and correct. Think of the AI as an intern who has read every programming book ever written but has zero context about your specific project. It needs hand-holding, guidance, and direction.
-
-The key is not to expect perfection. It is to build a system — feedback loops, testing, review — that catches and corrects mistakes efficiently. The workflow I have described is not about making AI perfect. It is about **creating an environment where AI can iterate to correctness quickly**.
-
-And the hand-holding pays off. Once you give the agent the right context — once you walk through Phase 1, once you point it at the right files, once you define the scenarios clearly — it *blooms*. It delivers exactly what you want, often surprising you with approaches you would not have considered.
-
-<Philosophy>
-The developers who get the most out of AI are not the ones using the fanciest tools. They are the ones who have learned how to communicate clearly with their agent, how to define what "done" looks like, and how to build the infrastructure that lets the agent verify its own work.
-</Philosophy>
-
-That is the whole workflow. Voice dictation for input. Two-phase prompts for understanding. Interface-first design for architecture. Scenario-driven development for correctness. Browser testing for validation. PR-style review for quality. Cross-model review for thoroughness. Parallel workflows for throughput. And a well-maintained codebase to make all of it possible.
-
-Start with one step. Try dictating your next prompt. Try the two-phase approach on your next feature. You do not need to adopt everything at once. But once you feel the difference, you will not go back.
+And once you feel how much better that works, it is very hard to go back.

@@ -7,6 +7,18 @@ interface CopyPageMenuProps {
   title: string
 }
 
+interface MenuItemTextProps {
+  description: string
+  title: string
+}
+
+const MenuItemText = ({ description, title }: MenuItemTextProps) => (
+  <span className="min-w-0 flex-1">
+    <span className="block font-medium text-black dark:text-dark-text">{title}</span>
+    <span className="block text-gray leading-snug dark:text-dark-text-muted">{description}</span>
+  </span>
+)
+
 const CopyPageMenu = ({ slug, title }: CopyPageMenuProps) => {
   const [open, setOpen] = useState(false)
   const [copied, setCopied] = useState(false)
@@ -111,7 +123,7 @@ const CopyPageMenu = ({ slug, title }: CopyPageMenuProps) => {
               strokeWidth={2}
             />
           </svg>
-          {copied ? 'Copied!' : 'Copy page'}
+          <span className="hidden sm:inline">{copied ? 'Copied!' : 'Copy page'}</span>
         </button>
         <button
           aria-expanded={open}
@@ -134,7 +146,7 @@ const CopyPageMenu = ({ slug, title }: CopyPageMenuProps) => {
       </div>
 
       {open && (
-        <div className="absolute top-full right-0 z-50 mt-1 w-64 rounded-lg border border-gray-lighter bg-white shadow-lg dark:border-dark-border dark:bg-dark-surface">
+        <div className="absolute top-full left-1/2 z-50 mt-1 w-[min(18rem,calc(100vw-1.5rem))] -translate-x-1/2 rounded-lg border border-gray-lighter bg-white shadow-lg sm:right-0 sm:left-auto sm:w-80 sm:translate-x-0 dark:border-dark-border dark:bg-dark-surface">
           <div className="py-1">
             <button
               className="flex w-full items-center gap-3 px-3 py-2.5 text-left text-xs transition-colors hover:bg-gray-lightest dark:hover:bg-dark-surface-hover"
@@ -160,14 +172,7 @@ const CopyPageMenu = ({ slug, title }: CopyPageMenuProps) => {
                   />
                 </svg>
               </span>
-              <span>
-                <span className="block font-medium text-black dark:text-dark-text">
-                  View as Markdown
-                </span>
-                <span className="text-gray dark:text-dark-text-muted">
-                  Open this page in Markdown
-                </span>
-              </span>
+              <MenuItemText description="Open this page in Markdown" title="View as Markdown" />
             </button>
 
             <button
@@ -191,14 +196,7 @@ const CopyPageMenu = ({ slug, title }: CopyPageMenuProps) => {
                   />
                 </svg>
               </span>
-              <span>
-                <span className="block font-medium text-black dark:text-dark-text">
-                  Copy as Markdown
-                </span>
-                <span className="text-gray dark:text-dark-text-muted">
-                  Copy page content as Markdown
-                </span>
-              </span>
+              <MenuItemText description="Copy page content as Markdown" title="Copy as Markdown" />
             </button>
 
             <button
@@ -222,12 +220,7 @@ const CopyPageMenu = ({ slug, title }: CopyPageMenuProps) => {
                   />
                 </svg>
               </span>
-              <span>
-                <span className="block font-medium text-black dark:text-dark-text">
-                  Download as .md
-                </span>
-                <span className="text-gray dark:text-dark-text-muted">Save Markdown file</span>
-              </span>
+              <MenuItemText description="Save Markdown file" title="Download as .md" />
             </button>
 
             <button
@@ -251,14 +244,7 @@ const CopyPageMenu = ({ slug, title }: CopyPageMenuProps) => {
                   />
                 </svg>
               </span>
-              <span>
-                <span className="block font-medium text-black dark:text-dark-text">
-                  Copy as JSON
-                </span>
-                <span className="text-gray dark:text-dark-text-muted">
-                  Structured data for AI pipelines
-                </span>
-              </span>
+              <MenuItemText description="Structured data for AI pipelines" title="Copy as JSON" />
             </button>
 
             <button
@@ -282,12 +268,7 @@ const CopyPageMenu = ({ slug, title }: CopyPageMenuProps) => {
                   />
                 </svg>
               </span>
-              <span>
-                <span className="block font-medium text-black dark:text-dark-text">
-                  Copy citation
-                </span>
-                <span className="text-gray dark:text-dark-text-muted">APA format reference</span>
-              </span>
+              <MenuItemText description="APA format reference" title="Copy citation" />
             </button>
 
             <div className="mx-3 my-1 border-gray-lighter border-t dark:border-dark-border" />
@@ -314,14 +295,7 @@ const CopyPageMenu = ({ slug, title }: CopyPageMenuProps) => {
                   />
                 </svg>
               </span>
-              <span>
-                <span className="block font-medium text-black dark:text-dark-text">
-                  Open in Claude
-                </span>
-                <span className="text-gray dark:text-dark-text-muted">
-                  Ask questions about this page
-                </span>
-              </span>
+              <MenuItemText description="Ask questions about this page" title="Open in Claude" />
             </a>
 
             <a
@@ -335,14 +309,7 @@ const CopyPageMenu = ({ slug, title }: CopyPageMenuProps) => {
                   <path d="M22.282 9.821a5.985 5.985 0 0 0-.516-4.91 6.046 6.046 0 0 0-6.51-2.9A6.065 6.065 0 0 0 4.981 4.18a5.985 5.985 0 0 0-3.998 2.9 6.046 6.046 0 0 0 .743 7.097 5.98 5.98 0 0 0 .51 4.911 6.051 6.051 0 0 0 6.515 2.9A5.985 5.985 0 0 0 13.26 24a6.056 6.056 0 0 0 5.772-4.206 5.99 5.99 0 0 0 3.997-2.9 6.056 6.056 0 0 0-.747-7.073zM13.26 22.43a4.476 4.476 0 0 1-2.876-1.04l.141-.081 4.779-2.758a.795.795 0 0 0 .392-.681v-6.737l2.02 1.168a.071.071 0 0 1 .038.052v5.583a4.504 4.504 0 0 1-4.494 4.494zM3.6 18.304a4.47 4.47 0 0 1-.535-3.014l.142.085 4.783 2.759a.771.771 0 0 0 .78 0l5.843-3.369v2.332a.08.08 0 0 1-.033.062L9.74 19.95a4.5 4.5 0 0 1-6.14-1.646zM2.34 7.896a4.485 4.485 0 0 1 2.366-1.973V11.6a.766.766 0 0 0 .388.676l5.815 3.355-2.02 1.168a.076.076 0 0 1-.071 0l-4.83-2.786A4.504 4.504 0 0 1 2.34 7.872zm16.597 3.855l-5.833-3.387L15.119 7.2a.076.076 0 0 1 .071 0l4.83 2.791a4.494 4.494 0 0 1-.676 8.105v-5.678a.79.79 0 0 0-.407-.667zm2.01-3.023l-.141-.085-4.774-2.782a.776.776 0 0 0-.785 0L9.409 9.23V6.897a.066.066 0 0 1 .028-.061l4.83-2.787a4.5 4.5 0 0 1 6.68 4.66zm-12.64 4.135l-2.02-1.164a.08.08 0 0 1-.038-.057V6.075a4.5 4.5 0 0 1 7.375-3.453l-.142.08L8.704 5.46a.795.795 0 0 0-.393.681zm1.097-2.365l2.602-1.5 2.607 1.5v2.999l-2.597 1.5-2.607-1.5z" />
                 </svg>
               </span>
-              <span>
-                <span className="block font-medium text-black dark:text-dark-text">
-                  Open in ChatGPT
-                </span>
-                <span className="text-gray dark:text-dark-text-muted">
-                  Ask questions about this page
-                </span>
-              </span>
+              <MenuItemText description="Ask questions about this page" title="Open in ChatGPT" />
             </a>
 
             <a
@@ -356,12 +323,7 @@ const CopyPageMenu = ({ slug, title }: CopyPageMenuProps) => {
                   <path d="M12 0L17.09 4.545V8.18L20.727 4.545V12H17.09v6.545L12 24l-5.09-5.455V12H3.272V4.545L6.909 8.18V4.545L12 0zm-.545 13.09H7.91v4.365l3.545 3.8V13.09zm1.09 8.165l3.546-3.8V13.09h-3.545v8.165zM7.91 11.454h3.545V6.545L7.909 2.89v8.564zm4.636-4.909v4.91h3.545V2.89l-3.545 3.655zM4.363 5.818v5.636h2.545V7.09L4.363 5.818zm12.727-1.091v5.727h2.546V5.818l-2.546 1.636z" />
                 </svg>
               </span>
-              <span>
-                <span className="block font-medium text-black dark:text-dark-text">
-                  Open in Perplexity
-                </span>
-                <span className="text-gray dark:text-dark-text-muted">Research this article</span>
-              </span>
+              <MenuItemText description="Research this article" title="Open in Perplexity" />
             </a>
 
             <a
@@ -385,14 +347,7 @@ const CopyPageMenu = ({ slug, title }: CopyPageMenuProps) => {
                   </defs>
                 </svg>
               </span>
-              <span>
-                <span className="block font-medium text-black dark:text-dark-text">
-                  Open in Gemini
-                </span>
-                <span className="text-gray dark:text-dark-text-muted">
-                  Ask questions about this page
-                </span>
-              </span>
+              <MenuItemText description="Ask questions about this page" title="Open in Gemini" />
             </a>
 
             <a
@@ -411,14 +366,7 @@ const CopyPageMenu = ({ slug, title }: CopyPageMenuProps) => {
                   <path d="M2.04 3l7.45 10.58L2 21h1.68l6.56-7.42L15.52 21H22l-7.82-11.1L21.2 3h-1.68l-6.12 6.92L8.52 3H2.04zm2.5 1.25h2.63l12.35 15.5h-2.63L4.54 4.25z" />
                 </svg>
               </span>
-              <span>
-                <span className="block font-medium text-black dark:text-dark-text">
-                  Open in Grok
-                </span>
-                <span className="text-gray dark:text-dark-text-muted">
-                  Ask questions about this page
-                </span>
-              </span>
+              <MenuItemText description="Ask questions about this page" title="Open in Grok" />
             </a>
 
             <a
@@ -437,14 +385,7 @@ const CopyPageMenu = ({ slug, title }: CopyPageMenuProps) => {
                   <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-2-13.5v9l7-4.5-7-4.5z" />
                 </svg>
               </span>
-              <span>
-                <span className="block font-medium text-black dark:text-dark-text">
-                  Open in DeepSeek
-                </span>
-                <span className="text-gray dark:text-dark-text-muted">
-                  Ask questions about this page
-                </span>
-              </span>
+              <MenuItemText description="Ask questions about this page" title="Open in DeepSeek" />
             </a>
           </div>
         </div>

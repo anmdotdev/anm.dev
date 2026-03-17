@@ -1,6 +1,6 @@
 interface CalloutProps {
   children: React.ReactNode
-  type?: 'note' | 'tip' | 'warning' | 'important'
+  type?: 'note' | 'tip' | 'warning' | 'important' | 'philosophy'
 }
 
 const NoteIcon = () => (
@@ -75,11 +75,14 @@ const ImportantIcon = () => (
   </svg>
 )
 
+const PhilosophyIcon = TipIcon
+
 const icons: Record<string, () => React.ReactNode> = {
   note: NoteIcon,
   tip: TipIcon,
   warning: WarningIcon,
   important: ImportantIcon,
+  philosophy: PhilosophyIcon,
 }
 
 const labels: Record<string, string> = {
@@ -87,19 +90,17 @@ const labels: Record<string, string> = {
   tip: 'Tip',
   warning: 'Warning',
   important: 'Important',
+  philosophy: 'Philosophy',
 }
 
 const Callout = ({ children, type = 'note' }: CalloutProps) => {
   const Icon = icons[type] ?? icons.note
 
   return (
-    <aside className={`callout callout-${type}`} role="note">
-      <div className="callout-header">
-        <span aria-hidden="true" className="callout-icon">
-          <Icon />
-        </span>
-        <span className="callout-label">{labels[type]}</span>
-      </div>
+    <aside aria-label={labels[type]} className={`callout callout-${type}`} role="note">
+      <span aria-hidden="true" className="callout-icon">
+        <Icon />
+      </span>
       <div className="callout-content">{children}</div>
     </aside>
   )

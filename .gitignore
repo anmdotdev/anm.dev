@@ -6,3 +6,6 @@ out/
 .firebase/
 .env
 yarn.lock
+data/*.db
+data/*.db-journal
+data/*.db-wal

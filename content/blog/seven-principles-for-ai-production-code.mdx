@@ -1,275 +1,239 @@
 ---
 title: "7 Principles for Getting AI to Write Production Code"
-date: 2026-04-21
-summary: "In the last 3 months, I shipped work that would have taken years. Here are the exact principles that made it possible — not by finding a better model, but by fundamentally changing how I work with AI."
+date: 2026-04-07
+series: "ai-workflows-modern-web-dev"
+seriesOrder: 6
+seriesTitle: "AI Workflows in Modern Web Development"
+summary: "The model matters less than people think. The real leverage comes from a handful of workflow principles that make AI output precise, testable, and safe to ship."
 tags: ["AI", "Workflow", "Developer Tools", "Productivity"]
 ---
 
-In the last three months, I shipped work that would have taken me *years*. Not because AI got smarter — because I changed how I work with it.
+The difference between "AI wrote some junk" and "AI helped me ship production code" is usually not the model.
 
-I built a real-time sync engine with optimistic mutations and IndexedDB persistence. A Notion-style document editor. A 2D interactive canvas like Figma. A custom GitHub Actions pipeline that analyzes bundle sizes, compares them against baselines, and posts AI-generated reviews on pull requests. Each of these would have been a multi-week or multi-month project. I built them in **days to weeks**.
+It is the operating system around the model.
 
-I have been writing software professionally for over ten years. I am a Staff Frontend Engineer. I have shipped large-scale applications, led teams, and built systems from scratch. I say this not to brag but to give you a baseline: I am not a beginner who discovered a shortcut. I am an experienced developer who found a **multiplier**.
+Over the last few months, I have ended up with a set of rules I trust. They are not clever prompt hacks. They are not fragile tricks tied to one tool. They are workflow principles.
 
-And the multiplier was not a specific model or tool. It was a set of principles — a *workflow* — that consistently turns AI from a frustrating autocomplete into a genuine collaborator.
+If I follow them, the output quality is high.
 
-<Callout type="warning">
-Most developers I talk to are frustrated with AI coding tools. They try them, get mediocre results, and conclude that the technology is overhyped. But the problem is rarely the model. **The problem is the workflow.** You are giving the AI too little context, too vague a direction, and no way to verify its own work. Then you are surprised when the output is garbage.
-</Callout>
+If I skip them, the output degrades fast.
 
-These seven principles are what I use every single day. They are ordered deliberately — each one builds on the previous. By the end, you will have a complete playbook for getting AI to write code you would actually ship.
-
-<Mermaid chart="graph LR | A[1. Voice Input] --> B[2. Understand First] | B --> C[3. Define Scenarios] | C --> D[4. Feedback Loop] | D --> E[5. Write the Interface] | E --> F[6. Declarative Prompts] | F --> G[7. Review Like a PR] | G -.->|Richer context| A" />
+These are the seven principles I think matter most.
 
 ---
 
-## Principle 1: Stop Typing, Start Talking
+## 1. Rich Context Beats Clever Wording
 
-Here is the single change that had the biggest impact on my AI workflow: I **stopped typing** my prompts and **started dictating** them.
+Most AI failures start upstream.
 
-I know how that sounds. I was deeply skeptical too. I am a fast typist. I have strong opinions about keyboards. Voice felt like a gimmick. But the data won me over — not in theory, *in practice*.
+The agent did not necessarily misunderstand a brilliant prompt.
 
-When you type a prompt, you unconsciously optimize for brevity. Typing is effort, so you trim. You write "add a delete button to the post component" and wonder why the AI produces something half-baked. Of course it did. You gave it almost no context.
+It never got enough context in the first place.
 
-When you dictate a prompt, something different happens. **Talking is cheap.** Your prompts naturally expand into four or five paragraphs. You describe the current state of the feature. You mention which files are involved. You explain what the user experience should feel like. You note edge cases you are thinking about. You give the AI the kind of rich briefing you would give a new team member before handing them a task.
+That is why I care so much about context density:
 
-I use a tool called Wispr Flow for dictation, but any good voice-to-text software works. The key insight is that this is *not* interactive voice mode — you are not having a conversation with the AI in real time. You are dictating text into the prompt field. One direction. The AI receives a well-formed, context-rich prompt and produces dramatically better output.
+- relevant files
+- current state
+- intended behavior
+- constraints
+- what not to change
 
-You do not need to be articulate or structured when you dictate. You can ramble. You can circle back. You can contradict yourself and then correct it. The LLM handles the synthesis. It is remarkably good at extracting intent from messy, natural speech. That is literally what it was trained to do.
+The exact wording matters far less than whether the real context made it into the handoff.
 
-<Philosophy>
-The quality of AI output is directly proportional to the quality of your input. More context in means better code out.
-</Philosophy>
-
-<Callout type="tip">
-**Try this:** Dictate your next prompt instead of typing it. Do not edit yourself. Just talk through what you want, what the current state is, and what the result should look like. Notice how much more context you naturally provide — and how much better the output is.
-</Callout>
-
----
-
-## Principle 2: Understand First, Execute Second
-
-The most common mistake I see developers make with AI is jumping straight to "build me X." They describe a feature, hit enter, and hope for the best. When the output misses the mark, they blame the model.
-
-The fix is dead simple: **split every task into two phases**.
-
-**Phase 1 — Understanding.** Before the AI writes a single line of code, ask it to explore and explain. Tell it: "Go look at the authentication module and describe what you understand about how it works." Or: "Read through the checkout flow and tell me what you think needs to change to support gift cards." Ask it to describe what the feature currently looks like. Ask it to identify the files, functions, and data flows involved.
-
-This does two things. First, it forces the AI to build a mental model of the relevant code before it starts modifying things. Second — and this is the part most people miss — it lets you **verify that the AI actually understands the problem**. If it comes back with an incorrect description, you can correct it *before* it writes anything. That correction costs you thirty seconds. Fixing bad code after the fact costs you thirty minutes.
-
-**Phase 2 — Execution.** Only once you are confident the AI has a correct understanding do you say "go ahead and implement it." At this point, the AI has context, comprehension, and a clear direction. The output quality jumps dramatically.
-
-There are a few key phrases I use constantly in Phase 1:
-
-- "Describe what you see in this area of the codebase."
-- "Feel free to ask me clarifying questions before you start."
-- "Walk me through how this feature currently works."
-- "What do you think needs to change?"
-
-That last one — *"feel free to ask me clarifying questions"* — is particularly powerful. It opens a dialogue. Instead of the AI guessing at ambiguities, it asks. And those questions often reveal things you had not thought through yourself.
-
-<Callout type="important">
-This **two-phase pattern** prevents roughly eighty percent of the "AI wrote garbage" situations I used to encounter. It is the single most reliable technique for getting good output.
-</Callout>
-
-<Callout type="tip">
-**Try this:** Before your next feature request, ask the AI to describe the current state of the code area it will modify. Ask it what it thinks needs to change. Only give the go-ahead once its understanding matches yours.
-</Callout>
-
----
-
-## Principle 3: Define Scenarios, Not Features
-
-"Build a CRUD page for blog posts."
-
-That prompt will get you *something*. It will technically have create, read, update, and delete functionality. It will also probably be riddled with edge case bugs, missing validation, and incomplete error handling. Not because the AI is bad at code, but because "build a CRUD page" is **not a specification**. It is a vague gesture in the direction of one.
-
-Instead, define **explicit scenarios**. Like this:
-
-```
-The features for the blog post manager are:
-
-1. A user can create a new blog post with a title and body
-2. A user can see a list of all their blog posts, sorted by date
-3. A user can click into a post to view it
-4. A user can edit an existing post's title and body
-5. A user can delete a post, with a confirmation dialog
-6. If the user's session expires mid-edit, their draft is preserved
-7. Empty titles or bodies show inline validation errors
-8. The list shows a loading skeleton while posts are being fetched
-9. Deleting the last post shows an empty state with a CTA to create one
-10. Optimistic updates: edits appear immediately, roll back on failure
-```
-
-This is a fundamentally different kind of input. You have given the AI **ten concrete behaviors** to implement, not one fuzzy concept. The AI can address each scenario individually, and you can verify each one individually.
-
-But it gets better. After you provide the scenario list, ask the AI to do a **dry run**. This means asking it to mentally trace through the code for each scenario before writing or running anything. "Walk through scenario 6 — what happens when the session expires? Where is the draft stored? How is it restored?" The AI will trace the code path, and either confirm that it works or identify a gap. Those gaps are the bugs you would have found in QA *three days later*.
-
-I also ask the AI to generate additional scenarios I might have missed. "What edge cases am I not thinking about?" It will usually come back with three or four good ones — network failures, concurrent edits, empty states, permission boundaries.
-
-<Callout type="tip">
-**Try this:** For your next feature, write out five to ten specific user scenarios before writing any code. Include edge cases. Ask the AI to dry-run each scenario through the existing code before implementing anything.
-</Callout>
-
----
-
-## Principle 4: Complete the Feedback Loop
-
-This is the principle that separates developers who get *mediocre* results from AI and developers who get *great* ones.
-
-The number one reason AI produces bad code is that **it cannot see what it built**. Think about how you work as a developer. You write code, switch to the browser, click around, open the console, see an error, go back and fix it. That feedback loop — *write, see, fix* — is the core of software development. Without it, you are coding blind.
-
-Most people use AI in a mode where it writes code and then... that is it. The AI has no idea if its code works. It cannot see the UI it rendered. It cannot check the console for errors. It cannot click a button to see if the interaction feels right. It is writing code into a void and hoping for the best.
-
-Fix this by giving the AI **browser access**. I use Playwright MCP and Chrome DevTools MCP together. With these tools, the AI can navigate to your running application, interact with elements, read the console, inspect the DOM, and take screenshots. It can debug exactly like a human developer would — because it has the same tools a human developer would use.
+This is also why voice prompting has been so valuable for me. It makes it cheaper to provide the context I would otherwise compress away.
 
 <Callout type="note">
-Think of the AI as a **brilliant intern**. It has read every programming book, every Stack Overflow answer, every documentation page. It has more raw knowledge than anyone on your team. But it is still an intern. It needs the same tools and the same feedback loops as every other developer. You would never tell a human intern to write code without access to a browser. Do not do that to the AI either.
-</Callout>
-
-Once the feedback loop is complete, the AI enters a **self-correction cycle**. It writes code, checks the browser, sees an issue, fixes it, checks again. You can literally tell it: "Test all the scenarios from our list, fix any bugs you find, and report back when everything passes." Then go get coffee.
-
-<Callout type="tip">
-**Try this:** Set up Playwright MCP and ask your AI agent to navigate to your running localhost, test a feature, and report what it finds. Watch how its ability to self-correct transforms the quality of output.
+Do not optimize for sounding smart. Optimize for leaving less out.
 </Callout>
 
 ---
 
-## Principle 5: Write the Interface, Let AI Fill It In
+## 2. Understanding Comes Before Implementation
 
-Before I ask the AI to build anything complex, I spend **ten minutes writing a short specification document**. Not a PRD. Not a detailed design doc. Just a Markdown file with the *shape* of what I want.
+I do not like asking an agent to modify a codebase it has not inspected yet.
 
-Here is what that looks like in practice:
+So the first move is usually:
 
-```markdown
-## Document Editor — Block System
+> "Go read this area and explain back what you understand."
 
-### Directory Structure
-src/
-  editor/
-    blocks/
-      TextBlock.tsx      — Rich text editing with inline formatting
-      HeadingBlock.tsx   — H1-H3, extends TextBlock behavior
-      ImageBlock.tsx     — Upload, display, caption
-      CodeBlock.tsx      — Syntax highlighting, language selector
-    BlockRenderer.tsx    — Routes block type to component
-    useBlockOperations.ts — CRUD operations for blocks
+That one step prevents a huge amount of bad output.
 
-### Core Interface
-type Block = {
-  id: string
-  type: 'text' | 'heading' | 'image' | 'code'
-  content: unknown  // varies by type
-  order: number
-}
+It gives the model a chance to build a real mental map of the current system, and it gives me a chance to catch misunderstandings before they become diffs.
 
-### Key Behaviors
-- Pressing Enter at end of block creates new empty text block
-- Backspace at start of empty block deletes it and focuses previous
-- Drag handle on left side for reordering
-- Slash command menu for inserting new block types
-```
+This sounds simple because it is simple.
 
-This is not pseudocode. It is not implementation. It is an **interface** — the shape of the system, the contracts between pieces, the patterns it should follow. I am defining the *architecture*. The AI fills in the *implementation*.
+It is also one of the highest-return habits in the whole workflow.
 
-This works because AI excels at **pattern matching**. When you give it a clear structure — here are the files, here are the types, here is how they connect — it follows that structure precisely. The narrower the focus, the better the output. A vague request produces vague code. A **precise interface produces precise implementation**.
+---
 
-Think of it as the difference between telling someone "paint something nice" versus handing them a sketch and saying "fill this in with color." Both are creative tasks, but the second one has guardrails that lead to a much more predictable result.
+## 3. Scenarios Are the Contract
 
-<Callout type="tip">
-**Try this:** Before your next complex task, spend ten minutes writing a spec with directory structure, type definitions, and function signatures. Hand it to the AI and ask it to implement the system following your spec exactly.
+Features are vague.
+
+Scenarios are testable.
+
+That is the whole principle.
+
+I do not want the model optimizing against labels like:
+
+- "build a dashboard"
+- "make the form better"
+- "add CRUD"
+
+I want it optimizing against concrete scenarios:
+
+- user saves successfully
+- empty state appears with no records
+- expired session preserves draft
+- failed request rolls back optimistic UI
+
+Once the scenarios are explicit, everything gets easier:
+
+- implementation
+- dry runs
+- testing
+- review
+
+The scenarios become the contract.
+
+That is much better than trusting shared intuition.
+
+---
+
+## 4. Feedback Loops Matter More Than Models
+
+If the model cannot see what it built, it is coding blind.
+
+That is why I care so much about:
+
+- browser access
+- console access
+- tests
+- linting
+- type checking
+
+The best prompt in the world cannot compensate for a missing feedback loop forever.
+
+A strong model with no feedback will still drift.
+
+A decent model with strong feedback will often converge.
+
+This is why I tell people to invest in the loop before they invest in prompt tricks.
+
+The loop is where reliability comes from.
+
+---
+
+## 5. Write the Shape Before the Code
+
+Before large features, I increasingly write the structure I want before I ask for the implementation.
+
+Not a huge spec.
+
+Just enough to define:
+
+- files
+- interfaces
+- behaviors
+- constraints
+
+This works because the model is very good at filling in a constrained frame.
+
+It is much less reliable when it is forced to invent the frame too.
+
+If the architecture matters, I want the human to set it.
+
+If the implementation is straightforward inside that architecture, I am happy to delegate it.
+
+That is a much cleaner split of responsibilities.
+
+---
+
+## 6. Review Behavior First, Style Second
+
+One of the biggest mindset shifts in AI-assisted development is learning to stop over-indexing on whether the code "looks like something I would have written."
+
+That is a weak review standard.
+
+A stronger one is:
+
+- did it satisfy the scenarios?
+- did it preserve the constraints?
+- did it stay inside the right architecture?
+- did the tests and types support it?
+
+I still care about sane structure and readability.
+
+But style preferences are much lower on the stack now than they used to be.
+
+If the behavior is right, the tests are good, and the interfaces are clean, I do not need to relitigate every implementation choice just because I would have typed it differently.
+
+<Callout type="philosophy">
+The best AI review question is not "would I have written it this way?" It is "is this the right behavior, expressed safely?"
 </Callout>
 
 ---
 
-## Principle 6: Treat Prompts as Declarative Code
+## 7. Concurrency Is a Reward for Discipline
 
-This is the principle that changed how I think about software development *itself*.
+Parallel agents are powerful.
 
-If you have worked with React, you understand the difference between declarative and imperative programming. With the DOM API, you tell the browser exactly *how* to do things step by step: create an element, set its class, append it to the parent, add an event listener. With React, you declare *what* the UI should look like and React figures out the how.
+They are also dangerous if the foundation is weak.
 
-<Philosophy>
-Prompts are the new declarative layer. Code is the new imperative layer.
-</Philosophy>
+The reason multi-agent workflows work for me is not because I opened more windows.
 
-When I write a prompt, I am declaring *what* the system should do. When the AI writes code, it is implementing the imperative details of *how*. I do not need to think about the implementation any more than a React developer needs to think about individual DOM mutations. I describe the behavior I want, and the AI produces the code that achieves it.
+It is because the rest of the system was already disciplined enough to support concurrency:
 
-Here is a concrete example. I needed a GitHub Action that would analyze bundle sizes on every pull request — compare them against the main branch baseline, post a formatted comment with the diff, upload Rsdoctor reports as artifacts, and even run an AI review of the bundle changes. That is a **non-trivial pipeline**. It involves caching strategies, conditional job execution, artifact management, shell scripting, and the GitHub API.
+- bounded tasks
+- strong prompts
+- feedback loops
+- clean review habits
+- good codebase hygiene
 
-I described what I wanted in plain English. The AI produced roughly 300 lines of working YAML — the caching logic, the conditional steps, the artifact uploads, the comment posting. Here is a small section to give you the flavor:
+Only then does running multiple agents at once become a force multiplier instead of a mess multiplier.
 
-```yaml
-- name: Run bundle analysis
-  if: github.event_name == 'pull_request'
-  run: |
-    BASELINE_ARG=""
-    if [ -f ../../bundle-baseline.json ]; then
-      BASELINE_ARG="--baseline ../../bundle-baseline.json"
-    fi
-    bun scripts/analyze-bundle.js $BASELINE_ARG \
-      --output ../../bundle-report.json \
-      --markdown ../../bundle-comment.md
+That is why I think concurrency is the last principle, not the first.
 
-- name: Post PR comment
-  if: github.event_name == 'pull_request'
-  uses: marocchino/sticky-pull-request-comment@v2
-  with:
-    header: bundle-analysis
-    path: bundle-comment.md
-```
-
-This entire pipeline — including an Rsdoctor integration, source map explorer reports, cache management, and an AI-powered bundle review step that uses Claude to analyze the changes — was done in **about an hour**. Manually, I would have spent *days* reading GitHub Actions documentation, debugging YAML indentation, and figuring out the artifact API. Instead, I described the behavior I wanted, and the AI wrote the imperative implementation.
-
-<Philosophy>
-You are not a typist. You are an architect. Your job is to define what systems should do — the contracts, the behaviors, the constraints. The AI handles the implementation. That is not a demotion. It is a promotion.
-</Philosophy>
-
-<Callout type="tip">
-**Try this:** Next time you catch yourself writing boilerplate — a CI pipeline, a CRUD endpoint, a form with validation — stop. Describe what it should do in plain English instead. Let the AI write the imperative code. Compare the result to what you would have written by hand.
-</Callout>
+You earn it by making the single-agent loop solid first.
 
 ---
 
-## Principle 7: Let It Cook, Then Review Like a PR
+## The Pattern Underneath All Seven
 
-The instinct, when you first start using AI coding tools, is to watch every keystroke. The AI starts writing a file and you are reading along in real time, ready to interrupt at the first sign of trouble. This is the **worst possible way** to use these tools.
+If you zoom out, all seven principles are really saying the same thing:
 
-Here is what I do instead: I write a detailed prompt — four or five paragraphs, rich with context, clear on the expected behavior. Then I **walk away**. I go make coffee, answer emails, or switch to a different task with a different agent. I come back twenty or thirty minutes later and review what the AI produced.
+make intent explicit, make feedback fast, and make review disciplined.
 
-I review it exactly the way I would review a **pull request from a colleague**. I look at the git diff. I check the file structure. I read through the logic. And then I ask questions:
+That is the pattern.
 
-- "Have we handled the case where the network request fails mid-save?"
-- "Does this change affect the existing search functionality?"
-- "How do we make sure this works when the user has no permissions?"
+Different tools will come and go. Model quality will rise. Interfaces will change.
 
-This is the mindset shift. You are not a pair programmer hunched over a shared screen. You are a **senior engineer reviewing work** from a capable but imperfect team member. Your job is to catch the things the AI missed, to ask the questions it did not think to ask, and to steer the architecture in the right direction.
+But I do not think those three requirements go away:
 
-There is another technique I use heavily: **cross-model review**. After Claude writes something, I ask a different model — say, OpenAI's Codex — to review it. I frame it explicitly: "Claude wrote this code. Review it critically and point out any bugs or issues." The reviewing model, whether by design or happy accident, tends to be thorough and competitive. It finds real issues. I then feed those findings back to the original model: "Codex found these problems in your code. Address them." And the original model takes the feedback seriously.
+- explicit intent
+- fast feedback
+- disciplined review
 
-You can run this loop — *write, cross-review, fix, cross-review* — until the issues converge to zero. It is like having two senior engineers reviewing each other's work, except they never get tired and they never get defensive.
+That is why I trust these principles more than any specific product recommendation.
 
-<Callout type="tip">
-**Try this:** After your next AI coding session, resist the urge to watch in real time. Give a detailed prompt, walk away, come back, and review the git diff as if it were a PR from a junior engineer. Ask the agent to justify its choices. Then have a different model review the same code and see what it catches.
-</Callout>
+They are durable.
+
+They describe what has to be true for AI output to become shippable.
 
 ---
 
-## The Compounding Effect
+## If You Only Adopt Three
 
-These principles do not just add up. They **compound**.
+If seven feels like too much, start with these:
 
-**Voice dictation** gives you richer prompts. Richer prompts give the AI **better understanding**. Better understanding means the **scenarios** you define get implemented correctly the first time. A complete **feedback loop** catches the remaining issues. A well-defined **interface** keeps everything on track. **Declarative thinking** lets you focus on what matters instead of boilerplate. And a disciplined **review process** catches whatever slips through.
+1. Give more context than feels necessary.
+2. Make the model explain before it implements.
+3. Build a feedback loop with tests and runtime verification.
 
-Stack all seven together and you are not just using AI — you are operating a development system that produces work at a pace that would have been *unimaginable* a year ago.
+That alone will move you a long way.
 
-<Callout type="warning">
-None of this works without **codebase hygiene**. You need linting — I use Biome. You need type checking — TypeScript is non-negotiable. You need tests. You need version control. These tools complete the feedback loop for the AI. It can run the linter. It can check the types. It can run the tests. And when something fails, it can self-correct. Without these tools, you are relying on the AI to be perfect on the first try. It will not be.
-</Callout>
+Everything else stacks on top.
 
-One more thing: I run **three agents in parallel**. I clone my repository into three directories, run a separate Claude Code session in each, and work on three different tasks simultaneously. While Agent 1 is building a feature, I give a prompt to Agent 2. When Agent 1 comes back with questions, I switch to it while Agent 3 works. Three agents is the sweet spot — enough to stay constantly productive without drowning in context switches.
+And once you feel the difference, the rest of the workflow becomes much easier to justify.
 
-This is not about replacing developers. It is about **amplifying** them. The developers who learn this workflow — who build real intuition for directing AI agents — will build in months what used to take years. The ones who dismiss it will wonder how their peers suddenly got so fast.
-
-The tools will keep getting better. The models will keep getting smarter. But the principles — *rich context, phased execution, explicit scenarios, complete feedback loops, clear interfaces, declarative thinking, disciplined review* — those are durable. They work today and they will work with whatever model comes next.
-
-Start with **Principle 1**. Dictate your next prompt. See what happens.
+---

@@ -4,7 +4,7 @@ import Link from 'components/ui/link'
 import { OPEN_SOURCE_PROJECTS } from 'lib/projects'
 
 const OpenSourceProjects = () => (
-  <section className="mx-auto w-full max-w-3xl pt-4 pb-16">
+  <section className="mx-auto w-full max-w-3xl pt-4 pb-8">
     <h2 className="mx-auto mb-8 w-full max-w-lg font-semibold text-lg max-md:px-6 dark:text-dark-text">
       My Open Source Projects
     </h2>
@@ -13,7 +13,7 @@ const OpenSourceProjects = () => (
 
     <div className="text-center">
       <Link
-        className="my-4 text-sm underline hover:text-black dark:text-dark-text-secondary dark:hover:text-dark-text"
+        className="mt-4 inline-block text-sm underline hover:text-black dark:text-dark-text-secondary dark:hover:text-dark-text"
         href="/open-source"
       >
         See all my open source projects...

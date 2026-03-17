@@ -1,218 +1,353 @@
 ---
 title: "Power User Mode: Running 3 Agents in Parallel"
-date: 2026-04-14
-summary: "While one agent writes code, I'm already prompting the next two. Here's the multi-agent workflow that 3x'd my already-accelerated output, plus the cross-model review technique that catches bugs neither model finds alone."
+date: 2026-04-03
+series: "ai-workflows-modern-web-dev"
+seriesOrder: 5
+seriesTitle: "AI Workflows in Modern Web Development"
+summary: "The real power move is not one brilliant prompt. It is keeping three agents busy at once without losing review quality, architectural control, or your own sanity."
 tags: [AI, Workflow, Productivity, Developer Tools]
 ---
 
-While one agent writes code, I am already prompting the next two.
+The first time I ran three agents in parallel, it felt slightly absurd.
 
-That sentence either sounds like chaos or like the future of software development, depending on where you are in your AI-assisted development journey. Three months ago, I would have said chaos. Today, it is just how I work.
+Three terminals. Three copies of the repo. Three features moving at once. Questions arriving from one session while another was finishing a draft and a third was midway through a test pass.
 
-In the previous posts in this series, I covered voice-first prompting, completing the feedback loop, and thinking about prompts as declarative code. Each of those techniques individually made me significantly more productive. But the **compounding effect** of combining all of them -- and then running multiple agents in parallel -- is where things get genuinely surreal.
+It looked chaotic.
 
-I built things in the last three months that would have taken **years of focused effort** to build manually. A sync engine framework. A Notion-like document editor. A Figma-style interactive canvas. A full bundle analysis CI pipeline. These are not weekend projects. These are the kinds of systems that would each represent months of work for a senior engineer.
+It was also the first time I really felt the compounding effect of the workflow I had been building.
 
-Here is how the multi-agent workflow works, why three is the magic number, and what a truly productive day looks like with this setup.
+Voice prompting, scenarios, dry runs, browser feedback, spec-first direction, review discipline. Those techniques are useful individually. But once they are stable enough, something else becomes possible:
 
----
+parallel execution.
 
-## The Multi-Directory, Multi-Session Setup
-
-The setup is deceptively simple. I clone my repository into three separate directories:
-
-```
-~/projects/
-  myapp-1/    # Agent 1's workspace
-  myapp-2/    # Agent 2's workspace
-  myapp-3/    # Agent 3's workspace
-```
-
-Each directory is a full clone of the same repo, on the same branch (or different branches if I am working on unrelated features). I run a separate AI coding agent session in each -- typically Claude Code in separate terminal tabs or windows.
-
-That is the entire infrastructure. Three copies of the repo, three agent sessions, three terminal windows. **No special tooling. No orchestration framework. No shared state between agents.**
-
-The workflow looks like this:
-
-1. **Give Agent 1 a task.** A detailed, voice-dictated prompt with full context, scenarios, and specs. Hit enter.
-2. **While Agent 1 works, switch to Agent 2.** Give it a different task. Same level of detail.
-3. **While both are working, switch to Agent 3.** Give it a third task.
-4. **Agent 1 comes back with questions.** Switch to it, answer the questions, let it continue.
-5. **Agent 2 finishes a first draft.** Switch to it, review the output, give feedback.
-6. **Agent 3 hits an error.** Switch to it, provide context, let it retry.
-7. **Repeat.**
-
-You are essentially playing the role of a **tech lead managing three very fast, very knowledgeable junior developers**. You context-switch between them, but the context-switching cost is low because each task is well-defined (you wrote the spec), and you are reviewing and steering rather than implementing.
-
-<Mermaid chart="graph TD | Dev[You: Architect + Reviewer] -->|prompt| A1[Agent 1: Feature A] | Dev -->|prompt| A2[Agent 2: Feature B] | Dev -->|prompt| A3[Agent 3: Tests] | A1 -->|draft ready| Dev | A2 -->|questions| Dev | A3 -->|done| Dev | A1 -.->|cross-review| A2 | A2 -.->|cross-review| A1 | style Dev fill:transparent,stroke:#7c3aed,color:#7c3aed | style A1 fill:transparent,stroke:#6366f1,color:#6366f1 | style A2 fill:transparent,stroke:#8b5cf6,color:#8b5cf6 | style A3 fill:transparent,stroke:#a78bfa,color:#a78bfa" />
+That is where the productivity jump stops feeling incremental.
 
 ---
 
-## Why Three Is the Sweet Spot
+## Parallelism Is Not the First Trick. It Is the Last One
 
-I experimented with different numbers. One agent feels slow -- you spend too much time waiting. Two agents is good but leaves gaps. Four or more agents becomes genuinely chaotic; you cannot keep the context in your head and you start making mistakes in your steering.
+This is the important caveat.
 
-**Three agents is the sweet spot** for a few reasons:
+Running multiple agents at once is not the starting move. It is the thing you do once the single-agent workflow is already reliable.
 
-**The timing works out.** A typical AI agent task takes 5 to 30 minutes to produce a first draft, depending on complexity. With three agents, by the time you have finished prompting and doing initial review for agents 2 and 3, agent 1 is usually ready for your attention. The rotation keeps you **continuously productive** without dead time.
+If your prompts are vague, if your feedback loop is weak, if your review discipline is inconsistent, then three agents just multiplies the chaos.
 
-**Cognitive load stays manageable.** Three concurrent tasks is within most people's working memory capacity. You can keep the high-level state of each task in your head: "Agent 1 is building the notification panel, Agent 2 is refactoring the auth flow, Agent 3 is writing the API integration tests." Four tasks and the mental juggling starts causing errors.
+Parallelism only works when the earlier layers are already in place:
 
-**Git conflicts stay minimal.** With three agents working on the same codebase (or similar feature areas), you occasionally get merge conflicts when combining their work. Three agents produces a manageable number of conflicts. More than three, and conflict resolution starts eating into your productivity gains.
+- strong prompts
+- bounded tasks
+- scenario definitions
+- browser or test feedback
+- good review habits
 
-<Callout type="important">
-The key insight is that **you are the bottleneck, not the agents.** The agents can work as fast as the model allows. Your job is to keep them supplied with good prompts, timely feedback, and course corrections. Three agents is about the maximum you can keep well-fed without dropping quality.
-</Callout>
+Without those, you are not scaling throughput.
+
+You are scaling confusion.
 
 ---
 
-## Cross-Model Review: Claude Reviews Codex's Work
+## What the Setup Actually Looks Like
 
-Here is a technique that sounds ridiculous until you try it: **use one AI model to review another AI model's code.**
+The infrastructure is boring, which is part of why I like it.
 
-I routinely use Claude Code and OpenAI's Codex (or GPT-based coding agents) side by side. Not just for parallel tasks, but for *code review*. The workflow looks like this:
+I use multiple copies of the same repo in separate directories. You can do this with multiple clones, multiple worktrees, or any setup that gives each agent an isolated workspace.
 
-1. Claude writes a feature in directory 1.
-2. I copy the relevant files (or point to the diff) and give them to Codex in directory 2.
-3. My prompt to Codex: "Claude wrote this code. Review it critically and point out any bugs, edge cases, or architectural issues. Be thorough."
-4. Codex produces a review with a list of issues.
-5. I feed Codex's review back to Claude: "Codex reviewed your code and found these issues. Address each one."
-6. Claude fixes the issues.
-7. If needed, I send the fixed code back to Codex for a second pass.
-8. Repeat until the issues converge to zero.
+The point is simple:
 
-Why does this work so well? Two reasons.
+- each agent gets its own environment
+- each environment can change files freely
+- I can review and merge the results independently
 
-**First, different models have different blind spots.** Claude might miss a race condition that Codex catches, while Claude catches a type safety issue that Codex overlooks. Using multiple models gives you **broader coverage**, similar to how multiple human reviewers catch more bugs than a single reviewer.
+That is enough.
 
-**Second, the models get competitive.** This sounds anthropomorphic, and maybe it is, but the reviewing model tends to be *thorough* when it knows another model wrote the code. Frame it as "another AI wrote this, find the problems" and the reviewer goes deep. It is like the models want to prove they are better than the other one. Whether this is real or just confirmation bias on my part, the practical result is **extremely thorough code reviews**.
+You do not need some grand multi-agent orchestration platform.
+
+You need clean isolation and a human in the middle who still understands the architecture.
+
+---
+
+## The Real Bottleneck Is You
+
+This is the key insight people miss.
+
+The agents are usually not the bottleneck.
+
+You are.
+
+The model can keep generating, testing, and iterating. The limiting factor is your ability to:
+
+- frame the task clearly
+- answer clarifying questions
+- review the output
+- merge decisions back into the codebase
+
+That is why there is a natural ceiling.
+
+For me, three agents is usually the sweet spot.
+
+One agent leaves too much idle time.
+
+Two is good.
+
+Three keeps the pipeline full without destroying my attention.
+
+Beyond that, the context-switching cost starts eating the gain.
+
+The problem is no longer "can the agents work faster?"
+
+It is "can I still direct them well?"
+
+---
+
+## Why Three Works
+
+Three works because it fits the rhythm of the work.
+
+A typical cycle looks like this:
+
+1. Agent 1 gets a feature task.
+2. While Agent 1 explores or implements, I prompt Agent 2.
+3. While both are moving, I prompt Agent 3.
+4. By the time I have done that, Agent 1 usually has questions or a first draft.
+5. I switch, answer, review, or redirect.
+6. Then Agent 2 comes up.
+7. Then Agent 3.
+
+That rotation feels natural.
+
+There is almost always something ready for my attention, but not so much that I lose track of the state of each task.
+
+That balance matters more than some theoretical maximum number of sessions.
+
+You are not trying to maximize open windows.
+
+You are trying to maximize useful flow.
+
+---
+
+## The Type of Work That Parallelizes Best
+
+Not all tasks should be run in parallel.
+
+The best parallel tasks are:
+
+- well-bounded
+- low dependency on each other
+- easy to review independently
+- unlikely to produce heavy merge conflicts
+
+Examples:
+
+- one agent on a UI feature
+- one agent on tests
+- one agent on infra or supporting refactors
+
+Bad candidates:
+
+- three agents changing the same state model
+- multiple agents touching the same component tree heavily
+- tasks where the output of one task defines the shape of the next
+
+The rule is simple:
+
+parallelize implementation, not uncertainty.
+
+If the architecture is still moving, keep the work local or sequential until the direction is stable.
+
+---
+
+## The Best Role Split
+
+I have found that the cleanest parallel pattern is not "three random features."
+
+It is usually something like:
+
+- Agent 1: primary feature
+- Agent 2: adjacent feature or supporting refactor
+- Agent 3: tests, verification, or review
+
+That third slot is underrated.
+
+A lot of people imagine three builders.
+
+Often the highest leverage is actually:
+
+- one agent building
+- one agent building something else
+- one agent validating or reviewing
+
+That keeps the overall system healthier.
+
+Because the goal is not just more code.
+
+It is more trustworthy output.
+
+---
+
+## Cross-Model Review Is Where This Gets Interesting
+
+One of my favorite uses of parallelism is review by a different model.
+
+If one model produces the implementation, another can review the diff with a fresh set of blind spots.
+
+This works much better than it sounds.
+
+Not because the second model is magically objective, but because different models miss different things.
+
+So a common pattern for me is:
+
+1. Agent 1 implements the feature.
+2. Agent 2 reviews it critically.
+3. I feed the review back to Agent 1.
+4. Agent 1 fixes.
+5. Agent 3 validates in the browser or through tests.
+
+That is a powerful loop.
+
+And it is exactly the kind of loop you cannot easily run if you are thinking only in single-session terms.
+
+Parallelism is not just about more implementation.
+
+It is also about more feedback, sooner.
 
 <Callout type="tip">
-Frame your cross-model review prompt as: "Another AI wrote this code. Review it critically and find every bug, edge case, and architectural issue." The reviewing model will be noticeably more thorough than if you just asked it to "review this code."
-</Callout>
-
-The feedback loop between models converges surprisingly fast. Usually two rounds -- original code, review, fixes, second review -- is enough. By the second review, the issues are down to nitpicks and style preferences, not actual bugs.
-
----
-
-## The Essential Safety Net: Codebase Hygiene
-
-Running three agents in parallel against your codebase sounds terrifying if you do not have guardrails. What if one agent introduces a regression? What if two agents make conflicting changes to the same module? What if an agent "refactors" something into an incorrect state?
-
-This is where codebase hygiene goes from "nice to have" to **"non-negotiable."** Here is my setup:
-
-### Linting: Biome
-
-Every agent session runs in a codebase with Biome configured. Biome is fast (it is written in Rust), opinionated, and catches a wide range of issues -- from formatting inconsistencies to actual bugs like unreachable code, unused variables, and suspicious comparisons.
-
-The AI agents can (and do) run `bun x ultracite check` to verify their changes pass linting. If linting fails, they fix the issues before presenting the code for my review. This catches a massive category of low-level mistakes automatically.
-
-### TypeScript: Strict Mode
-
-TypeScript in strict mode is **the single most important safety net** for AI-assisted development. It is not just about catching type errors -- it is about giving the AI an automatic verification mechanism. After writing code, the agent can run `tsc --noEmit` and get immediate feedback about type mismatches, missing properties, incorrect function signatures, and null safety issues.
-
-Without TypeScript, the agent is *guessing*. With TypeScript, it has a **formal contract to verify against**. The difference in output quality is enormous.
-
-### Tests
-
-Tests are the **ultimate verification layer**. When an agent makes changes, it can run the test suite and immediately know whether it broke something. More importantly, when multiple agents are working in parallel and I need to merge their work, the test suite tells me whether the combined result is still correct.
-
-I ask agents to write tests as part of every feature implementation. Not after the feature is done -- *as part of the same task*. "Build the notification panel and write tests for all the scenarios I listed." The AI-generated tests are not always perfect, but they provide a baseline of coverage that makes parallel development safe.
-
-### Git
-
-This almost goes without saying, but: every agent works on a branch (or in a separate directory), and I use git diffs as my primary review tool. I **never** let agents push directly to main. Everything goes through a review workflow -- usually me reading the diff, but sometimes enhanced with cross-model review as described above.
-
-<Callout type="warning">
-The combination of linting + types + tests + git is what makes the parallel workflow possible. Without these guardrails, running three agents simultaneously would be reckless. With them, it is just efficient. Do not skip any of these layers.
+One of the best uses of a second agent is not writing code. It is reviewing code written by the first.
 </Callout>
 
 ---
 
-## The Compounding Effect
+## The Merge Problem
 
-Each technique I have covered in this series is valuable on its own. But the real power is in **the combination**. Let me trace through how they compound:
+The obvious downside of multi-agent work is integration.
 
-**Voice-first prompting** lets me write detailed, context-rich prompts in 60 seconds instead of 10 minutes. This means I can prompt three agents in the time it used to take me to prompt one.
+If multiple sessions are changing related parts of the codebase, merge friction can erase your gains quickly.
 
-**Scenario-driven development** gives each agent a clear definition of "done." This means I spend less time steering and more time on the next prompt.
+That is why codebase hygiene matters even more in parallel mode:
 
-**Complete feedback loops** (browser access, console debugging, dry runs) mean the agents self-correct more often, requiring less intervention from me.
+- linting
+- strict types
+- tests
+- disciplined diffs
 
-**Declarative specs** constrain the solution space, so the agents produce more architecturally consistent code that merges cleanly.
+These are not abstract best practices here. They are operational necessities.
 
-**Parallel execution** multiplies the output by 3x (or more, since some tasks proceed while I am reviewing others).
+I want every merge step to answer one question fast:
 
-**Cross-model review** catches bugs before they reach my review queue, reducing my review time.
+did the combined result stay correct?
 
-Individually, each technique might give a 2-3x improvement. Combined, **the effect is multiplicative**. I am genuinely producing an order of magnitude more working software than I was six months ago. This is not hype. I have the commit history to prove it.
+If the answer comes back quickly from types and tests, the workflow stays fluid.
+
+If not, you start burning time in reconciliation.
+
+The better your verification layer, the safer the parallelism.
 
 ---
 
-## What a Productive Day Looks Like
+## A Typical Day in This Mode
 
-Let me walk you through a typical day with this workflow.
+A good day in this workflow does not feel like "AI did everything."
 
-**9:00 AM -- Morning planning.** I review my task list and pick three things to work on. Ideally, they are independent enough that the agents will not step on each other's toes. Today: building a user settings page, adding email notification preferences, and writing integration tests for the API layer.
+It feels like I am constantly routing work through a system.
 
-**9:15 AM -- First round of prompts.** I dictate a detailed prompt for Agent 1 (settings page), including the spec document I wrote last night. I switch to Agent 2 and dictate the email preferences prompt. I switch to Agent 3 and dictate the test suite prompt with specific scenarios to cover.
+I spend most of my time on:
 
-**9:20 AM -- All three agents are working.** I take five minutes to review a colleague's PR, respond to a Slack message, or refill my coffee.
+- framing tasks
+- making architectural calls
+- answering clarifying questions
+- checking diffs
+- deciding what gets merged
 
-**9:30 AM -- Agent 3 finishes first** (tests are usually fastest). I review the test suite, notice it missed a few edge cases, dictate a follow-up prompt to add them. Agent 3 starts iterating.
+Very little of my time is spent typing implementation from scratch.
 
-**9:35 AM -- Agent 1 asks a clarifying question** about the settings page layout. I answer it and let it continue.
+That is the deeper shift.
 
-**9:45 AM -- Agent 2 finishes a first draft** of the email preferences feature. I review the diff. The architecture looks good but there is a bug in the unsubscribe flow. I describe the bug and let it fix it.
+Parallel agents make it impossible to ignore that your role has changed.
 
-**10:00 AM -- Agent 1 finishes the settings page.** I send the code to Agent 2 for cross-model review (Agent 2 is done with its fix and now has capacity). Agent 2 finds two issues. I feed them back to Agent 1.
+You stop thinking like a solo typist.
 
-**10:15 AM -- All three tasks are in good shape.** I merge the work from each directory, run the full test suite, fix one merge conflict, and commit.
+You start thinking like a reviewer, architect, and traffic controller.
 
-**10:30 AM -- Second round of tasks.** Three new prompts. The cycle continues.
+That is why I call this power user mode.
 
-By the end of the day, I have typically completed **six to nine substantial tasks**. Some of these are full feature implementations. Some are refactors. Some are test suites. Some are infrastructure like CI workflows. The volume is high, but more importantly, the quality is high because every piece has been reviewed, tested, and verified.
+Not because it is flashy.
 
-A year ago, three tasks per day was a good day. Now, **three tasks by lunch is normal**.
+Because it forces you into the higher-leverage parts of the job.
 
 ---
 
 ## The Honest Caveats
 
-I want to close this series with some honesty about the limitations and the reality of this workflow.
+This mode is not free.
 
-**AI still produces garbage sometimes.** This has not gone away. Some tasks just do not go well. The agent gets confused, goes in circles, or produces something fundamentally wrong. When this happens, I scrap the attempt, rethink my approach, and try again with a clearer spec. Not every task is a win.
+It has costs:
 
-**The learning curve is real.** It took me about three weeks to get comfortable with the parallel workflow. The first week I was constantly confused about which agent was doing what. By the third week, it felt natural. If you try this and it feels chaotic at first, that is normal.
+- more cognitive load
+- more merge discipline required
+- more temptation to let mediocre work slip through because throughput feels high
 
-**Not every task benefits from AI assistance.** Deeply creative work, high-level architecture decisions, understanding user needs, defining product strategy -- these are still *fundamentally human activities*. AI accelerates the *implementation* of decisions, not the decisions themselves.
+It can also create false confidence.
 
-**You need to stay sharp.** There is a risk of atrophying your own coding skills if you lean too heavily on AI. I make a deliberate effort to occasionally work without AI assistance, to stay fluent in the code I am supposedly reviewing. If you cannot understand what the AI is doing, you cannot effectively steer it.
+You can feel productive because many things are moving, while quality quietly drops.
 
-**Context limits are real.** Long agent sessions accumulate context and eventually degrade in quality. I start fresh sessions regularly -- sometimes every 30 to 45 minutes for complex tasks. A fresh session with a good prompt outperforms a stale session with lots of accumulated context almost every time.
+That is why I keep coming back to the same rule:
 
-<Callout type="tip">
-Start fresh agent sessions every 30-45 minutes for complex tasks. A clean session with a well-written prompt will consistently outperform a long-running session with accumulated context drift.
+throughput only matters if review quality holds.
+
+If I cannot still review sharply, then the extra agent is hurting, not helping.
+
+That is also why I think three is the practical ceiling for me most days.
+
+It is not a technical limit.
+
+It is an attention limit.
+
+---
+
+## When to Start Using This
+
+My advice is simple:
+
+Do not start here.
+
+Start parallel work only after:
+
+- you trust your single-agent prompting
+- you have a solid feedback loop
+- you know how to review AI output properly
+- your codebase has real guardrails
+
+Once those are true, add a second agent.
+
+Then maybe a third.
+
+Treat it like scaling any other system:
+
+stabilize first, then add concurrency.
+
+That approach is much less glamorous than jumping straight to five agents and a dashboard.
+
+It is also much more effective.
+
+<Callout type="philosophy">
+Parallel agents do not replace engineering judgment. They multiply the value of it.
 </Callout>
 
 ---
 
-## This Is the New Way
+## What Power User Mode Really Is
 
-Over the last three months, I built things I genuinely did not think I could build. Not because I lacked the knowledge -- I have been a frontend engineer for over a decade. But because the *time* required to implement complex systems was always the limiting factor. A sync engine is a months-long project. A rich document editor is a months-long project. An interactive canvas is a months-long project.
+From the outside, this workflow can look like "the AI is writing code while I supervise."
 
-With the workflow I have described in this series -- voice-first prompting, complete feedback loops, declarative specs, and parallel agents -- each of those became a *weeks-long project*. Not because the AI is magic, but because the AI handles the parts that are time-consuming but not intellectually difficult: the boilerplate, the API glue, the test generation, the pattern implementation, the debugging of straightforward issues.
+That description misses the point.
 
-<Philosophy>
-My job has shifted. I spend most of my day thinking about architecture, defining scenarios, writing specs, and reviewing code. Very little of my day is spent actually typing code into an editor. And my output has never been higher.
-</Philosophy>
+What is really happening is that I am decomposing engineering work into a set of clear, reviewable, testable streams and letting multiple agents execute inside those lanes at once.
 
-If you have read this entire series, here is my suggestion: **do not try to adopt everything at once.** Start with voice prompting for one week. Then add scenario-driven development. Then set up browser access for your agent. Then try running two agents in parallel. Build the habits incrementally.
+That is a very different thing.
 
-The tools will only get better. The models will only get smarter. The developers who learn to steer AI effectively now will have a **compounding advantage** that grows with every model improvement. You do not need to be an AI expert. You need to be a good communicator, a clear thinker, and a thorough reviewer.
+It is not laziness.
 
-Those have always been the most important engineering skills. Now they are also **the most leveraged ones**.
+It is leverage.
+
+And if the earlier parts of the workflow are strong enough, it works shockingly well.
 
 ---
-
-*This is the final post in the series. If you found it useful, the previous posts are: [Stop Typing, Start Talking](/blog/stop-typing-start-talking), [Complete the Loop](/blog/complete-the-loop), and [Prompts Are the New Declarative Code](/blog/prompts-are-declarative-code).*

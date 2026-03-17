@@ -1,5 +1,7 @@
 import Intro from 'components/home/intro'
 import OpenSourceProjects from 'components/home/open-source-projects'
+import RecentPosts from 'components/home/recent-posts'
+import { getBlogPosts } from 'lib/blog'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -45,16 +47,21 @@ const homePageJsonLd = {
   },
 }
 
-const HomePage = () => (
-  <>
-    <Intro />
-    <OpenSourceProjects />
-    <script
-      /* biome-ignore lint/security/noDangerouslySetInnerHtml: JSON-LD structured data */
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(homePageJsonLd) }}
-      type="application/ld+json"
-    />
-  </>
-)
+const HomePage = () => {
+  const recentPosts = getBlogPosts().slice(0, 3)
+
+  return (
+    <>
+      <Intro />
+      <OpenSourceProjects />
+      <RecentPosts posts={recentPosts} />
+      <script
+        /* biome-ignore lint/security/noDangerouslySetInnerHtml: JSON-LD structured data */
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(homePageJsonLd) }}
+        type="application/ld+json"
+      />
+    </>
+  )
+}
 
 export default HomePage

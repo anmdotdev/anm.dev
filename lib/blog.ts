@@ -37,6 +37,9 @@ export interface BlogPost {
   lastModified?: string
   readingTime: string
   scheduled: boolean
+  series?: string
+  seriesOrder?: number
+  seriesTitle?: string
   slug: string
   summary: string
   tags: string[]
@@ -82,6 +85,9 @@ export const getBlogPosts = (): BlogPost[] => {
         summary: data.summary || '',
         draft: isDraft,
         scheduled,
+        series: typeof data.series === 'string' ? data.series : undefined,
+        seriesOrder: typeof data.seriesOrder === 'number' ? data.seriesOrder : undefined,
+        seriesTitle: typeof data.seriesTitle === 'string' ? data.seriesTitle : undefined,
         readingTime: stats.text,
         content,
       }
@@ -121,9 +127,29 @@ export const getBlogPost = (slug: string): BlogPost | null => {
     summary: data.summary || '',
     draft: isDraft,
     scheduled,
+    series: typeof data.series === 'string' ? data.series : undefined,
+    seriesOrder: typeof data.seriesOrder === 'number' ? data.seriesOrder : undefined,
+    seriesTitle: typeof data.seriesTitle === 'string' ? data.seriesTitle : undefined,
     readingTime: stats.text,
     content,
   }
+}
+
+export const getSeriesPosts = (series: string): BlogPost[] => {
+  return getBlogPosts()
+    .filter((post) => post.series === series)
+    .sort((a, b) => {
+      if (a.seriesOrder != null && b.seriesOrder != null) {
+        return a.seriesOrder - b.seriesOrder
+      }
+      if (a.seriesOrder != null) {
+        return -1
+      }
+      if (b.seriesOrder != null) {
+        return 1
+      }
+      return new Date(a.date).getTime() - new Date(b.date).getTime()
+    })
 }
 
 export const getRelatedPosts = (

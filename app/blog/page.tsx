@@ -2,6 +2,14 @@ import Link from 'components/ui/link'
 import { formatDate, getBlogPosts } from 'lib/blog'
 import type { Metadata } from 'next'
 
+const formatMonthYear = (dateStr: string): string => {
+  const date = new Date(dateStr)
+  return date.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+  })
+}
+
 export const metadata: Metadata = {
   title: 'Blog - Anmol Mahatpurkar (@anmdotdev)',
   description:
@@ -18,16 +26,21 @@ export const metadata: Metadata = {
 const BlogPage = () => {
   const posts = getBlogPosts()
 
-  const postsByYear: Record<string, typeof posts> = {}
+  const sections: { label: string; posts: typeof posts }[] = []
   for (const post of posts) {
-    const year = new Date(post.date).getFullYear().toString()
-    if (!postsByYear[year]) {
-      postsByYear[year] = []
-    }
-    postsByYear[year].push(post)
-  }
+    const label = formatMonthYear(post.date)
+    const currentSection = sections.at(-1)
 
-  const years = Object.keys(postsByYear).sort((a, b) => Number(b) - Number(a))
+    if (!currentSection || currentSection.label !== label) {
+      sections.push({
+        label,
+        posts: [post],
+      })
+      continue
+    }
+
+    currentSection.posts.push(post)
+  }
 
   const blogJsonLd = {
     '@context': 'https://schema.org',
@@ -97,13 +110,13 @@ const BlogPage = () => {
         </div>
       ) : (
         <div className="space-y-10">
-          {years.map((year) => (
-            <div key={year}>
+          {sections.map((section) => (
+            <div key={section.label}>
               <h2 className="mb-4 font-semibold text-gray-dark text-xs uppercase tracking-wider dark:text-dark-text-muted">
-                {year}
+                {section.label}
               </h2>
               <div className="divide-y divide-gray-lighter dark:divide-dark-border">
-                {postsByYear[year].map((post) => (
+                {section.posts.map((post) => (
                   <article key={post.slug}>
                     <Link
                       className="group/post !flex !items-start !no-underline flex-col gap-1 py-4"

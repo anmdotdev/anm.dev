@@ -2,10 +2,10 @@ interface PhilosophyProps {
   children: React.ReactNode
 }
 
-const Philosophy = ({ children }: PhilosophyProps) => (
-  <figure className="philosophy">
-    <blockquote>{children}</blockquote>
-  </figure>
-)
+import Callout from './callout'
+
+const Philosophy = ({ children }: PhilosophyProps) => {
+  return <Callout type="philosophy">{children}</Callout>
+}
 
 export default Philosophy
