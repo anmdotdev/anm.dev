@@ -1,4 +1,4 @@
-import { getAllTags, getBlogPosts } from 'lib/blog'
+import { getAllTags, getBlogPosts, getTagPath } from 'lib/blog'
 
 export const GET = () => {
   const posts = getBlogPosts()
@@ -11,9 +11,7 @@ export const GET = () => {
     )
     .join('\n')
 
-  const tagList = tags
-    .map((tag) => `- [${tag}](https://anm.dev/blog/tag/${encodeURIComponent(tag.toLowerCase())})`)
-    .join('\n')
+  const tagList = tags.map((tag) => `- [${tag}](https://anm.dev${getTagPath(tag)})`).join('\n')
 
   const lastUpdated = posts.length > 0 ? posts[0].date : new Date().toISOString().split('T')[0]
 
@@ -94,6 +92,10 @@ Every page includes JSON-LD structured data (Schema.org):
 
 - [RSS Feed](https://anm.dev/feed.xml): XML RSS 2.0 feed with full content
 - [JSON Feed](https://anm.dev/feed.json): JSON Feed 1.1
+
+## Publishing Notes
+
+- Scheduled and draft content is intentionally omitted from these public AI endpoints until published.
 
 ## Contact
 

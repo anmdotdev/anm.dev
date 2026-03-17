@@ -2,6 +2,10 @@ import OpenSourceProject from 'components/open-source/open-source-project'
 import { OPEN_SOURCE_PROJECTS } from 'lib/projects'
 import type { Metadata } from 'next'
 
+export const revalidate = 300
+
+const PROGRAMMING_LANGUAGES = new Set(['JavaScript', 'TypeScript', 'HTML', 'CSS'])
+
 export const metadata: Metadata = {
   title: 'Open Source Projects',
   description:
@@ -12,6 +16,26 @@ export const metadata: Metadata = {
     description:
       'Open source projects by Anmol Mahatpurkar — React libraries, developer tools, and more.',
     url: 'https://anm.dev/open-source',
+    type: 'website',
+    siteName: 'anmdotdev',
+    locale: 'en_US',
+    images: [
+      {
+        url: 'https://anm.dev/opengraph-image',
+        width: 1200,
+        height: 630,
+        alt: 'Open source projects by Anmol Mahatpurkar',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Open Source Projects - Anmol Mahatpurkar',
+    description:
+      'Open source projects by Anmol Mahatpurkar — React libraries, developer tools, and more.',
+    creator: '@anmdotdev',
+    site: '@anmdotdev',
+    images: ['https://anm.dev/opengraph-image'],
   },
 }
 
@@ -44,7 +68,15 @@ const projectsJsonLd = {
         name: project.name,
         description: project.description,
         codeRepository: `https://github.com/${project.githubOrgName}/${project.githubRepoName}`,
-        programmingLanguage: project.tags.map((t) => t.label),
+        ...(project.tags.map((tag) => tag.label).filter((tag) => PROGRAMMING_LANGUAGES.has(tag))
+          .length > 0
+          ? {
+              programmingLanguage: project.tags
+                .map((tag) => tag.label)
+                .filter((tag) => PROGRAMMING_LANGUAGES.has(tag)),
+            }
+          : {}),
+        keywords: project.tags.map((tag) => tag.label).join(', '),
         author: {
           '@type': 'Person',
           name: 'Anmol Mahatpurkar',
@@ -59,12 +91,19 @@ const OpenSourcePage = () => (
     <h1 className="mx-auto mb-2 w-full max-w-lg text-center font-semibold text-lg dark:text-dark-text">
       My Open Source Projects
     </h1>
+    <p className="mx-auto mb-8 max-w-2xl px-6 text-center text-gray-dark text-sm leading-relaxed dark:text-dark-text-secondary">
+      A collection of React libraries, developer tools, and frontend experiments I have built in
+      public. Each project reflects the kind of product engineering, design systems work, and
+      tooling I care about.
+    </p>
 
     {OPEN_SOURCE_PROJECTS.map((project) => (
       <OpenSourceProject
         key={project.name}
         {...project}
         className="border-gray-lighter border-b py-6 last:border-b-0 dark:border-dark-border"
+        headingLevel="h2"
+        priority={project.name === OPEN_SOURCE_PROJECTS[0]?.name}
       />
     ))}
 

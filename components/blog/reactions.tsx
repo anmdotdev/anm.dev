@@ -160,7 +160,7 @@ const Reactions = () => {
     <div className="flex items-center gap-1.5">
       <div className="relative">
         <button
-          aria-label="Like this post"
+          aria-label={`Like this post (${likes})`}
           className="flex items-center gap-1.5 rounded-md border border-gray-lighter bg-white px-2 py-1.5 text-xs transition-colors hover:bg-gray-lightest active:scale-95 dark:border-dark-border dark:bg-dark-surface dark:hover:bg-dark-surface-hover"
           onClick={() => handleClick('like')}
           type="button"
@@ -182,7 +182,9 @@ const Reactions = () => {
       </div>
 
       <button
-        aria-label={userDisliked ? 'Remove dislike' : 'Dislike this post'}
+        aria-label={
+          userDisliked ? `Remove dislike (${dislikes})` : `Dislike this post (${dislikes})`
+        }
         aria-pressed={userDisliked}
         className={`flex items-center gap-1.5 rounded-md border px-2 py-1.5 text-xs transition-colors active:scale-95 ${
           userDisliked

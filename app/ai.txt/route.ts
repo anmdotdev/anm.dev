@@ -1,8 +1,14 @@
-import { getAllTags, getBlogPosts } from 'lib/blog'
+import { getAllTags, getBlogPosts, getTagPath } from 'lib/blog'
 
 export const GET = () => {
   const posts = getBlogPosts()
   const tags = getAllTags()
+  const availableSlugs =
+    posts.length > 0 ? posts.map((post) => post.slug).join(', ') : 'none currently published'
+  const availableTopics =
+    tags.length > 0
+      ? tags.map((tag) => `- ${tag}: https://anm.dev${getTagPath(tag)}`).join('\n')
+      : '- none currently published'
 
   const content = `# AI Content Access Policy — anm.dev
 
@@ -34,13 +40,13 @@ This file describes how AI systems can access and use content from anm.dev.
 ### Blog Content API
 - Raw markdown: GET https://anm.dev/api/blog/{slug}/raw
   - Returns: text/markdown
-  - Available slugs: ${posts.map((p) => p.slug).join(', ')}
+  - Available slugs: ${availableSlugs}
 - Search: GET https://anm.dev/api/search?q={query}
   - Returns: application/json with ranked results
   - Searches: titles, summaries, tags, and content
 
 ### Available Topics
-${tags.map((tag) => `- ${tag}: https://anm.dev/blog/tag/${encodeURIComponent(tag.toLowerCase())}`).join('\n')}
+${availableTopics}
 
 ## Content Negotiation
 
@@ -51,6 +57,9 @@ Blog post pages support content negotiation via the Accept header:
 
 ## Structured Data
 All pages include Schema.org JSON-LD structured data.
+
+## Publishing Notes
+- Scheduled and draft content is intentionally omitted from these public AI endpoints until published.
 
 ## Contact
 - Author: Anmol Mahatpurkar

@@ -8,6 +8,10 @@ const Timeline = () => (
     <h1 className="mb-12 text-center font-bold text-4xl text-black dark:text-dark-text">
       My Journey
     </h1>
+    <p className="mx-auto mb-12 max-w-3xl text-center text-gray-dark text-sm leading-relaxed dark:text-dark-text-secondary">
+      A timeline of the roles, projects, and career shifts that shaped my path from game development
+      into frontend architecture, staff-level engineering, and product-focused technical leadership.
+    </p>
 
     {/* Timeline */}
     <div className="relative">
@@ -22,7 +26,9 @@ const Timeline = () => (
             {/* Era marker */}
             <div className="relative z-10 mb-8 flex items-center max-md:ml-12 md:justify-center">
               <div className="rounded-full border border-gray-lighter bg-white px-5 py-2.5 shadow-sm dark:border-dark-border dark:bg-dark-surface">
-                <p className="font-semibold text-black text-sm dark:text-dark-text">{era.label}</p>
+                <h2 className="font-semibold text-black text-sm dark:text-dark-text">
+                  {era.label}
+                </h2>
                 <p className="text-center font-mono text-gray text-xs tracking-wider dark:text-dark-text-muted">
                   {era.years}
                 </p>

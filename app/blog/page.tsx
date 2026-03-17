@@ -1,6 +1,8 @@
 import Link from 'components/ui/link'
-import { formatDate, getBlogPosts } from 'lib/blog'
+import { formatDate, getArticleDateTime, getBlogPosts } from 'lib/blog'
 import type { Metadata } from 'next'
+
+export const revalidate = 300
 
 const formatMonthYear = (dateStr: string): string => {
   const date = new Date(dateStr)
@@ -20,6 +22,26 @@ export const metadata: Metadata = {
     description:
       'Thoughts on frontend engineering, TypeScript, React, developer tools, AI prompts, and building for the web.',
     url: 'https://anm.dev/blog',
+    type: 'website',
+    siteName: 'anmdotdev',
+    locale: 'en_US',
+    images: [
+      {
+        url: 'https://anm.dev/opengraph-image',
+        width: 1200,
+        height: 630,
+        alt: 'anmdotdev blog',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Blog - Anmol Mahatpurkar (@anmdotdev)',
+    description:
+      'Thoughts on frontend engineering, TypeScript, React, developer tools, AI prompts, and building for the web.',
+    creator: '@anmdotdev',
+    site: '@anmdotdev',
+    images: ['https://anm.dev/opengraph-image'],
   },
 }
 
@@ -65,7 +87,7 @@ const BlogPage = () => {
       '@type': 'BlogPosting',
       '@id': `https://anm.dev/blog/${post.slug}#article`,
       headline: post.title,
-      datePublished: post.date,
+      datePublished: getArticleDateTime(post),
       url: `https://anm.dev/blog/${post.slug}`,
       description: post.summary,
       inLanguage: 'en-US',

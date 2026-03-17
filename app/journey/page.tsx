@@ -1,6 +1,8 @@
 import Timeline from 'components/journey/timeline'
 import type { Metadata } from 'next'
 
+export const revalidate = 300
+
 export const metadata: Metadata = {
   title: 'Journey',
   description:
@@ -11,6 +13,26 @@ export const metadata: Metadata = {
     description:
       'My professional journey — 10+ years of frontend engineering, from game development to staff engineer at Airbase (Paylocity).',
     url: 'https://anm.dev/journey',
+    type: 'website',
+    siteName: 'anmdotdev',
+    locale: 'en_US',
+    images: [
+      {
+        url: 'https://anm.dev/opengraph-image',
+        width: 1200,
+        height: 630,
+        alt: 'Professional journey of Anmol Mahatpurkar',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Journey - Anmol Mahatpurkar',
+    description:
+      'My professional journey — 10+ years of frontend engineering, from game development to staff engineer at Airbase (Paylocity).',
+    creator: '@anmdotdev',
+    site: '@anmdotdev',
+    images: ['https://anm.dev/opengraph-image'],
   },
 }
 

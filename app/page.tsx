@@ -4,6 +4,8 @@ import RecentPosts from 'components/home/recent-posts'
 import { getBlogPosts } from 'lib/blog'
 import type { Metadata } from 'next'
 
+export const revalidate = 300
+
 export const metadata: Metadata = {
   title: 'Anmol Mahatpurkar - Staff Frontend Engineer - @anmdotdev',
   description:
@@ -14,6 +16,25 @@ export const metadata: Metadata = {
     description:
       'Staff Frontend Engineer with 10+ years of experience building design systems, web & mobile apps with React and TypeScript.',
     url: 'https://anm.dev',
+    type: 'website',
+    siteName: 'anmdotdev',
+    locale: 'en_US',
+    images: [
+      {
+        url: 'https://anm.dev/opengraph-image',
+        width: 1200,
+        height: 630,
+        alt: 'anmdotdev - Anmol Mahatpurkar',
+      },
+    ],
+  },
+  twitter: {
+    title: 'Anmol Mahatpurkar - @anmdotdev',
+    description: 'Staff Frontend Engineer building for the web with React & TypeScript.',
+    site: '@anmdotdev',
+    card: 'summary_large_image',
+    creator: '@anmdotdev',
+    images: ['https://anm.dev/opengraph-image'],
   },
 }
 

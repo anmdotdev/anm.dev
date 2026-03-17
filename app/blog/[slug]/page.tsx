@@ -9,7 +9,17 @@ import ShareButton from 'components/blog/share-button'
 import TableOfContents from 'components/blog/table-of-contents'
 import mdxComponents from 'components/mdx/mdx-components'
 import Link from 'components/ui/link'
-import { formatDate, getBlogPost, getBlogPosts, getRelatedPosts, getSeriesPosts } from 'lib/blog'
+import {
+  formatDate,
+  getArticleDateTime,
+  getArticleModifiedTime,
+  getBlogPost,
+  getBlogPosts,
+  getRelatedPosts,
+  getSeriesPosts,
+  getTagPath,
+  SCHEDULED_CONTENT_PREVIEW_ENABLED,
+} from 'lib/blog'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { compileMDX } from 'next-mdx-remote/rsc'
@@ -17,10 +27,18 @@ import rehypePrettyCode from 'rehype-pretty-code'
 
 const WHITESPACE_REGEX = /\s+/
 const HEADING_REGEX = /^(#{2,3})\s+(.+)$/gm
+export const revalidate = 300
+export const dynamicParams = true
 
 interface BlogPostPageProps {
   params: Promise<{ slug: string }>
 }
+
+const getWordCount = (content: string): number =>
+  content
+    .split(WHITESPACE_REGEX)
+    .map((word) => word.trim())
+    .filter(Boolean).length
 
 const extractHeadings = (content: string) => {
   const headings: { level: number; text: string; id: string }[] = []
@@ -43,7 +61,7 @@ const extractHeadings = (content: string) => {
 }
 
 export const generateStaticParams = () => {
-  const posts = getBlogPosts()
+  const posts = getBlogPosts({ includeScheduled: SCHEDULED_CONTENT_PREVIEW_ENABLED })
   return posts.map((post) => ({ slug: post.slug }))
 }
 
@@ -57,7 +75,6 @@ export const generateMetadata = async ({ params }: BlogPostPageProps): Promise<M
   return {
     title: post.title,
     description: post.summary || `${post.title} - A blog post by Anmol Mahatpurkar`,
-    keywords: post.tags,
     alternates: {
       canonical: `/blog/${slug}`,
       types: {
@@ -70,19 +87,39 @@ export const generateMetadata = async ({ params }: BlogPostPageProps): Promise<M
       title: post.title,
       description: post.summary || `${post.title} - A blog post by Anmol Mahatpurkar`,
       type: 'article',
-      publishedTime: post.date,
-      modifiedTime: post.lastModified || post.date,
+      publishedTime: getArticleDateTime(post),
+      modifiedTime: getArticleModifiedTime(post),
       url: `https://anm.dev/blog/${slug}`,
       authors: ['Anmol Mahatpurkar'],
       tags: post.tags,
       section: 'Frontend Engineering',
       locale: 'en_US',
+      siteName: 'anmdotdev',
+      images: [
+        {
+          url: `https://anm.dev/blog/${slug}/opengraph-image`,
+          width: 1200,
+          height: 630,
+          alt: post.title,
+        },
+      ],
     },
     twitter: {
       card: 'summary_large_image',
       title: post.title,
       description: post.summary || `${post.title} - A blog post by Anmol Mahatpurkar`,
+      creator: '@anmdotdev',
+      site: '@anmdotdev',
+      images: [`https://anm.dev/blog/${slug}/opengraph-image`],
     },
+    ...(post.scheduled
+      ? {
+          robots: {
+            index: false,
+            follow: false,
+          },
+        }
+      : {}),
   }
 }
 
@@ -94,8 +131,16 @@ const BlogPostPage = async ({ params }: BlogPostPageProps) => {
   }
 
   const headings = extractHeadings(post.content)
-  const relatedPosts = getRelatedPosts(slug, post.tags)
-  const seriesPosts = post.series ? getSeriesPosts(post.series) : []
+  const includeScheduledSeriesPreview = post.scheduled
+  const relatedPosts = getRelatedPosts(slug, post.tags, 3, {
+    includeScheduled: includeScheduledSeriesPreview,
+  })
+  const seriesPosts = post.series
+    ? getSeriesPosts(post.series, {
+        includeScheduled: includeScheduledSeriesPreview,
+      })
+    : []
+  const wordCount = getWordCount(post.plainText)
 
   const { content } = await compileMDX({
     source: post.content,
@@ -108,7 +153,7 @@ const BlogPostPage = async ({ params }: BlogPostPageProps) => {
             {
               theme: {
                 dark: 'github-dark-dimmed',
-                light: 'github-light',
+                light: 'github-light-high-contrast',
               },
               keepBackground: false,
             },
@@ -118,7 +163,7 @@ const BlogPostPage = async ({ params }: BlogPostPageProps) => {
     },
   })
 
-  const dateModified = post.lastModified || post.date
+  const dateModified = getArticleModifiedTime(post)
 
   const hasToc = headings.length > 2
 
@@ -133,7 +178,7 @@ const BlogPostPage = async ({ params }: BlogPostPageProps) => {
             data-article-slug={slug}
             data-article-tags={post.tags.join(',')}
             data-article-type="blog-post"
-            data-article-word-count={post.content.split(WHITESPACE_REGEX).length}
+            data-article-word-count={wordCount}
           >
             <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <nav aria-label="Breadcrumb" className="text-gray text-xs dark:text-dark-text-muted">
@@ -163,8 +208,8 @@ const BlogPostPage = async ({ params }: BlogPostPageProps) => {
             )}
             {post.scheduled && (
               <div className="mb-6 rounded-md border border-blue-200 bg-blue-50 px-4 py-3 text-blue-800 text-sm dark:border-blue-800/40 dark:bg-blue-900/20 dark:text-blue-400">
-                This post is scheduled for {formatDate(post.date)} and is only visible in
-                development.
+                This post is scheduled for {formatDate(post.date)} and is currently visible as a
+                preview.
               </div>
             )}
 
@@ -173,7 +218,7 @@ const BlogPostPage = async ({ params }: BlogPostPageProps) => {
                 {post.title}
               </h1>
               <div className="flex flex-wrap items-center gap-2 text-gray-dark text-xs dark:text-dark-text-muted">
-                <time dateTime={post.date}>{formatDate(post.date)}</time>
+                <time dateTime={getArticleDateTime(post)}>{formatDate(post.date)}</time>
                 <span aria-hidden="true">·</span>
                 <span>{post.readingTime}</span>
                 {post.tags.length > 0 && (
@@ -184,7 +229,7 @@ const BlogPostPage = async ({ params }: BlogPostPageProps) => {
                         <span key={tag}>
                           <Link
                             className="hover:text-black dark:hover:text-dark-text"
-                            href={`/blog/tag/${encodeURIComponent(tag.toLowerCase())}`}
+                            href={getTagPath(tag)}
                             showIcon="never"
                           >
                             {tag}
@@ -226,7 +271,7 @@ const BlogPostPage = async ({ params }: BlogPostPageProps) => {
                 '@type': 'BlogPosting',
                 '@id': `https://anm.dev/blog/${slug}#article`,
                 headline: post.title,
-                datePublished: post.date,
+                datePublished: getArticleDateTime(post),
                 dateModified,
                 author: {
                   '@type': 'Person',
@@ -252,7 +297,7 @@ const BlogPostPage = async ({ params }: BlogPostPageProps) => {
                 },
                 image: `https://anm.dev/blog/${slug}/opengraph-image`,
                 thumbnailUrl: `https://anm.dev/blog/${slug}/opengraph-image`,
-                wordCount: post.content.split(WHITESPACE_REGEX).length,
+                wordCount,
                 keywords: post.tags,
                 inLanguage: 'en-US',
                 articleSection: 'Frontend Engineering',

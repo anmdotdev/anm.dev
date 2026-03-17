@@ -56,10 +56,10 @@
   --color-error-lightest: #fef1f2;
 
   --color-gray-darkest: #444;
-  --color-gray-darker: #666;
-  --color-gray-dark: #777;
-  --color-gray: #999;
-  --color-gray-light: #bbb;
+  --color-gray-darker: #5c5c5c;
+  --color-gray-dark: #6a6a6a;
+  --color-gray: #6f6f6f;
+  --color-gray-light: #a8a8a8;
   --color-gray-lighter: #ddd;
   --color-gray-lightest: #f6f7f8;
 

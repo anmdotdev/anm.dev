@@ -85,7 +85,7 @@ const EntryCard = ({
     <p className="mb-2 text-gray-darker text-sm dark:text-dark-text-secondary">
       {entry.companyUrl ? (
         <Link
-          className="text-link dark:text-dark-link"
+          className="text-link underline decoration-current underline-offset-2 dark:text-dark-link"
           external
           href={entry.companyUrl}
           showIcon="never"

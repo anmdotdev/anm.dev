@@ -4,7 +4,7 @@ const robots = (): MetadataRoute.Robots => ({
   rules: [
     {
       userAgent: '*',
-      allow: ['/', '/api/search', '/api/openapi.json'],
+      allow: ['/', '/api/search', '/api/openapi.json', '/api/blog/'],
       disallow: '/api/',
     },
     {

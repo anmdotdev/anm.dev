@@ -1,9 +1,13 @@
-import { getBlogPosts } from 'lib/blog'
+import { getArticleModifiedTime, getBlogPosts } from 'lib/blog'
+
+export const revalidate = 300
 
 export const GET = () => {
   const posts = getBlogPosts()
   const lastBuildDate =
-    posts.length > 0 ? new Date(posts[0].date).toUTCString() : new Date().toUTCString()
+    posts.length > 0
+      ? new Date(getArticleModifiedTime(posts[0])).toUTCString()
+      : new Date().toUTCString()
 
   const items = posts
     .map(
@@ -12,11 +16,11 @@ export const GET = () => {
       <title>${escapeXml(post.title)}</title>
       <link>https://anm.dev/blog/${post.slug}</link>
       <guid isPermaLink="true">https://anm.dev/blog/${post.slug}</guid>
-      <pubDate>${new Date(post.date).toUTCString()}</pubDate>
+      <pubDate>${new Date(post.dateTime).toUTCString()}</pubDate>
       <description>${escapeXml(post.summary)}</description>
       <dc:creator>Anmol Mahatpurkar</dc:creator>
 ${post.tags.map((tag) => `      <category>${escapeXml(tag)}</category>`).join('\n')}
-      <content:encoded><![CDATA[${post.content}]]></content:encoded>
+      <content:encoded><![CDATA[${post.feedHtml}]]></content:encoded>
     </item>`,
     )
     .join('')

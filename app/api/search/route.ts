@@ -17,7 +17,7 @@ export const GET = (request: NextRequest) => {
     .map((post) => {
       const titleLower = post.title.toLowerCase()
       const summaryLower = (post.summary || '').toLowerCase()
-      const contentLower = post.content.toLowerCase()
+      const contentLower = post.plainText.toLowerCase()
       const tagsLower = post.tags.map((t) => t.toLowerCase())
 
       let score = 0

@@ -2,6 +2,8 @@ import { getBlogPosts } from 'lib/blog'
 import { JOURNEY_ACHIEVEMENTS, JOURNEY_ENTRIES } from 'lib/journey'
 import { OPEN_SOURCE_PROJECTS } from 'lib/projects'
 
+export const revalidate = 300
+
 export const GET = () => {
   const posts = getBlogPosts()
 
@@ -15,7 +17,7 @@ export const GET = () => {
 - Reading Time: ${post.readingTime}
 - Summary: ${post.summary}
 
-${post.content}
+${post.plainText}
 
 ---`,
     )
@@ -71,6 +73,11 @@ ${blogContent || 'No blog posts published yet.'}
 - JSON Feed: https://anm.dev/feed.json
 - Sitemap: https://anm.dev/sitemap.xml
 - LLM summary: https://anm.dev/llms.txt
+
+## Publishing Notes
+
+Only published content is included here. Scheduled and draft posts remain excluded until their
+publish date.
 
 ## Contact & Social
 

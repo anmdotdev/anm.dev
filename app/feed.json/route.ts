@@ -1,5 +1,7 @@
 import { getBlogPosts } from 'lib/blog'
 
+export const revalidate = 300
+
 export const GET = () => {
   const posts = getBlogPosts()
 
@@ -23,10 +25,13 @@ export const GET = () => {
       id: `https://anm.dev/blog/${post.slug}`,
       url: `https://anm.dev/blog/${post.slug}`,
       title: post.title,
-      content_text: post.content,
+      content_html: post.feedHtml,
+      content_text: post.plainText,
       summary: post.summary,
-      date_published: new Date(post.date).toISOString(),
-      ...(post.lastModified ? { date_modified: new Date(post.lastModified).toISOString() } : {}),
+      date_published: new Date(post.dateTime).toISOString(),
+      ...(post.lastModifiedTime
+        ? { date_modified: new Date(post.lastModifiedTime).toISOString() }
+        : {}),
       tags: post.tags,
       image: `https://anm.dev/blog/${post.slug}/opengraph-image`,
       authors: [

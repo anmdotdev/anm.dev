@@ -1,7 +1,20 @@
 import Link from 'components/ui/link'
-import { formatDate, getAllTags, getBlogPosts } from 'lib/blog'
+import {
+  formatDate,
+  getAllTags,
+  getArticleDateTime,
+  getBlogPosts,
+  getTagCounts,
+  getTagPath,
+  getTagSlug,
+  MIN_INDEXABLE_TAG_POSTS,
+  resolveTag,
+} from 'lib/blog'
 import type { Metadata } from 'next'
-import { notFound } from 'next/navigation'
+import { notFound, permanentRedirect } from 'next/navigation'
+
+export const revalidate = 300
+export const dynamicParams = true
 
 interface TagPageProps {
   params: Promise<{ tag: string }>
@@ -9,34 +22,55 @@ interface TagPageProps {
 
 export const generateStaticParams = () => {
   const tags = getAllTags()
-  return tags.map((tag) => ({ tag: encodeURIComponent(tag.toLowerCase()) }))
+  return tags.map((tag) => ({ tag: getTagSlug(tag) }))
 }
 
 export const generateMetadata = async ({ params }: TagPageProps): Promise<Metadata> => {
   const { tag } = await params
-  const decodedTag = decodeURIComponent(tag)
-  const posts = getBlogPosts().filter((post) =>
-    post.tags.some((t) => t.toLowerCase() === decodedTag.toLowerCase()),
-  )
+  const resolvedTag = resolveTag(decodeURIComponent(tag))
+  const posts = resolvedTag
+    ? getBlogPosts().filter((post) => post.tags.some((t) => t === resolvedTag))
+    : []
 
-  if (posts.length === 0) {
+  if (!resolvedTag || posts.length === 0) {
     return {}
   }
 
-  const title = `Articles tagged "${decodedTag}"`
-  const description = `Blog posts about ${decodedTag} by Anmol Mahatpurkar — frontend engineering, React, TypeScript, and more.`
+  const tagSlug = getTagSlug(resolvedTag)
+  const title = `Articles tagged "${resolvedTag}"`
+  const description = `Blog posts about ${resolvedTag} by Anmol Mahatpurkar — frontend engineering, React, TypeScript, and more.`
+  const isIndexable = posts.length >= MIN_INDEXABLE_TAG_POSTS
 
   return {
     title,
     description,
-    alternates: { canonical: `/blog/tag/${tag}` },
+    alternates: { canonical: `/blog/tag/${tagSlug}` },
     openGraph: {
       title,
       description,
-      url: `https://anm.dev/blog/tag/${tag}`,
+      url: `https://anm.dev/blog/tag/${tagSlug}`,
+      type: 'website',
+      siteName: 'anmdotdev',
+      locale: 'en_US',
+      images: [
+        {
+          url: 'https://anm.dev/opengraph-image',
+          width: 1200,
+          height: 630,
+          alt: `Articles tagged ${resolvedTag}`,
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      creator: '@anmdotdev',
+      site: '@anmdotdev',
+      images: ['https://anm.dev/opengraph-image'],
     },
     robots: {
-      index: true,
+      index: isIndexable,
       follow: true,
     },
   }
@@ -44,10 +78,20 @@ export const generateMetadata = async ({ params }: TagPageProps): Promise<Metada
 
 const TagPage = async ({ params }: TagPageProps) => {
   const { tag } = await params
-  const decodedTag = decodeURIComponent(tag)
-  const posts = getBlogPosts().filter((post) =>
-    post.tags.some((t) => t.toLowerCase() === decodedTag.toLowerCase()),
-  )
+  const resolvedTag = resolveTag(decodeURIComponent(tag))
+  if (!resolvedTag) {
+    notFound()
+  }
+
+  const canonicalTagSlug = getTagSlug(resolvedTag)
+
+  if (canonicalTagSlug !== tag) {
+    permanentRedirect(getTagPath(resolvedTag))
+  }
+
+  const posts = getBlogPosts().filter((post) => post.tags.some((t) => t === resolvedTag))
+  const tagCounts = getTagCounts()
+  const isIndexable = (tagCounts[resolvedTag] ?? 0) >= MIN_INDEXABLE_TAG_POSTS
 
   if (posts.length === 0) {
     notFound()
@@ -56,10 +100,10 @@ const TagPage = async ({ params }: TagPageProps) => {
   const collectionJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
-    '@id': `https://anm.dev/blog/tag/${tag}#collection`,
-    name: `Articles tagged "${decodedTag}"`,
-    description: `Blog posts about ${decodedTag} by Anmol Mahatpurkar.`,
-    url: `https://anm.dev/blog/tag/${tag}`,
+    '@id': `https://anm.dev/blog/tag/${canonicalTagSlug}#collection`,
+    name: `Articles tagged "${resolvedTag}"`,
+    description: `Blog posts about ${resolvedTag} by Anmol Mahatpurkar.`,
+    url: `https://anm.dev/blog/tag/${canonicalTagSlug}`,
     inLanguage: 'en-US',
     isPartOf: {
       '@type': 'WebSite',
@@ -79,7 +123,7 @@ const TagPage = async ({ params }: TagPageProps) => {
         item: {
           '@type': 'BlogPosting',
           headline: post.title,
-          datePublished: post.date,
+          datePublished: getArticleDateTime(post),
           url: `https://anm.dev/blog/${post.slug}`,
           description: post.summary,
         },
@@ -106,8 +150,8 @@ const TagPage = async ({ params }: TagPageProps) => {
       {
         '@type': 'ListItem',
         position: 3,
-        name: decodedTag,
-        item: `https://anm.dev/blog/tag/${tag}`,
+        name: resolvedTag,
+        item: `https://anm.dev/blog/tag/${canonicalTagSlug}`,
       },
     ],
   }
@@ -121,15 +165,21 @@ const TagPage = async ({ params }: TagPageProps) => {
         <span aria-hidden="true" className="mx-1.5">
           /
         </span>
-        <span className="text-black dark:text-dark-text">{decodedTag}</span>
+        <span className="text-black dark:text-dark-text">{resolvedTag}</span>
       </nav>
 
       <h1 className="mb-2 font-semibold text-2xl text-black dark:text-dark-text">
-        Tag: {decodedTag}
+        Tag: {resolvedTag}
       </h1>
       <p className="mb-12 text-gray-dark text-sm dark:text-dark-text-secondary">
-        {posts.length} {posts.length === 1 ? 'article' : 'articles'} tagged with "{decodedTag}"
+        {posts.length} {posts.length === 1 ? 'article' : 'articles'} tagged with "{resolvedTag}"
       </p>
+      {!isIndexable && (
+        <p className="mb-8 text-gray text-xs dark:text-dark-text-muted">
+          This topic archive is intentionally kept out of search until it has more published
+          articles.
+        </p>
+      )}
 
       <div className="divide-y divide-gray-lighter dark:divide-dark-border">
         {posts.map((post) => (

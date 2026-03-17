@@ -17,7 +17,7 @@ const ShareButton = ({ slug }: ShareButtonProps) => {
 
   return (
     <button
-      aria-label="Copy post URL to clipboard"
+      aria-label={copied ? 'Share (link copied)' : 'Share (copy post URL to clipboard)'}
       className="flex items-center gap-1.5 rounded-md border border-gray-lighter bg-white px-2 py-1.5 font-medium text-black text-xs transition-colors hover:bg-gray-lightest sm:px-3 dark:border-dark-border dark:bg-dark-surface dark:text-dark-text dark:hover:bg-dark-surface-hover"
       onClick={copyUrl}
       type="button"
