@@ -1,6 +1,15 @@
 import { type NextRequest, NextResponse } from 'next/server'
 
 const BLOG_POST_REGEX = /^\/blog\/([^/]+)$/
+const IS_VERCEL_PREVIEW = process.env.VERCEL_ENV === 'preview'
+
+const applyPreviewNoindex = (response: NextResponse): NextResponse => {
+  if (IS_VERCEL_PREVIEW) {
+    response.headers.set('X-Robots-Tag', 'noindex, nofollow')
+  }
+
+  return response
+}
 
 export const proxy = (request: NextRequest) => {
   const { pathname } = request.nextUrl
@@ -15,13 +24,15 @@ export const proxy = (request: NextRequest) => {
       (accept.includes('text/plain') && !accept.includes('text/html'))
 
     if (prefersMarkdown) {
-      return NextResponse.rewrite(new URL(`/api/blog/${slug}/raw`, request.url))
+      return applyPreviewNoindex(
+        NextResponse.rewrite(new URL(`/api/blog/${slug}/raw`, request.url)),
+      )
     }
   }
 
-  return NextResponse.next()
+  return applyPreviewNoindex(NextResponse.next())
 }
 
 export const config = {
-  matcher: '/blog/:slug',
+  matcher: ['/((?!_next/static|_next/image).*)'],
 }

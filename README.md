@@ -21,9 +21,9 @@ git clone
 
 cd anm.dev
 
-pnpm i
+bun install
 
-pnpm dev
+bun run dev
 ```
 
 App runs on [http://localhost:3000](http://localhost:3000)
@@ -31,7 +31,8 @@ App runs on [http://localhost:3000](http://localhost:3000)
 ### For Running a Production Ready Build
 
 ```bash
-pnpm start
+bun run build
+bun run start
 ```
 
 App runs on [http://localhost:3000](http://localhost:3000)
