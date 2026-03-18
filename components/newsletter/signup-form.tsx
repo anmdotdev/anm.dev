@@ -88,15 +88,20 @@ const NewsletterSignupForm = ({
           role="status"
         >
           <p className="font-medium text-sm text-success-darker dark:text-success-light">
-            Confirmation email sent
+            Request received
           </p>
           {submittedEmail ? (
             <p className="mt-1 text-success-darker text-xs dark:text-success-light">
-              We sent a confirmation link to <span className="font-medium">{submittedEmail}</span>.
+              We processed your signup request for{' '}
+              <span className="font-medium">{submittedEmail}</span>.
             </p>
           ) : null}
           <p className="mt-2 text-success-darker text-xs dark:text-success-light">
-            You will only get new post notifications after you verify that confirmation email.
+            If this email is not subscribed yet, a confirmation link is on its way. You will only
+            get new post notifications after you verify that email.
+          </p>
+          <p className="mt-2 text-success-darker text-xs dark:text-success-light">
+            If this address is already subscribed, you will not receive another confirmation email.
           </p>
           <p className="mt-2 text-success-darker text-xs dark:text-success-light">{message}</p>
         </div>
