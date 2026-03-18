@@ -19,7 +19,7 @@ interface NewsletterSignupCardProps {
 const SuccessIcon = () => (
   <span
     aria-hidden="true"
-    className="inline-flex size-10 items-center justify-center rounded-full bg-white/85 text-success-darker shadow-sm"
+    className="inline-flex size-10 items-center justify-center rounded-full border border-success/30 bg-white text-success-darker"
   >
     <svg aria-hidden="true" className="size-5" fill="none" viewBox="0 0 16 16">
       <path
@@ -50,7 +50,7 @@ const NewsletterSignupCard = ({
     return (
       <section
         className={classnames(
-          'rounded-2xl border border-success/30 bg-success text-success-darker shadow-sm',
+          'rounded-2xl border border-success/40 bg-success/10 text-success-darker shadow-sm',
           compact ? 'p-5' : 'p-6 sm:p-8',
           className,
         )}

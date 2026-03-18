@@ -32,9 +32,9 @@ const SUCCESS_STATES = new Set(['confirmed', 'already-confirmed'])
 const SuccessIcon = () => (
   <span
     aria-hidden="true"
-    className="inline-flex size-5 items-center justify-center rounded-full bg-success text-white"
+    className="inline-flex size-8 items-center justify-center rounded-full border border-success/30 bg-white text-success-darker"
   >
-    <svg aria-hidden="true" className="size-3.5" fill="none" viewBox="0 0 16 16">
+    <svg aria-hidden="true" className="size-4" fill="none" viewBox="0 0 16 16">
       <path
         d="M4 8.2 6.5 10.7 12 5.3"
         stroke="currentColor"
@@ -57,7 +57,7 @@ const NewsletterBlogSection = ({ enabled }: NewsletterBlogSectionProps) => {
         className="rounded-2xl border border-success/40 bg-success/10 p-5 shadow-sm sm:p-8"
         id="newsletter"
       >
-        <div className="mb-3 flex items-center gap-2 font-semibold text-[11px] text-success-darker uppercase tracking-[0.16em] dark:text-success-light">
+        <div className="mb-3 flex items-center gap-3 font-semibold text-[11px] text-success-darker uppercase tracking-[0.16em] dark:text-success-light">
           <SuccessIcon />
           <span>Subscription Confirmed</span>
         </div>
