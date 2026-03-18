@@ -359,10 +359,12 @@ interface ParsedBlogFile {
   plainText: string
   readingTime: string
   scheduled: boolean
+  seoDescription?: string
   series?: string
   seriesOrder?: number
   seriesTitle?: string
   slug: string
+  socialDescription?: string
   summary: string
   tags: string[]
   title: string
@@ -397,6 +399,9 @@ const parseBlogFile = (slug: string): ParsedBlogFile | null => {
     tags: Array.isArray(data.tags)
       ? data.tags.filter((tag): tag is string => typeof tag === 'string')
       : [],
+    seoDescription: typeof data.seoDescription === 'string' ? data.seoDescription : undefined,
+    socialDescription:
+      typeof data.socialDescription === 'string' ? data.socialDescription : undefined,
     summary: typeof data.summary === 'string' ? data.summary : '',
     draft,
     scheduled,
@@ -423,14 +428,25 @@ export interface BlogPost {
   plainText: string
   readingTime: string
   scheduled: boolean
+  seoDescription?: string
   series?: string
   seriesOrder?: number
   seriesTitle?: string
   slug: string
+  socialDescription?: string
   summary: string
   tags: string[]
   title: string
 }
+
+export const getPostSeoDescription = (
+  post: Pick<BlogPost, 'seoDescription' | 'summary' | 'title'>,
+): string =>
+  post.seoDescription || post.summary || `${post.title} - A blog post by Anmol Mahatpurkar`
+
+export const getPostSocialDescription = (
+  post: Pick<BlogPost, 'seoDescription' | 'socialDescription' | 'summary' | 'title'>,
+): string => post.socialDescription || getPostSeoDescription(post)
 
 const shouldIncludePost = (
   post: Pick<BlogPost, 'draft' | 'scheduled'>,

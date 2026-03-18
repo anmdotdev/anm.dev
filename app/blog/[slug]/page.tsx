@@ -13,6 +13,8 @@ import {
   getArticleModifiedTime,
   getBlogPost,
   getBlogPosts,
+  getPostSeoDescription,
+  getPostSocialDescription,
   getRelatedPosts,
   getSeriesPosts,
   getTagPath,
@@ -70,9 +72,12 @@ export const generateMetadata = async ({ params }: BlogPostPageProps): Promise<M
     return {}
   }
 
+  const seoDescription = getPostSeoDescription(post)
+  const socialDescription = getPostSocialDescription(post)
+
   return {
     title: post.title,
-    description: post.summary || `${post.title} - A blog post by Anmol Mahatpurkar`,
+    description: seoDescription,
     alternates: {
       canonical: `/blog/${slug}`,
       types: {
@@ -83,7 +88,7 @@ export const generateMetadata = async ({ params }: BlogPostPageProps): Promise<M
     },
     openGraph: {
       title: post.title,
-      description: post.summary || `${post.title} - A blog post by Anmol Mahatpurkar`,
+      description: socialDescription,
       type: 'article',
       publishedTime: getArticleDateTime(post),
       modifiedTime: getArticleModifiedTime(post),
@@ -106,7 +111,7 @@ export const generateMetadata = async ({ params }: BlogPostPageProps): Promise<M
     twitter: {
       card: 'summary_large_image',
       title: post.title,
-      description: post.summary || `${post.title} - A blog post by Anmol Mahatpurkar`,
+      description: socialDescription,
       creator: '@anmdotdev',
       site: '@anmdotdev',
       images: [
@@ -177,6 +182,7 @@ const BlogPostPage = async ({ params }: BlogPostPageProps) => {
     post.lastModified && post.lastModified !== post.date ? post.lastModifiedTime : undefined
 
   const hasToc = headings.length > 2
+  const seoDescription = getPostSeoDescription(post)
 
   return (
     <>
@@ -247,7 +253,7 @@ const BlogPostPage = async ({ params }: BlogPostPageProps) => {
                   name: 'Anmol Mahatpurkar',
                   url: 'https://anm.dev',
                 },
-                description: post.summary,
+                description: seoDescription,
                 url: `https://anm.dev/blog/${slug}`,
                 mainEntityOfPage: {
                   '@type': 'WebPage',

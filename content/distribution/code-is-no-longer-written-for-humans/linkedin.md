@@ -1,3 +1,5 @@
+Code is no longer written primarily for humans to read line by line. It is increasingly written as the executable output of a clearer layer above it: intent.
+
 I used to think maintainability lived mostly inside the code.
 
 Good variable names. Clean abstractions. Small functions. Predictable file structure. A tasteful amount of comments. The goal was obvious: make sure the next developer could open the file, understand it quickly, and change it without breaking everything.
@@ -27,7 +29,7 @@ That is the shift I care about:
 
 the bottleneck is moving from typing code to specifying behavior.
 
-The maintainability layer now starts earlier:
+The maintainability layer, in theory always started earlier, but is now fundamentally more important and harder to get away without:
 
 - what the feature should do
 - what must never happen
@@ -43,6 +45,6 @@ But increasingly, code is the compiled artifact of intent.
 Docs explain what should happen.
 Tests prove whether it actually does.
 
-That is the full argument in my first essay of a new series:
+I have captured my full thoughts here. Do let me know what you think about it
 
 https://anm.dev/blog/code-is-no-longer-written-for-humans

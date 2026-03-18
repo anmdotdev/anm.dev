@@ -1,5 +1,7 @@
 ## Post 1
 
+Code is no longer written primarily where humans read it line by line. It is increasingly written as the executable output of a clearer layer above it: intent.
+
 I used to think maintainability lived mostly inside the code.
 
 Good variable names. Clean abstractions. Small functions. Predictable file structure.
