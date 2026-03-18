@@ -102,9 +102,11 @@ const OpenSourcePage = () => (
       <OpenSourceProject
         key={project.name}
         {...project}
+        cardClickable
         className="border-gray-lighter border-b py-6 last:border-b-0 dark:border-dark-border"
         headingLevel="h2"
         priority={project.name === OPEN_SOURCE_PROJECTS[0]?.name}
+        showDemoButton
       />
     ))}
 

@@ -16,6 +16,8 @@ interface StickyPostHeaderProps {
   dateLabel: string
   dateTime: string
   draft: boolean
+  lastModifiedLabel?: string
+  lastModifiedTime?: string
   readingTime: string
   scheduledPreviewLabel?: string
   slug: string
@@ -67,6 +69,8 @@ const StickyPostHeader = ({
   dateLabel,
   dateTime,
   draft,
+  lastModifiedLabel,
+  lastModifiedTime,
   readingTime,
   scheduledPreviewLabel,
   slug,
@@ -211,7 +215,19 @@ const StickyPostHeader = ({
             {title}
           </h1>
           <p className="text-gray-dark text-xs leading-relaxed dark:text-dark-text-muted">
-            <time dateTime={dateTime}>{dateLabel}</time>
+            {lastModifiedLabel && lastModifiedTime ? (
+              <>
+                <span>Published </span>
+                <time dateTime={dateTime}>{dateLabel}</time>
+                <span aria-hidden="true" className="mx-2">
+                  ·
+                </span>
+                <span>Updated </span>
+                <time dateTime={lastModifiedTime}>{lastModifiedLabel}</time>
+              </>
+            ) : (
+              <time dateTime={dateTime}>{dateLabel}</time>
+            )}
             <span aria-hidden="true" className="mx-2">
               ·
             </span>

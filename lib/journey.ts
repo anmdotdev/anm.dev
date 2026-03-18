@@ -22,11 +22,23 @@ export interface IJourneyAchievement {
 export const JOURNEY_ENTRIES: IJourneyEntry[] = [
   {
     category: 'work',
-    company: 'Airbase - Paylocity',
+    company: 'Stealth Startup',
+    description:
+      'Building AI-powered product experiences with a strong focus on web engineering, rapid iteration, and shipping carefully before launch.',
+    endDate: 'Present',
+    highlight: true,
+    location: 'Remote',
+    role: 'Staff Software Engineer',
+    startDate: 'Dec 2025',
+    tags: ['AI', 'TypeScript', 'React', 'Product Engineering'],
+  },
+  {
+    category: 'work',
+    company: 'Airbase (Paylocity)',
     companyUrl: 'https://airbase.com',
     description:
       'Mentoring and leading initiatives to scale the frontend architecture and make frontend teams productive across the entire Airbase product.',
-    endDate: 'Present',
+    endDate: 'May 2025',
     highlight: true,
     location: 'Remote',
     role: 'Staff Software Engineer - Frontend',
@@ -191,32 +203,39 @@ export const JOURNEY_ACHIEVEMENTS: IJourneyAchievement[] = [
 
 export const JOURNEY_ERAS = [
   {
-    description: 'Scaling frontend teams and systems at growing product organizations.',
-    endIndex: 3,
-    label: 'The Staff Engineer Path',
+    description: 'Building AI-native products at the intersection of web engineering and AI.',
+    endIndex: 0,
+    label: 'The AI Era',
     startIndex: 0,
-    years: '2020 – Present',
+    years: '2025 – Present',
+  },
+  {
+    description: 'Scaling frontend teams and systems at growing product organizations.',
+    endIndex: 4,
+    label: 'The Staff Engineer Path',
+    startIndex: 1,
+    years: '2020 – 2025',
   },
   {
     description: 'Deep-diving into React, Node, and frontend architecture at scale.',
-    endIndex: 6,
+    endIndex: 7,
     label: 'The Architecture Years',
-    startIndex: 4,
+    startIndex: 5,
     years: '2018 – 2020',
   },
   {
     description: 'Striking out independently and learning the business side of tech.',
-    endIndex: 8,
+    endIndex: 9,
     label: 'The Entrepreneurial Leap',
-    startIndex: 7,
+    startIndex: 8,
     years: '2016 – 2018',
   },
   {
     description:
       'Where it all started — building games, learning to code, and discovering the craft.',
-    endIndex: 12,
+    endIndex: 13,
     label: 'The Early Days',
-    startIndex: 9,
+    startIndex: 10,
     years: '2012 – 2016',
   },
 ]

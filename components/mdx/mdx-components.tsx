@@ -46,7 +46,7 @@ const mdxComponents: MDXComponents = {
       )
     }
     return (
-      <a href={href} rel="noopener noreferrer" target="_blank" {...props}>
+      <a href={href} rel="nofollow noopener noreferrer" target="_blank" {...props}>
         {children}
       </a>
     )

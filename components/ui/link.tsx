@@ -17,6 +17,23 @@ interface ILinkProps {
   target?: string
 }
 
+const EXTERNAL_REL_VALUES = ['nofollow', 'noopener', 'noreferrer'] as const
+const REL_SPLIT_REGEX = /\s+/
+
+const getRelValue = (external?: boolean, rel?: string): string | undefined => {
+  if (!external) {
+    return rel || undefined
+  }
+
+  const relValues = new Set((rel || '').split(REL_SPLIT_REGEX).filter(Boolean))
+
+  for (const value of EXTERNAL_REL_VALUES) {
+    relValues.add(value)
+  }
+
+  return Array.from(relValues).join(' ')
+}
+
 export default ({
   href,
   target: propTarget,
@@ -28,7 +45,7 @@ export default ({
   showIcon = 'hover',
   ...rest
 }: ILinkProps) => {
-  const target = propTarget || external ? '_blank' : ''
+  const target = propTarget || (external ? '_blank' : undefined)
   const iconClassName = classnames(
     'text-gray ml-2',
     showIcon === 'hover' ? 'opacity-0 group-hover:opacity-100' : '',
@@ -67,7 +84,7 @@ export default ({
       download={download}
       href={href}
       prefetch={!external}
-      rel={rel || external ? 'noreferrer noopener' : ''}
+      rel={getRelValue(external, rel)}
       target={target}
     >
       {children}

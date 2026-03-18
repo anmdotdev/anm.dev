@@ -1,5 +1,6 @@
 import { getBlogPosts } from 'lib/blog'
 import { JOURNEY_ACHIEVEMENTS, JOURNEY_ENTRIES } from 'lib/journey'
+import { EXPERIENCE_YEARS_LABEL } from 'lib/profile'
 import { OPEN_SOURCE_PROJECTS } from 'lib/projects'
 
 export const revalidate = 300
@@ -43,7 +44,7 @@ ${post.plainText}
 
 ## About
 
-Anmol Mahatpurkar is a Staff Frontend Engineer based in Mumbai, India, with over 10 years of experience. He specializes in React, TypeScript, design systems, and frontend architecture at scale. He currently works at Airbase (acquired by Paylocity), where he mentors and leads initiatives to scale frontend architecture across the product.
+Anmol Mahatpurkar is a software engineer based in Mumbai, India, with ${EXPERIENCE_YEARS_LABEL} of experience. He specializes in React, TypeScript, design systems, frontend architecture, and AI-native product work. He is currently building AI products at a stealth startup after previously leading frontend architecture initiatives at Airbase.
 
 When not working, Anmol enjoys playing Age of Empires 2, chess, and thinking about the mysteries of the human mind.
 

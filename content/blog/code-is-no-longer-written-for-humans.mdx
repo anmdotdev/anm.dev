@@ -16,8 +16,6 @@ That instinct is still correct. It is just no longer sufficient.
 
 Over the last few months, I have spent a lot of time building software with AI coding agents. Not as autocomplete. Not as a novelty. As actual collaborators that read the codebase, propose changes, write implementation, run checks, and iterate. And that experience has changed how I think about what code is *for*.
 
-If you want the practical side of this argument, the companion posts on [voice-first prompting](/blog/voice-first-ai-coding) and [AI feedback loops](/blog/ai-coding-feedback-loops) show how this shift changes day-to-day implementation work.
-
 Here is the hot take:
 
 <Philosophy>
@@ -63,7 +61,7 @@ That is the part people miss when they talk about AI coding.
 
 The problem is usually not that the agent cannot read the code.
 
-The problem is that the code is not the full source of truth anymore.
+The problem is that the code is not the full source of truth for intent.
 
 ---
 
@@ -89,7 +87,7 @@ That means describing:
 
 The better I define those things in English, the better the implementation tends to be.
 
-This is what I mean when I say English is becoming the new programming language. Not because code disappears. Not because natural language is magically precise. But because natural language is increasingly the layer where we describe behavior before code exists.
+This is what people mean when they say English is becoming the new programming language. Not because code disappears. Not because natural language is magically precise. But because natural language is increasingly the layer where we describe behavior before code exists.
 
 React did something similar for the DOM. You stopped manually telling the browser every little step and started declaring what the UI should be. The framework handled the imperative work underneath.
 
@@ -154,7 +152,7 @@ The meaning lives in the spec.
 
 ## Documentation and Tests Are Now the Real Leverage
 
-If you buy the argument so far, two things become much more important than most teams currently treat them.
+If you buy the argument so far, two things that have always been important at a fundamental level become significantly more important now:
 
 ### 1. Documentation
 
@@ -228,10 +226,6 @@ If the tests are thin, the mistakes will survive.
 
 If the product rules are undocumented, the next change will break something "obvious" that was never actually written down.
 
-That is why I think many teams are aiming at the wrong target. They are obsessing over whether AI-generated code "looks like us," instead of asking whether the behavior is clearly specified and mechanically verified.
-
-Those are not the same thing.
-
 ---
 
 ## A Better Standard for AI-Era Code
@@ -247,8 +241,6 @@ I still care whether the code is sane. I still want clear structure and understa
 - Can another agent or engineer safely extend this without guessing?
 
 That last question is the one I keep coming back to.
-
-The goal is not to produce code that wins a style argument.
 
 The goal is to produce a system where future change is cheap and safe.
 

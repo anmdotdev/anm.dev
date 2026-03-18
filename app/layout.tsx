@@ -6,6 +6,7 @@ import './globals.css'
 import Shell from 'components/layout/shell'
 
 import defaultMetadata from 'lib/default-metadata'
+import { EXPERIENCE_YEARS_LABEL } from 'lib/profile'
 
 const jetbrainsMono = JetBrains_Mono({
   subsets: ['latin'],
@@ -35,10 +36,10 @@ const personJsonLd = {
   name: 'Anmol Mahatpurkar',
   url: 'https://anm.dev',
   image: 'https://anm.dev/images/profile.jpeg',
-  jobTitle: 'Staff Frontend Engineer',
+  jobTitle: 'Staff Software Engineer',
   worksFor: {
     '@type': 'Organization',
-    name: 'Airbase (Paylocity)',
+    name: 'Stealth Startup',
   },
   sameAs: [
     'https://github.com/anmdotdev',
@@ -63,8 +64,7 @@ const websiteJsonLd = {
   '@id': 'https://anm.dev/#website',
   name: 'anmdotdev',
   url: 'https://anm.dev',
-  description:
-    'Staff Frontend Engineer with 10+ years of experience building design systems, web & mobile apps with React and TypeScript.',
+  description: `Staff Software Engineer with ${EXPERIENCE_YEARS_LABEL} of experience building web products, design systems, and frontend architecture with React and TypeScript.`,
   inLanguage: 'en-US',
   author: {
     '@type': 'Person',

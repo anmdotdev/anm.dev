@@ -65,7 +65,7 @@ const OgImage = () =>
           maxWidth: 700,
         }}
       >
-        Staff Frontend Engineer | React & TypeScript | Design Systems
+        Staff Software Engineer | AI x Web | React & TypeScript
       </p>
     </div>,
     { ...size },

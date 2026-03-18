@@ -10,7 +10,7 @@ const Timeline = () => (
     </h1>
     <p className="mx-auto mb-12 max-w-3xl text-center text-gray-dark text-sm leading-relaxed dark:text-dark-text-secondary">
       A timeline of the roles, projects, and career shifts that shaped my path from game development
-      into frontend architecture, staff-level engineering, and product-focused technical leadership.
+      into frontend architecture, AI-native product work, and product-focused technical leadership.
     </p>
 
     {/* Timeline */}

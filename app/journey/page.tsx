@@ -1,17 +1,16 @@
 import Timeline from 'components/journey/timeline'
+import { EXPERIENCE_YEARS_LABEL } from 'lib/profile'
 import type { Metadata } from 'next'
 
 export const revalidate = 300
 
 export const metadata: Metadata = {
   title: 'Journey',
-  description:
-    'My professional journey — 10+ years of frontend engineering, from game development to staff engineer at Airbase (Paylocity).',
+  description: `My professional journey — ${EXPERIENCE_YEARS_LABEL} of engineering, from game development to building AI products at a stealth startup.`,
   alternates: { canonical: '/journey' },
   openGraph: {
     title: 'Journey - Anmol Mahatpurkar',
-    description:
-      'My professional journey — 10+ years of frontend engineering, from game development to staff engineer at Airbase (Paylocity).',
+    description: `My professional journey — ${EXPERIENCE_YEARS_LABEL} of engineering, from game development to building AI products at a stealth startup.`,
     url: 'https://anm.dev/journey',
     type: 'website',
     siteName: 'anmdotdev',
@@ -29,8 +28,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'Journey - Anmol Mahatpurkar',
-    description:
-      'My professional journey — 10+ years of frontend engineering, from game development to staff engineer at Airbase (Paylocity).',
+    description: `My professional journey — ${EXPERIENCE_YEARS_LABEL} of engineering, from game development to building AI products at a stealth startup.`,
     creator: '@anmdotdev',
     site: '@anmdotdev',
     images: ['https://anm.dev/opengraph-image'],
@@ -42,8 +40,7 @@ const journeyJsonLd = {
   '@type': 'ProfilePage',
   '@id': 'https://anm.dev/journey#profile',
   name: 'Professional Journey - Anmol Mahatpurkar',
-  description:
-    'My professional journey — 10+ years of frontend engineering, from game development to staff engineer at Airbase (Paylocity).',
+  description: `My professional journey — ${EXPERIENCE_YEARS_LABEL} of engineering, from game development to building AI products at a stealth startup.`,
   url: 'https://anm.dev/journey',
   inLanguage: 'en-US',
   isPartOf: {
@@ -54,11 +51,11 @@ const journeyJsonLd = {
     '@type': 'Person',
     '@id': 'https://anm.dev/#person',
     name: 'Anmol Mahatpurkar',
-    jobTitle: 'Staff Frontend Engineer',
+    jobTitle: 'Software Engineer',
     url: 'https://anm.dev',
     worksFor: {
       '@type': 'Organization',
-      name: 'Airbase (Paylocity)',
+      name: 'Stealth Startup',
     },
   },
 }

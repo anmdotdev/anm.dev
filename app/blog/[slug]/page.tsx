@@ -163,6 +163,10 @@ const BlogPostPage = async ({ params }: BlogPostPageProps) => {
   })
 
   const dateModified = getArticleModifiedTime(post)
+  const lastModifiedLabel =
+    post.lastModified && post.lastModified !== post.date ? formatDate(post.lastModified) : undefined
+  const lastModifiedTime =
+    post.lastModified && post.lastModified !== post.date ? post.lastModifiedTime : undefined
 
   const hasToc = headings.length > 2
 
@@ -183,6 +187,8 @@ const BlogPostPage = async ({ params }: BlogPostPageProps) => {
               dateLabel={formatDate(post.date)}
               dateTime={getArticleDateTime(post)}
               draft={post.draft}
+              lastModifiedLabel={lastModifiedLabel}
+              lastModifiedTime={lastModifiedTime}
               readingTime={post.readingTime}
               scheduledPreviewLabel={post.scheduled ? formatDate(post.date) : undefined}
               slug={slug}

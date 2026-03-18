@@ -2,9 +2,9 @@ import type { StaticImageData } from 'next/image'
 import aashayDedhiaImage from 'public/images/aashay-dedhia.png'
 import anmdotdevImage from 'public/images/anmdotdev.png'
 import cogoToastImage from 'public/images/cogo-toast.png'
-import gridsAndTablesImage from 'public/images/grids-and-tables.png'
 
 export interface IOpenSourceProject {
+  demoUrl?: string
   description: string
 
   githubOrgName: string
@@ -21,6 +21,7 @@ export const OPEN_SOURCE_PROJECTS: IOpenSourceProject[] = [
     image: cogoToastImage,
     name: 'CogoToast',
     description: 'A Beautiful, Zero Configuration, Plug and Play Toast Notifications Library',
+    demoUrl: 'https://successtar.github.io/cogo-toast/',
     tags: [
       { label: 'NPM Library', color: 'gray' },
       { label: 'React', color: 'gray' },
@@ -34,6 +35,7 @@ export const OPEN_SOURCE_PROJECTS: IOpenSourceProject[] = [
     image: aashayDedhiaImage,
     name: 'Aashay Dedhia - Portfolio Website for a Designer Friend',
     description: 'A portfolio website developed in partnership with a UX UI designer friend.',
+    demoUrl: 'https://aashaydedhia.vercel.app/',
     tags: [
       { label: 'React', color: 'gray' },
       { label: 'TypeScript', color: 'gray' },
@@ -48,6 +50,7 @@ export const OPEN_SOURCE_PROJECTS: IOpenSourceProject[] = [
     name: 'anmdotdev - This Website',
     description:
       'My dev website. Feel free to use it as a template for your dev site. Would love credits on your site, if you do 😃',
+    demoUrl: 'https://anm.dev',
     tags: [
       { label: 'React', color: 'gray' },
       { label: 'TypeScript', color: 'gray' },
@@ -56,20 +59,6 @@ export const OPEN_SOURCE_PROJECTS: IOpenSourceProject[] = [
     ],
     githubOrgName: 'anmdotdev',
     githubRepoName: 'anmdotdev',
-  },
-  {
-    image: gridsAndTablesImage,
-    name: 'Grids and Tables',
-    description:
-      'A Sample React app built using TypeScript, Next.js, Redux, that fetches and display data with SSR.',
-    tags: [
-      { label: 'React', color: 'gray' },
-      { label: 'TypeScript', color: 'gray' },
-      { label: 'Next.js', color: 'gray' },
-      { label: 'Redux', color: 'gray' },
-    ],
-    githubOrgName: 'anmdotdev',
-    githubRepoName: 'grids-and-tables',
   },
 ]
 

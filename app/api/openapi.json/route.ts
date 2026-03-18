@@ -9,7 +9,7 @@ export const GET = () => {
     info: {
       title: 'anm.dev Content API',
       description:
-        'API for accessing blog content, search, and raw markdown from anm.dev — the personal website and blog of Anmol Mahatpurkar, a Staff Frontend Engineer.',
+        'API for accessing blog content, search, and raw markdown from anm.dev — the personal website and blog of Anmol Mahatpurkar, a software engineer building AI products at a stealth startup.',
       version: '1.0.0',
       contact: {
         name: 'Anmol Mahatpurkar',

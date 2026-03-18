@@ -1,4 +1,5 @@
 import { getAllTags, getBlogPosts, getTagPath } from 'lib/blog'
+import { EXPERIENCE_YEARS_LABEL } from 'lib/profile'
 
 export const GET = () => {
   const posts = getBlogPosts()
@@ -19,13 +20,13 @@ export const GET = () => {
 
 > Last updated: ${lastUpdated}
 
-> Personal website and blog by Anmol Mahatpurkar, a Staff Frontend Engineer with 10+ years of experience building design systems, web & mobile apps with React and TypeScript. Currently at Airbase (Paylocity).
+> Personal website and blog by Anmol Mahatpurkar, a software engineer with ${EXPERIENCE_YEARS_LABEL} of experience building web products, design systems, and frontend architecture with React and TypeScript. Currently building AI products at a stealth startup.
 
 > Optional: [Full site content](https://anm.dev/llms-full.txt)
 
 ## About
 
-Anmol Mahatpurkar is a Staff Frontend Engineer based in Mumbai, India. He specializes in React, TypeScript, design systems, and frontend architecture. He has worked at companies including Airbase (Paylocity), Cogoport, and Emotix.
+Anmol Mahatpurkar is a software engineer based in Mumbai, India. He specializes in React, TypeScript, design systems, frontend architecture, and AI-native product work. He is currently working on AI products at a stealth startup and has previously worked at Airbase, Cogoport, and Emotix.
 
 ## Pages
 

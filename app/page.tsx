@@ -2,19 +2,18 @@ import Intro from 'components/home/intro'
 import OpenSourceProjects from 'components/home/open-source-projects'
 import RecentPosts from 'components/home/recent-posts'
 import { getBlogPosts } from 'lib/blog'
+import { EXPERIENCE_YEARS_LABEL } from 'lib/profile'
 import type { Metadata } from 'next'
 
 export const revalidate = 300
 
 export const metadata: Metadata = {
-  title: 'Anmol Mahatpurkar - Staff Frontend Engineer - @anmdotdev',
-  description:
-    'Staff Frontend Engineer with 10+ years of experience building design systems, web & mobile apps with React and TypeScript. Currently at Airbase (Paylocity).',
+  title: 'Anmol Mahatpurkar - Staff Software Engineer - @anmdotdev',
+  description: `Staff Software Engineer with ${EXPERIENCE_YEARS_LABEL} of experience building web products, design systems, and frontend architecture with React and TypeScript. Currently building AI products at a stealth startup.`,
   alternates: { canonical: '/' },
   openGraph: {
-    title: 'Anmol Mahatpurkar - Staff Frontend Engineer - @anmdotdev',
-    description:
-      'Staff Frontend Engineer with 10+ years of experience building design systems, web & mobile apps with React and TypeScript.',
+    title: 'Anmol Mahatpurkar - Staff Software Engineer - @anmdotdev',
+    description: `Staff Software Engineer with ${EXPERIENCE_YEARS_LABEL} of experience building web products, design systems, and frontend architecture with React and TypeScript.`,
     url: 'https://anm.dev',
     type: 'website',
     siteName: 'anmdotdev',
@@ -31,7 +30,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     title: 'Anmol Mahatpurkar - @anmdotdev',
-    description: 'Staff Frontend Engineer building for the web with React & TypeScript.',
+    description: 'Staff Software Engineer building AI products and modern web experiences.',
     site: '@anmdotdev',
     card: 'summary_large_image',
     creator: '@anmdotdev',
@@ -43,9 +42,8 @@ const homePageJsonLd = {
   '@context': 'https://schema.org',
   '@type': 'WebPage',
   '@id': 'https://anm.dev/#webpage',
-  name: 'Anmol Mahatpurkar - Staff Frontend Engineer',
-  description:
-    'Staff Frontend Engineer with 10+ years of experience building design systems, web & mobile apps with React and TypeScript. Currently at Airbase (Paylocity).',
+  name: 'Anmol Mahatpurkar - Staff Software Engineer',
+  description: `Staff Software Engineer with ${EXPERIENCE_YEARS_LABEL} of experience building web products, design systems, and frontend architecture with React and TypeScript. Currently building AI products at a stealth startup.`,
   url: 'https://anm.dev',
   inLanguage: 'en-US',
   isPartOf: {

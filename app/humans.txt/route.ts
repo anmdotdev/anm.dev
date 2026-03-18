@@ -1,7 +1,7 @@
 export const GET = () => {
   const content = `/* TEAM */
 Name: Anmol Mahatpurkar
-Role: Staff Frontend Engineer
+Role: Software Engineer building AI products at a stealth startup
 Site: https://anm.dev
 Location: Mumbai, India
 GitHub: https://github.com/anmdotdev

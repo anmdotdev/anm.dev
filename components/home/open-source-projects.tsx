@@ -16,7 +16,7 @@ const OpenSourceProjects = ({ compactBottomSpacing = false }: OpenSourceProjects
       My Open Source Projects
     </h2>
 
-    <OpenSourceProject {...OPEN_SOURCE_PROJECTS[0]} priority />
+    <OpenSourceProject {...OPEN_SOURCE_PROJECTS[0]} cardClickable priority showDemoButton />
 
     <div className="text-center">
       <Link

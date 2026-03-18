@@ -1,4 +1,4 @@
-import Link from 'components/ui/link'
+import { EXPERIENCE_YEARS_LABEL } from 'lib/profile'
 
 const Intro = () => (
   <section className="mx-auto w-full max-w-lg pt-10 pb-8 max-sm:px-6">
@@ -6,34 +6,18 @@ const Intro = () => (
     <p className="mb-6 text-gray-dark dark:text-dark-text-secondary">
       I am a remote{' '}
       <strong className="font-medium text-black dark:text-dark-text">
-        Staff Frontend Engineer
+        Staff Software Engineer
       </strong>
-      , based in Mumbai, India, and I love JavaScript and React. I currently work at{' '}
-      <Link
-        className="font-semibold text-link dark:text-dark-link"
-        external
-        href="https://airbase.com"
-        showIcon="never"
-      >
-        Airbase Inc.
-      </Link>
-      , recently acquired by{' '}
-      <Link
-        className="font-semibold text-link dark:text-dark-link"
-        external
-        href="https://www.paylocity.com/resources/resource-library/press-release/paylocity-announces-completion-of-acquisition-of-airbase-inc/"
-        showIcon="never"
-      >
-        Paylocity
-      </Link>
-      , and have a total of{' '}
+      , based in Mumbai, India, currently working on AI products at a{' '}
+      <strong className="font-medium text-black dark:text-dark-text">stealth startup</strong>. I
+      love JavaScript, React, and the web, and I have a total of{' '}
       <strong className="font-medium text-black dark:text-dark-text">
-        about 10 years of experience
+        about {EXPERIENCE_YEARS_LABEL} of experience
       </strong>{' '}
       as an engineer.
     </p>
     <p className="mb-6 text-gray-dark dark:text-dark-text-secondary">
-      Over the span of 10 years, I have worked with a{' '}
+      Over the span of {EXPERIENCE_YEARS_LABEL}, I have worked with a{' '}
       <strong className="font-medium text-black dark:text-dark-text">
         range of Frontend initiatives
       </strong>
@@ -44,7 +28,9 @@ const Intro = () => (
       multiple teams on building{' '}
       <strong className="font-medium text-black dark:text-dark-text">
         frontend across multiple different product areas.
-      </strong>
+      </strong>{' '}
+      These days, a lot of that energy goes into building at the intersection of web engineering and
+      AI.
     </p>
     <p className="text-gray-dark dark:text-dark-text-secondary">
       When I am not working, you would find me playing Age of Empires 2 on my PC. I also like to

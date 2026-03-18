@@ -1,13 +1,13 @@
+import { EXPERIENCE_YEARS_LABEL } from 'lib/profile'
 import type { Metadata } from 'next'
 
 const defaultMetadata: Metadata = {
   metadataBase: new URL('https://anm.dev'),
   title: {
-    default: 'Anmol Mahatpurkar - Staff Frontend Engineer - @anmdotdev',
+    default: 'Anmol Mahatpurkar - Staff Software Engineer - @anmdotdev',
     template: '%s | anmdotdev',
   },
-  description:
-    'Staff Frontend Engineer with 10+ years of experience building design systems, web & mobile apps with React and TypeScript. Currently at Airbase (Paylocity).',
+  description: `Staff Software Engineer with ${EXPERIENCE_YEARS_LABEL} of experience building web products, design systems, and frontend architecture with React and TypeScript. Currently building AI products at a stealth startup.`,
   authors: [{ name: 'Anmol Mahatpurkar', url: 'https://anm.dev' }],
   creator: 'Anmol Mahatpurkar',
   publisher: 'Anmol Mahatpurkar',
@@ -20,9 +20,8 @@ const defaultMetadata: Metadata = {
   },
   openGraph: {
     url: 'https://anm.dev',
-    title: 'Anmol Mahatpurkar - Staff Frontend Engineer - @anmdotdev',
-    description:
-      'Staff Frontend Engineer with 10+ years of experience building design systems, web & mobile apps with React and TypeScript.',
+    title: 'Anmol Mahatpurkar - Staff Software Engineer - @anmdotdev',
+    description: `Staff Software Engineer with ${EXPERIENCE_YEARS_LABEL} of experience building web products, design systems, and frontend architecture with React and TypeScript.`,
     siteName: 'anmdotdev',
     locale: 'en_US',
     type: 'website',
@@ -39,7 +38,7 @@ const defaultMetadata: Metadata = {
   applicationName: 'anmdotdev',
   twitter: {
     title: 'Anmol Mahatpurkar - @anmdotdev',
-    description: 'Staff Frontend Engineer building for the web with React & TypeScript.',
+    description: 'Staff Software Engineer building AI products and modern web experiences.',
     site: '@anmdotdev',
     card: 'summary_large_image',
     creator: '@anmdotdev',
