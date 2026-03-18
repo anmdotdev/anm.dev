@@ -56,7 +56,7 @@ const TimelineEntry = ({ entry, index }: ITimelineEntryProps) => {
 
       {/* Mobile content — single card, always right-aligned */}
       <div className="ml-4 flex-1 md:hidden">
-        <EntryCard dateRange={dateRange} entry={entry} mobile side="right" />
+        <EntryCard dateRange={dateRange} entry={entry} side="right" />
       </div>
     </div>
   )
