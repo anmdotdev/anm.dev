@@ -17,10 +17,10 @@ export const metadata: Metadata = {
     locale: 'en_US',
     images: [
       {
-        url: 'https://anm.dev/opengraph-image',
+        url: 'https://anm.dev/journey/opengraph-image',
         width: 1200,
         height: 630,
-        alt: 'Professional journey of Anmol Mahatpurkar',
+        alt: 'Journey',
         type: 'image/png',
       },
     ],
@@ -31,7 +31,15 @@ export const metadata: Metadata = {
     description: `My professional journey — ${EXPERIENCE_YEARS_LABEL} of engineering, from game development to building AI products at a stealth startup.`,
     creator: '@anmdotdev',
     site: '@anmdotdev',
-    images: ['https://anm.dev/opengraph-image'],
+    images: [
+      {
+        url: 'https://anm.dev/journey/opengraph-image',
+        width: 1200,
+        height: 630,
+        alt: 'Journey',
+        type: 'image/png',
+      },
+    ],
   },
 }
 

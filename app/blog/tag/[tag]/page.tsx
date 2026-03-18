@@ -54,7 +54,7 @@ export const generateMetadata = async ({ params }: TagPageProps): Promise<Metada
       locale: 'en_US',
       images: [
         {
-          url: 'https://anm.dev/opengraph-image',
+          url: `https://anm.dev/blog/tag/${tagSlug}/opengraph-image`,
           width: 1200,
           height: 630,
           alt: `Articles tagged ${resolvedTag}`,
@@ -68,7 +68,15 @@ export const generateMetadata = async ({ params }: TagPageProps): Promise<Metada
       description,
       creator: '@anmdotdev',
       site: '@anmdotdev',
-      images: ['https://anm.dev/opengraph-image'],
+      images: [
+        {
+          url: `https://anm.dev/blog/tag/${tagSlug}/opengraph-image`,
+          width: 1200,
+          height: 630,
+          alt: `Articles tagged ${resolvedTag}`,
+          type: 'image/png',
+        },
+      ],
     },
     robots: {
       index: isIndexable,

@@ -23,7 +23,7 @@ export const metadata: Metadata = {
         url: 'https://anm.dev/opengraph-image',
         width: 1200,
         height: 630,
-        alt: 'anmdotdev - Anmol Mahatpurkar',
+        alt: 'anm.dev',
         type: 'image/png',
       },
     ],
@@ -34,7 +34,15 @@ export const metadata: Metadata = {
     site: '@anmdotdev',
     card: 'summary_large_image',
     creator: '@anmdotdev',
-    images: ['https://anm.dev/opengraph-image'],
+    images: [
+      {
+        url: 'https://anm.dev/opengraph-image',
+        width: 1200,
+        height: 630,
+        alt: 'anm.dev',
+        type: 'image/png',
+      },
+    ],
   },
 }
 

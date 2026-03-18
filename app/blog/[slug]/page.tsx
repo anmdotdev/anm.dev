@@ -109,7 +109,15 @@ export const generateMetadata = async ({ params }: BlogPostPageProps): Promise<M
       description: post.summary || `${post.title} - A blog post by Anmol Mahatpurkar`,
       creator: '@anmdotdev',
       site: '@anmdotdev',
-      images: [`https://anm.dev/blog/${slug}/opengraph-image`],
+      images: [
+        {
+          url: `https://anm.dev/blog/${slug}/opengraph-image`,
+          width: 1200,
+          height: 630,
+          alt: post.title,
+          type: 'image/png',
+        },
+      ],
     },
     ...(post.scheduled
       ? {

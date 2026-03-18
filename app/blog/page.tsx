@@ -24,15 +24,15 @@ export const metadata: Metadata = {
     description:
       'Thoughts on frontend engineering, TypeScript, React, developer tools, AI prompts, and building for the web.',
     url: 'https://anm.dev/blog',
-    type: 'profile',
+    type: 'website',
     siteName: 'anmdotdev',
     locale: 'en_US',
     images: [
       {
-        url: 'https://anm.dev/opengraph-image',
+        url: 'https://anm.dev/blog/opengraph-image',
         width: 1200,
         height: 630,
-        alt: 'anmdotdev blog',
+        alt: 'Blog list',
         type: 'image/png',
       },
     ],
@@ -44,7 +44,15 @@ export const metadata: Metadata = {
       'Thoughts on frontend engineering, TypeScript, React, developer tools, AI prompts, and building for the web.',
     creator: '@anmdotdev',
     site: '@anmdotdev',
-    images: ['https://anm.dev/opengraph-image'],
+    images: [
+      {
+        url: 'https://anm.dev/blog/opengraph-image',
+        width: 1200,
+        height: 630,
+        alt: 'Blog list',
+        type: 'image/png',
+      },
+    ],
   },
 }
 

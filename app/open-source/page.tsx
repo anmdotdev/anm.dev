@@ -21,10 +21,10 @@ export const metadata: Metadata = {
     locale: 'en_US',
     images: [
       {
-        url: 'https://anm.dev/opengraph-image',
+        url: 'https://anm.dev/open-source/opengraph-image',
         width: 1200,
         height: 630,
-        alt: 'Open source projects by Anmol Mahatpurkar',
+        alt: 'Open source projects',
         type: 'image/png',
       },
     ],
@@ -36,7 +36,15 @@ export const metadata: Metadata = {
       'Open source projects by Anmol Mahatpurkar — React libraries, developer tools, and more.',
     creator: '@anmdotdev',
     site: '@anmdotdev',
-    images: ['https://anm.dev/opengraph-image'],
+    images: [
+      {
+        url: 'https://anm.dev/open-source/opengraph-image',
+        width: 1200,
+        height: 630,
+        alt: 'Open source projects',
+        type: 'image/png',
+      },
+    ],
   },
 }
 
