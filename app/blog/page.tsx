@@ -1,5 +1,4 @@
-import NewsletterSignupCard from 'components/newsletter/signup-card'
-import NewsletterStatusNotice from 'components/newsletter/status-notice'
+import NewsletterBlogSection from 'components/newsletter/blog-section'
 import Link from 'components/ui/link'
 import { formatDate, getArticleDateTime, getArticleModifiedTime, getBlogPosts } from 'lib/blog'
 import { isNewsletterConfigured } from 'lib/newsletter'
@@ -195,17 +194,10 @@ const BlogPage = () => {
           ))}
         </div>
       )}
-      <div className="mt-8 space-y-4" id="newsletter">
+      <div className="mt-8">
         <Suspense fallback={null}>
-          <NewsletterStatusNotice />
+          <NewsletterBlogSection enabled={newsletterEnabled} />
         </Suspense>
-        <NewsletterSignupCard
-          compact
-          description="New blog post published? You get a short note and a direct link."
-          enabled={newsletterEnabled}
-          source="blog-index"
-          title="Prefer email over checking back?"
-        />
       </div>
       <script
         /* biome-ignore lint/security/noDangerouslySetInnerHtml: JSON-LD structured data */

@@ -4,6 +4,7 @@ import crypto from 'node:crypto'
 import { render, toPlainText } from '@react-email/render'
 import NewsletterConfirmationEmail from 'emails/newsletter-confirmation'
 import NewsletterPostPublishedEmail from 'emails/newsletter-post-published'
+import NewsletterWelcomeEmail from 'emails/newsletter-welcome'
 import { getBlogPost, getBlogPosts } from 'lib/blog'
 import { ensureDb } from 'lib/db'
 import { getAbsoluteUrl, NEWSLETTER_FROM_NAME } from 'lib/site'
@@ -487,6 +488,27 @@ const sendConfirmationEmail = async (email: string, token: string): Promise<void
   }
 }
 
+const sendWelcomeEmail = async (email: string): Promise<void> => {
+  const resend = getResendClient()
+  const config = getNewsletterConfig()
+  const blogUrl = getAbsoluteUrl('/blog')
+
+  const { error } = await resend.emails.send({
+    from: `${config.fromName} <${config.fromEmail}>`,
+    to: email,
+    replyTo: config.replyToEmail,
+    subject: 'You are subscribed to anmdotdev',
+    react: <NewsletterWelcomeEmail blogUrl={blogUrl} />,
+    headers: {
+      'X-Entity-Ref-ID': `newsletter-welcome-${hashValue(email)}`,
+    },
+  })
+
+  if (error) {
+    throw new Error(`Unable to send welcome email: ${error.message}`)
+  }
+}
+
 const ensureContactIsInSegment = async (contactId: string | null, email: string): Promise<void> => {
   const resend = getResendClient()
   const { segmentId } = getNewsletterConfig()
@@ -610,6 +632,12 @@ export const confirmNewsletterSubscription = async (
     args: [resendContactId, tokenRecord.subscriber.id],
   })
   await markTokenUsed(tokenRecord.id)
+
+  try {
+    await sendWelcomeEmail(tokenRecord.subscriber.email)
+  } catch {
+    // Confirmation should succeed even if the follow-up welcome email fails transiently.
+  }
 
   return { status: 'confirmed' }
 }
