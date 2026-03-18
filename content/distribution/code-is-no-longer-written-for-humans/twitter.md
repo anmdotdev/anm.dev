@@ -1,49 +1,80 @@
 ## Post 1
 
-A hot take from my recent AI coding work:
+I used to think maintainability lived mostly inside the code.
 
-code is no longer the primary place maintainability begins.
+Good variable names. Clean abstractions. Small functions. Predictable file structure.
 
-Readable code still matters.
-But it is no longer enough on its own.
+That instinct is still correct.
+It is just no longer sufficient.
 
 ---
 
 ## Post 2
 
-What breaks AI agents is usually not code volume.
+Working with AI coding agents has changed how I think about what code is *for*.
 
-It is missing intent.
+The next thing reading your code may not be a human teammate.
+It may be an agent.
 
-If the real rule only lives in your head, Slack, or unwritten team lore, the model has to guess.
-
-And guessing is where expensive errors show up.
+And agents are good at different things than humans are.
 
 ---
 
 ## Post 3
 
-So the leverage moves upward:
+An agent can read a hundred files faster than I can read five.
 
-- behavior specs
-- constraints
-- scenarios
-- docs
-- tests
+It can follow types, trace call sites, and identify repeated patterns almost instantly.
 
-That layer increasingly acts like the contract above the code.
-
-Code becomes the compiled artifact of that intent.
+What trips it up is usually not complexity.
+It is ambiguity.
 
 ---
 
 ## Post 4
 
+If the real rule lives in Slack, in somebody's head, or in unwritten team lore, the model has to guess.
+
+And guessing is where expensive mistakes come from.
+
+The issue is often not code readability.
+
+It is that the code is not the full source of truth for intent.
+
+---
+
+## Post 5
+
+So the bottleneck is shifting.
+
+Less: typing the implementation
+More: specifying the behavior clearly
+
+What should happen.
+What must never happen.
+Which edge cases matter.
+How success is verified.
+
+---
+
+## Post 6
+
+That is why I think docs and tests matter even more in AI-native workflows.
+
+Docs explain what should happen.
+Tests prove whether it actually does.
+
+Together, they act like the contract above the code.
+
+---
+
+## Post 7
+
 Readable code still matters.
 Architecture still matters.
 
-But in AI-native development, maintainability starts earlier:
-in how explicitly you define behavior.
+But maintainability increasingly starts earlier:
+in how explicitly you define intent.
 
-I wrote the full argument here:
+I wrote the full essay here:
 https://anm.dev/blog/code-is-no-longer-written-for-humans

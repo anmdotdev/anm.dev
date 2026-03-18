@@ -1,21 +1,36 @@
 ---
-subject: "Code is no longer the first place maintainability starts"
-preview: "AI changes what maintainability depends on: less hidden intent, more explicit specs, docs, and tests."
-summary: "This email is the short version of the argument: readable code still matters, but AI shifts the real source of truth upward."
+subject: "I used to think maintainability lived mostly inside the code"
+preview: "That instinct is still correct. It is just no longer sufficient once AI agents become real collaborators."
+summary: "A preface to the essay: readable code still matters, but AI shifts the real source of truth upward, from files to intent."
 ---
 
-For years, we treated maintainability as something that lived mainly inside the code. Name things well. Keep functions small. Use sane abstractions. Make the next engineer comfortable.
+I used to think maintainability lived mostly inside the code.
 
-That instinct is still right. It is just no longer sufficient once AI agents become real collaborators instead of autocomplete.
+Good variable names. Clean abstractions. Small functions. Predictable file structure. A tasteful amount of comments. The goal was obvious: make sure the next developer could open the file, understand it quickly, and change it without breaking everything.
 
-> The new question is not only "will another engineer understand this file?" It is also "have I made the behavior explicit enough that a machine can implement it, verify it, and safely change it later?"
+That instinct is still correct. It is just no longer sufficient.
 
-Agents are not usually blocked by code volume. They are blocked by missing intent. If the real rule lives in your head, in Slack, or in unwritten team lore, the model has to guess. And guessing is where expensive errors come from.
+Over the last few months, I have spent a lot of time building software with AI coding agents. Not as autocomplete. Not as a novelty. As actual collaborators that read the codebase, propose changes, write implementation, run checks, and iterate. And that experience has changed how I think about what code is *for*.
 
-That is why I increasingly think the high-leverage skill is declarative specification. Behavior. Constraints. Scenarios. Non-negotiables. The better that layer is written, the better the implementation usually gets.
+Here is the shift I keep coming back to:
 
-- Docs explain what should happen.
-- Tests prove whether it actually does.
-- Code becomes the compiled artifact of that intent.
+> Code is no longer written primarily for humans to read line by line. It is increasingly written as the executable output of a clearer layer above it: intent.
 
-Readable code still matters. Architecture still matters. But maintainability starts earlier now. It starts in the clarity of the contract above the code.
+Readable code still matters. Architecture still matters. But the center of gravity has moved.
+
+The biggest AI failures I see usually do not come from the model being unable to read the code. They come from missing intent. A model can trace files and follow types faster than I can. But if the real rule is buried in Slack, trapped in somebody's head, or never written down at all, the model has to guess.
+
+And guessing is where expensive mistakes come from.
+
+That is why I think the leverage is moving upward:
+
+- specs that define behavior clearly
+- documentation that captures why a decision exists
+- tests that act like product contracts
+- constraints and scenarios that leave less room for improvisation
+
+In an AI-heavy workflow, docs explain what should happen and tests prove whether it actually does. That pair is a much stronger maintenance layer than style preferences alone.
+
+This essay is my attempt to make that argument carefully:
+
+https://anm.dev/blog/code-is-no-longer-written-for-humans
