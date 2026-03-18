@@ -1,0 +1,21 @@
+---
+subject: "Code is no longer the first place maintainability starts"
+preview: "AI changes what maintainability depends on: less hidden intent, more explicit specs, docs, and tests."
+summary: "This email is the short version of the argument: readable code still matters, but AI shifts the real source of truth upward."
+---
+
+For years, we treated maintainability as something that lived mainly inside the code. Name things well. Keep functions small. Use sane abstractions. Make the next engineer comfortable.
+
+That instinct is still right. It is just no longer sufficient once AI agents become real collaborators instead of autocomplete.
+
+> The new question is not only "will another engineer understand this file?" It is also "have I made the behavior explicit enough that a machine can implement it, verify it, and safely change it later?"
+
+Agents are not usually blocked by code volume. They are blocked by missing intent. If the real rule lives in your head, in Slack, or in unwritten team lore, the model has to guess. And guessing is where expensive errors come from.
+
+That is why I increasingly think the high-leverage skill is declarative specification. Behavior. Constraints. Scenarios. Non-negotiables. The better that layer is written, the better the implementation usually gets.
+
+- Docs explain what should happen.
+- Tests prove whether it actually does.
+- Code becomes the compiled artifact of that intent.
+
+Readable code still matters. Architecture still matters. But maintainability starts earlier now. It starts in the clarity of the contract above the code.

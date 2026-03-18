@@ -1,0 +1,25 @@
+---
+subject: "7 principles I trust for getting AI to write production code"
+preview: "The model matters less than people think. The workflow around it matters much more."
+summary: "These are the seven principles I keep coming back to when I want AI output to be precise, testable, and safe to ship."
+---
+
+The difference between "AI wrote some junk" and "AI helped me ship production code" is usually not the model. It is the operating system around the model.
+
+## The seven principles
+
+1. Rich context beats clever wording.
+2. Understanding comes before implementation.
+3. Scenarios are the contract.
+4. Feedback loops matter more than models.
+5. Write the shape before the code.
+6. Review behavior first, style second.
+7. Concurrency is a reward for discipline.
+
+If you zoom out, all seven are really saying the same thing: make intent explicit, make feedback fast, and make review disciplined.
+
+That is also why I do not find isolated prompt hacks very persuasive. Tools will change. Model quality will change. But those three requirements stay stable if you want reliable output.
+
+> A strong model with no feedback still drifts. A decent model with strong feedback often converges.
+
+If you only adopt three habits, I would start here: give more context than feels necessary, make the model explain before it implements, and build a loop with tests plus runtime verification. That alone changes a lot.

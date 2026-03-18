@@ -1,0 +1,23 @@
+---
+subject: "Most bad AI code is a feedback-loop failure"
+preview: "If an agent cannot see, test, and correct its work, it is coding blind."
+summary: "The problem is usually not that the model is dumb. It is that we ask it to implement without giving it the same feedback a human developer would use."
+---
+
+One of the most common complaints about AI coding is: "it wrote something plausible, but it did not actually work." I hit that constantly at first.
+
+The mistake was assuming the failure lived in the model. Most of the time, it lived in the loop. I was asking the agent to write code without giving it any real way to verify whether the result worked.
+
+> Bad AI output is very often just blind output.
+
+A human developer writes code, runs it, inspects what happened, notices what broke, and fixes it. But many AI workflows stop at "generate code" and then force the model to guess from vague second-hand descriptions.
+
+## The loop I actually want has three layers
+
+- Static feedback: linting, type checking, unit tests.
+- Logical feedback: dry-running real scenarios through the code.
+- Runtime feedback: browser access, console output, network inspection, screenshots, DOM checks.
+
+Once the model can implement, inspect, and correct against real signals, the workflow changes from draft generation to convergence. That is the whole shift.
+
+So when AI output looks weak, I no longer ask only "was the prompt good?" I ask whether the agent had enough feedback to become correct. That is a much better standard.

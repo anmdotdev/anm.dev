@@ -1,21 +1,19 @@
-import fs from 'node:fs'
-import path from 'node:path'
-
 import { getArticleModifiedTime, getBlogPosts, getIndexableTags, getTagSlug } from 'lib/blog'
+import { JOURNEY_LAST_UPDATED } from 'lib/journey'
+import { OPEN_SOURCE_LAST_UPDATED } from 'lib/projects'
 import type { MetadataRoute } from 'next'
 
 export const revalidate = 300
 
-const getLatestFileModifiedTime = (paths: string[]): Date =>
-  paths.reduce<Date>((latestDate, relativePath) => {
-    const absolutePath = path.join(process.cwd(), relativePath)
+const toUtcDate = (value: string): Date => new Date(`${value}T00:00:00.000Z`)
 
-    if (!fs.existsSync(absolutePath)) {
+const getLatestDate = (...values: (Date | null | undefined)[]): Date =>
+  values.reduce<Date>((latestDate, value) => {
+    if (!(value && value > latestDate)) {
       return latestDate
     }
 
-    const modifiedTime = fs.statSync(absolutePath).mtime
-    return modifiedTime > latestDate ? modifiedTime : latestDate
+    return value
   }, new Date(0))
 
 const getLatestPublishedPostDate = (posts: ReturnType<typeof getBlogPosts>): Date | null =>
@@ -24,44 +22,15 @@ const getLatestPublishedPostDate = (posts: ReturnType<typeof getBlogPosts>): Dat
 const sitemap = (): MetadataRoute.Sitemap => {
   const posts = getBlogPosts()
   const latestPublishedPostDate = getLatestPublishedPostDate(posts)
-
-  const homeLastModified = latestPublishedPostDate
-    ? new Date(
-        Math.max(
-          latestPublishedPostDate.getTime(),
-          getLatestFileModifiedTime([
-            'app/page.tsx',
-            'components/home/intro.tsx',
-            'components/home/open-source-projects.tsx',
-            'components/home/recent-posts.tsx',
-            'lib/projects.ts',
-          ]).getTime(),
-        ),
-      )
-    : getLatestFileModifiedTime([
-        'app/page.tsx',
-        'components/home/intro.tsx',
-        'components/home/open-source-projects.tsx',
-        'components/home/recent-posts.tsx',
-        'lib/projects.ts',
-      ])
-
-  const openSourceLastModified = getLatestFileModifiedTime([
-    'app/open-source/page.tsx',
-    'components/open-source/open-source-project.tsx',
-    'lib/projects.ts',
-  ])
-
-  const journeyLastModified = getLatestFileModifiedTime([
-    'app/journey/page.tsx',
-    'components/journey/timeline.tsx',
-    'components/journey/timeline-entry.tsx',
-    'lib/journey.ts',
-  ])
-
+  const openSourceLastModified = toUtcDate(OPEN_SOURCE_LAST_UPDATED)
+  const journeyLastModified = toUtcDate(JOURNEY_LAST_UPDATED)
   const blogIndexLastModified =
-    latestPublishedPostDate ??
-    getLatestFileModifiedTime(['app/blog/page.tsx', 'components/home/recent-posts.tsx'])
+    latestPublishedPostDate ?? getLatestDate(openSourceLastModified, journeyLastModified)
+  const homeLastModified = getLatestDate(
+    latestPublishedPostDate,
+    openSourceLastModified,
+    journeyLastModified,
+  )
 
   const blogEntries = posts.map((post) => ({
     url: `https://anm.dev/blog/${post.slug}`,

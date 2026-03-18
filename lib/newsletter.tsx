@@ -6,14 +6,13 @@ import NewsletterConfirmationEmail from 'emails/newsletter-confirmation'
 import NewsletterPostPublishedEmail from 'emails/newsletter-post-published'
 import NewsletterWelcomeEmail from 'emails/newsletter-welcome'
 import { getBlogPost, getBlogPosts } from 'lib/blog'
+import { type BlogEmailTextBlock, getRequiredBlogEmailDistribution } from 'lib/blog-distribution'
 import { ensureDb } from 'lib/db'
 import { getAbsoluteUrl, NEWSLETTER_FROM_NAME } from 'lib/site'
 import { Resend, type WebhookEventPayload } from 'resend'
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-const MAX_EXCERPT_LENGTH = 420
 const MAX_PREVIEW_LENGTH = 140
-const MAX_SUMMARY_LENGTH = 220
 const MAX_SIGNUP_ATTEMPTS_PER_HOUR = 5
 const RATE_LIMIT_WINDOW = '-1 hour'
 const CONFIRM_TOKEN_TTL_HOURS = 24 * 7
@@ -139,7 +138,7 @@ interface NewsletterSendConfig {
 }
 
 interface NewsletterPostContent {
-  excerpt: string
+  body: BlogEmailTextBlock[]
   preview: string
   subject: string
   summary: string
@@ -272,17 +271,14 @@ const formatPostDate = (date: string): string =>
   }).format(new Date(`${date}T00:00:00+05:30`))
 
 const buildPostContent = (post: ReturnType<typeof getBlogPosts>[number]): NewsletterPostContent => {
-  const summary = truncate(post.summary || post.plainText, MAX_SUMMARY_LENGTH)
-  const excerptSource = post.newsletterExcerpt || post.summary || post.plainText
-  const excerpt = truncate(excerptSource, MAX_EXCERPT_LENGTH)
-  const preview = truncate(post.newsletterPreview || summary, MAX_PREVIEW_LENGTH)
-  const subject = post.newsletterSubject || `New post: ${post.title}`
+  const distribution = getRequiredBlogEmailDistribution(post)
+  const preview = truncate(distribution.preview, MAX_PREVIEW_LENGTH)
 
   return {
-    summary,
-    excerpt,
+    body: distribution.body,
     preview,
-    subject,
+    subject: distribution.subject,
+    summary: distribution.summary,
   }
 }
 
@@ -765,10 +761,10 @@ const sendCampaign = async (campaign: NewsletterCampaign): Promise<boolean> => {
 
     const config = getNewsletterConfig()
     const postUrl = getAbsoluteUrl(`/blog/${post.slug}`)
-    const { excerpt, preview, summary, subject } = buildPostContent(post)
+    const { body, preview, summary, subject } = buildPostContent(post)
     const emailComponent = (
       <NewsletterPostPublishedEmail
-        excerpt={excerpt}
+        body={body}
         postDateLabel={formatPostDate(post.date)}
         postUrl={postUrl}
         preview={preview}

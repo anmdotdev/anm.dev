@@ -77,6 +77,13 @@ const styles = {
     lineHeight: '1.8',
     margin: '0 0 18px',
   },
+  sectionHeading: {
+    color: '#222222',
+    fontSize: '16px',
+    fontWeight: '700',
+    lineHeight: '1.6',
+    margin: '0 0 12px',
+  },
   panel: {
     backgroundColor: '#f6f7f8',
     border: '1px solid #dddddd',

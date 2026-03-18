@@ -19,6 +19,8 @@ export interface IJourneyAchievement {
   title: string
 }
 
+export const JOURNEY_LAST_UPDATED = '2026-03-18'
+
 export const JOURNEY_ENTRIES: IJourneyEntry[] = [
   {
     category: 'work',

@@ -74,14 +74,6 @@ const websiteJsonLd = {
     '@type': 'Person',
     '@id': 'https://anm.dev/#person',
   },
-  potentialAction: {
-    '@type': 'SearchAction',
-    target: {
-      '@type': 'EntryPoint',
-      urlTemplate: 'https://anm.dev/api/search?q={search_term_string}',
-    },
-    'query-input': 'required name=search_term_string',
-  },
 }
 
 const RootLayout = ({ children }: IRootLayoutProps) => (
@@ -93,8 +85,6 @@ const RootLayout = ({ children }: IRootLayoutProps) => (
       <link href="https://api.github.com" rel="preconnect" />
       <link href="https://api.github.com" rel="dns-prefetch" />
       <link href="https://github.com" rel="dns-prefetch" />
-      <link href="https://anm.dev" hrefLang="en" rel="alternate" />
-      <link href="https://anm.dev" hrefLang="x-default" rel="alternate" />
       <link
         href="/feed.xml"
         rel="alternate"

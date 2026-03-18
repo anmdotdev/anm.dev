@@ -65,12 +65,10 @@ const TimelineEntry = ({ entry, index }: ITimelineEntryProps) => {
 const EntryCard = ({
   dateRange,
   entry,
-  mobile,
   side,
 }: {
   dateRange: string
   entry: IJourneyEntry
-  mobile?: boolean
   side: 'left' | 'right'
 }) => (
   <div
@@ -83,13 +81,7 @@ const EntryCard = ({
     <p className="mb-1.5 font-mono text-gray-dark text-xs tracking-wider dark:text-dark-text-muted">
       {dateRange}
     </p>
-    {mobile ? (
-      <p aria-hidden="true" className="mb-1 font-semibold text-base text-black dark:text-dark-text">
-        {entry.role}
-      </p>
-    ) : (
-      <h3 className="mb-1 font-semibold text-base text-black dark:text-dark-text">{entry.role}</h3>
-    )}
+    <h3 className="mb-1 font-semibold text-base text-black dark:text-dark-text">{entry.role}</h3>
     <p className="mb-2 text-gray-darker text-sm dark:text-dark-text-secondary">
       {entry.companyUrl ? (
         <Link

@@ -1,7 +1,7 @@
-import { redirect } from 'next/navigation'
+import { permanentRedirect } from 'next/navigation'
 
 const NewsletterPage = () => {
-  redirect('/blog#newsletter')
+  permanentRedirect('/blog#newsletter')
 }
 
 export default NewsletterPage

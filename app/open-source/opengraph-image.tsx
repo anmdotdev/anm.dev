@@ -8,6 +8,7 @@ export const revalidate = 3600
 
 const OgImage = async () =>
   createOgImageResponse({
+    showAuthor: true,
     title: 'Open Source Projects',
   })
 

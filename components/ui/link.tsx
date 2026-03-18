@@ -19,6 +19,7 @@ interface ILinkProps {
 
 const EXTERNAL_REL_VALUES = ['nofollow', 'noopener', 'noreferrer'] as const
 const REL_SPLIT_REGEX = /\s+/
+const PREFETCHABLE_PATH_REGEX = /^\/(?!.*\.[a-z0-9]+(?:[?#]|$)).*/i
 
 const getRelValue = (external?: boolean, rel?: string): string | undefined => {
   if (!external) {
@@ -32,6 +33,14 @@ const getRelValue = (external?: boolean, rel?: string): string | undefined => {
   }
 
   return Array.from(relValues).join(' ')
+}
+
+const shouldPrefetchHref = (href: string, external?: boolean): boolean => {
+  if (external) {
+    return false
+  }
+
+  return PREFETCHABLE_PATH_REGEX.test(href)
 }
 
 export default ({
@@ -83,7 +92,7 @@ export default ({
       )}
       download={download}
       href={href}
-      prefetch={!external}
+      prefetch={shouldPrefetchHref(href, external)}
       rel={getRelValue(external, rel)}
       target={target}
     >

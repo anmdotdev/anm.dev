@@ -16,6 +16,8 @@ export interface IOpenSourceProject {
   tags: { label: string; color: string }[]
 }
 
+export const OPEN_SOURCE_LAST_UPDATED = '2026-03-18'
+
 export const OPEN_SOURCE_PROJECTS: IOpenSourceProject[] = [
   {
     image: cogoToastImage,

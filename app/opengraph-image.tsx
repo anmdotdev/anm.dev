@@ -6,6 +6,10 @@ export const contentType = 'image/png'
 export const runtime = 'nodejs'
 export const revalidate = 3600
 
-const OgImage = () => createOgImageResponse({})
+const OgImage = () =>
+  createOgImageResponse({
+    showAuthor: true,
+    title: 'Anmol Mahatpurkar',
+  })
 
 export default OgImage

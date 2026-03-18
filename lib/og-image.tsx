@@ -5,8 +5,8 @@ import { ImageResponse } from 'next/og'
 import { cache } from 'react'
 
 export const OG_IMAGE_SIZE = { width: 1200, height: 630 } as const
-export const DEFAULT_OG_ALT = 'anmdotdev Open Graph image'
-export const BLOG_OG_ALT = 'Blog post Open Graph image'
+export const DEFAULT_OG_ALT = 'Anmol Mahatpurkar Open Graph image'
+export const BLOG_OG_ALT = 'Anmol Mahatpurkar blog post Open Graph image'
 
 const AUTHOR_NAME = 'Anmol Mahatpurkar'
 const SITE_LABEL = 'anm.dev'

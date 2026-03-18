@@ -1,0 +1,29 @@
+---
+subject: "My exact AI coding workflow, step by step"
+preview: "The practical version: how I go from a rough idea to reviewed, tested, production-ready code with AI in the loop."
+summary: "After writing about specs, feedback loops, and parallelism, this is the end-to-end workflow I actually trust in day-to-day work."
+---
+
+The earlier posts in this series were the theory. This one is the operating procedure I come back to when I want AI output to be predictable enough for real work.
+
+## The workflow in order
+
+1. Pick a bounded task.
+2. Dump context fast.
+3. Ask for understanding before changes.
+4. Write a thin spec when the task deserves it.
+5. Define the scenarios explicitly.
+6. Let it implement.
+7. Dry run the scenarios.
+8. Run real feedback loops.
+9. Review the diff like a pull request.
+10. Use a second model when it matters.
+11. Merge, then reset context.
+
+What I like about this sequence is that each step reduces a different class of failure. Bad scoping poisons the task. Missing context forces guessing. No scenarios weakens review. No runtime loop leaves the model blind.
+
+By the time implementation starts, most of the real thinking has already happened. The model is no longer improvising the whole system. It is executing inside a frame.
+
+> AI becomes reliable when you stop treating it like a generator and start treating it like a participant in a full engineering loop.
+
+That is the main shift. I spend less time typing implementation and more time defining behavior, shaping tasks, reviewing outcomes, and making architecture calls. That is why this feels like a genuine workflow change rather than a novelty.

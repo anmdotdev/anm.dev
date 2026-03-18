@@ -8,7 +8,8 @@ export const revalidate = 3600
 
 const OgImage = async () =>
   createOgImageResponse({
-    title: 'Blog List',
+    showAuthor: true,
+    title: 'Frontend engineering, AI, and the web',
   })
 
 export default OgImage

@@ -1,0 +1,23 @@
+---
+subject: "Prompts are starting to function like declarative code"
+preview: "The useful prompt is not a magic spell. It is a compact declaration of behavior, constraints, and scenarios."
+summary: "I think prompts are becoming the declarative layer above implementation, in the same way React moved many frontend developers above manual DOM mutation."
+---
+
+React felt powerful because it moved us one layer up. Instead of manually mutating the DOM, we declared what the UI should be and let the framework handle the mechanics underneath.
+
+That is increasingly how I think about prompts. A good prompt is not just a request to a chatbot. It is a behavioral layer that sits above code.
+
+> The useful prompt is not an incantation. It is a compact declaration of intent.
+
+When the prompt defines behavior, constraints, scenarios, relevant files, and boundaries, it narrows the solution space. The model is no longer inventing the shape of the system from scratch. It is implementing inside a frame.
+
+- Context: what already exists and where it lives.
+- Intent: what the feature is actually trying to accomplish.
+- Constraints: what patterns or invariants must hold.
+- Scenarios: what success looks like in the real product.
+- Boundaries: what should not change yet.
+
+That is why I now think writing the spec is often more valuable than writing the first draft of the code. The spec tells the model what kind of code is allowed to exist.
+
+Code still matters. It remains the executable layer. But prompts, specs, scenarios, and tests increasingly carry more of the meaningful human decisions above it.
