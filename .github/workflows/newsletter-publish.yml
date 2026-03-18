@@ -1,8 +1,12 @@
 name: Newsletter Publish
 
 on:
+  push:
+    paths:
+      - 'content/blog/**'
+      - '.github/workflows/newsletter-publish.yml'
   schedule:
-    - cron: '*/15 * * * *'
+    - cron: '15 19 * * *'
   workflow_dispatch:
 
 jobs:
