@@ -58,6 +58,7 @@ export const generateMetadata = async ({ params }: TagPageProps): Promise<Metada
           width: 1200,
           height: 630,
           alt: `Articles tagged ${resolvedTag}`,
+          type: 'image/png',
         },
       ],
     },
@@ -189,9 +190,9 @@ const TagPage = async ({ params }: TagPageProps) => {
               href={`/blog/${post.slug}`}
               showIcon="never"
             >
-              <span className="font-medium text-black text-sm group-hover/post:underline dark:text-dark-text">
+              <h2 className="font-medium text-black text-sm group-hover/post:underline dark:text-dark-text">
                 {post.title}
-              </span>
+              </h2>
               {post.summary && (
                 <span className="line-clamp-2 text-gray-dark text-xs dark:text-dark-text-secondary">
                   {post.summary}

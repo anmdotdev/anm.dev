@@ -263,6 +263,7 @@ const CommentForm = ({ slug, parentId, onSubmit, onCancel, autoFocus }: CommentF
         )}
         {!showEmail && (
           <button
+            aria-label="Add email address (optional)"
             className="shrink-0 text-gray text-xs hover:text-black dark:hover:text-dark-text"
             onClick={() => setShowEmail(true)}
             type="button"
@@ -374,6 +375,7 @@ const CommentItem = ({
         <div className="mt-1 flex items-center gap-3">
           {depth === 0 && (
             <button
+              aria-controls={`reply-form-${comment.id}`}
               aria-expanded={showReply}
               className="text-gray text-xs transition-colors hover:text-black dark:text-dark-text-muted dark:hover:text-dark-text"
               onClick={() => setShowReply(!showReply)}
@@ -402,7 +404,7 @@ const CommentItem = ({
           )}
         </div>
         {showReply && (
-          <div className="mt-3">
+          <div className="mt-3" id={`reply-form-${comment.id}`}>
             <CommentForm
               autoFocus
               onCancel={() => setShowReply(false)}

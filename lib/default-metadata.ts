@@ -13,10 +13,6 @@ const defaultMetadata: Metadata = {
   publisher: 'Anmol Mahatpurkar',
   alternates: {
     canonical: '/',
-    languages: {
-      'en-US': '/',
-      'x-default': '/',
-    },
     types: {
       'application/rss+xml': '/feed.xml',
       'application/feed+json': '/feed.json',
@@ -36,6 +32,7 @@ const defaultMetadata: Metadata = {
         width: 1200,
         height: 630,
         alt: 'anmdotdev - Anmol Mahatpurkar',
+        type: 'image/png',
       },
     ],
   },
@@ -52,6 +49,7 @@ const defaultMetadata: Metadata = {
         width: 1200,
         height: 630,
         alt: 'anmdotdev - Anmol Mahatpurkar',
+        type: 'image/png',
       },
     ],
   },

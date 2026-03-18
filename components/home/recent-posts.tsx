@@ -1,6 +1,6 @@
 import Link from 'components/ui/link'
 import type { BlogPost } from 'lib/blog'
-import { formatDate } from 'lib/blog'
+import { formatDate, getArticleDateTime } from 'lib/blog'
 
 interface RecentPostsProps {
   posts: BlogPost[]
@@ -26,16 +26,17 @@ const RecentPosts = ({ posts }: RecentPostsProps) => {
               href={`/blog/${post.slug}`}
               showIcon="never"
             >
-              <span className="font-semibold text-base text-black group-hover:underline dark:text-dark-text">
+              <h3 className="font-semibold text-base text-black group-hover:underline dark:text-dark-text">
                 {post.title}
-              </span>
+              </h3>
               {post.summary ? (
                 <p className="text-gray-dark text-sm dark:text-dark-text-secondary">
                   {post.summary}
                 </p>
               ) : null}
               <span className="text-gray text-xs dark:text-dark-text-muted">
-                {formatDate(post.date)} · {post.readingTime}
+                <time dateTime={getArticleDateTime(post)}>{formatDate(post.date)}</time> ·{' '}
+                {post.readingTime}
               </span>
             </Link>
           </article>

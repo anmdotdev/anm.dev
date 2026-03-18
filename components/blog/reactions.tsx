@@ -166,7 +166,9 @@ const Reactions = () => {
           type="button"
         >
           <ThumbsUpIcon className="h-3.5 w-3.5 text-black dark:text-dark-text" />
-          <span className="text-success-dark dark:text-success-light">{likes}</span>
+          <span aria-live="polite" className="text-success-dark dark:text-success-light">
+            {likes}
+          </span>
         </button>
         {particles
           .filter((p) => p.type === 'like')
@@ -197,7 +199,9 @@ const Reactions = () => {
         <ThumbsDownIcon
           className={`h-3.5 w-3.5 ${userDisliked ? 'text-error-dark dark:text-error-light' : 'text-black dark:text-dark-text'}`}
         />
-        <span className="text-error-light dark:text-error-lighter">{dislikes}</span>
+        <span aria-live="polite" className="text-error-light dark:text-error-lighter">
+          {dislikes}
+        </span>
       </button>
     </div>
   )

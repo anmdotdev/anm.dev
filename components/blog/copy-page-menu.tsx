@@ -103,9 +103,9 @@ const CopyPageMenu = ({ slug, title }: CopyPageMenuProps) => {
 
   return (
     <div className="relative" ref={menuRef}>
-      <div className="flex items-center">
+      <div className="flex items-center overflow-hidden rounded-md border border-gray-lighter bg-white dark:border-dark-border dark:bg-dark-surface">
         <button
-          className="flex items-center gap-1.5 rounded-l-md border border-gray-lighter bg-white px-3 py-1.5 font-medium text-black text-xs transition-colors hover:bg-gray-lightest dark:border-dark-border dark:bg-dark-surface dark:text-dark-text dark:hover:bg-dark-surface-hover"
+          className="flex items-center gap-1.5 border-gray-lighter border-r px-3 py-1.5 font-medium text-black text-xs transition-colors hover:bg-gray-lightest dark:border-dark-border dark:text-dark-text dark:hover:bg-dark-surface-hover"
           onClick={copyPageText}
           type="button"
         >
@@ -129,7 +129,7 @@ const CopyPageMenu = ({ slug, title }: CopyPageMenuProps) => {
           aria-expanded={open}
           aria-haspopup="true"
           aria-label="More copy options"
-          className="rounded-r-md border border-gray-lighter border-l-0 bg-white px-1.5 py-1.5 text-gray-dark transition-colors hover:bg-gray-lightest dark:border-dark-border dark:bg-dark-surface dark:text-dark-text-muted dark:hover:bg-dark-surface-hover"
+          className="px-2 py-1.5 text-gray-dark transition-colors hover:bg-gray-lightest dark:text-dark-text-muted dark:hover:bg-dark-surface-hover"
           onClick={() => setOpen(!open)}
           type="button"
         >

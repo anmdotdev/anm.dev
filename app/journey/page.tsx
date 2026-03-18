@@ -22,6 +22,7 @@ export const metadata: Metadata = {
         width: 1200,
         height: 630,
         alt: 'Professional journey of Anmol Mahatpurkar',
+        type: 'image/png',
       },
     ],
   },

@@ -13,6 +13,7 @@ interface TableOfContentsProps {
   variant?: 'desktop' | 'mobile'
 }
 
+const DESKTOP_TOC_OFFSET = 60
 const TOC_SCROLL_OFFSET = 32
 
 const TocLinks = ({
@@ -105,7 +106,11 @@ const TableOfContents = ({ headings, variant = 'mobile' }: TableOfContentsProps)
     return (
       <nav
         aria-label="Table of contents"
-        className="hidden max-h-[calc(100vh-3rem)] self-start overflow-y-auto xl:sticky xl:top-12 xl:block"
+        className="hidden self-start overflow-y-auto xl:sticky xl:block"
+        style={{
+          maxHeight: `calc(100vh - ${DESKTOP_TOC_OFFSET + 24}px)`,
+          top: `${DESKTOP_TOC_OFFSET}px`,
+        }}
       >
         <h2 className="mb-3 font-semibold text-[11px] text-gray-dark uppercase tracking-wider dark:text-dark-text-muted">
           On this page

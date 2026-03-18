@@ -23,6 +23,7 @@ const ReadingProgress = () => {
       const current = Math.min(Math.max((scrollY - start) / (end - start), 0), 1)
 
       barRef.current.style.transform = `scaleX(${current})`
+      barRef.current.setAttribute('aria-valuenow', `${Math.round(current * 100)}`)
     }
 
     window.addEventListener('scroll', onScroll, { passive: true })
@@ -32,9 +33,13 @@ const ReadingProgress = () => {
 
   return (
     <div
-      aria-hidden="true"
+      aria-label="Reading progress"
+      aria-valuemax={100}
+      aria-valuemin={0}
+      aria-valuenow={0}
       className="fixed top-0 left-0 z-50 h-0.5 w-full origin-left bg-black dark:bg-dark-text"
       ref={barRef}
+      role="progressbar"
       style={{ transform: 'scaleX(0)' }}
     />
   )

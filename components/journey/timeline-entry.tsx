@@ -31,9 +31,9 @@ const TimelineEntry = ({ entry, index }: ITimelineEntryProps) => {
 
   return (
     <div className="group relative flex w-full items-start max-md:flex-row md:items-center">
-      {/* Left content (desktop only) */}
+      {/* Left content (desktop) — only rendered for left-aligned entries */}
       <div
-        className={`hidden w-[calc(50%-20px)] md:block ${isLeft ? 'pr-8' : 'pointer-events-none invisible pr-8'}`}
+        className={`hidden w-[calc(50%-20px)] pr-8 md:block ${isLeft ? '' : 'pointer-events-none invisible'}`}
       >
         {isLeft && <EntryCard dateRange={dateRange} entry={entry} side="left" />}
       </div>
@@ -47,16 +47,16 @@ const TimelineEntry = ({ entry, index }: ITimelineEntryProps) => {
         </div>
       </div>
 
-      {/* Right content (desktop only) */}
+      {/* Right content (desktop) — only rendered for right-aligned entries */}
       <div
-        className={`hidden w-[calc(50%-20px)] md:block ${isLeft ? 'pointer-events-none invisible pl-8' : 'pl-8'}`}
+        className={`hidden w-[calc(50%-20px)] pl-8 md:block ${isLeft ? 'pointer-events-none invisible' : ''}`}
       >
         {!isLeft && <EntryCard dateRange={dateRange} entry={entry} side="right" />}
       </div>
 
-      {/* Mobile content */}
+      {/* Mobile content — single card, always right-aligned */}
       <div className="ml-4 flex-1 md:hidden">
-        <EntryCard dateRange={dateRange} entry={entry} side="right" />
+        <EntryCard dateRange={dateRange} entry={entry} mobile side="right" />
       </div>
     </div>
   )
@@ -65,10 +65,12 @@ const TimelineEntry = ({ entry, index }: ITimelineEntryProps) => {
 const EntryCard = ({
   dateRange,
   entry,
+  mobile,
   side,
 }: {
   dateRange: string
   entry: IJourneyEntry
+  mobile?: boolean
   side: 'left' | 'right'
 }) => (
   <div
@@ -81,7 +83,13 @@ const EntryCard = ({
     <p className="mb-1.5 font-mono text-gray-dark text-xs tracking-wider dark:text-dark-text-muted">
       {dateRange}
     </p>
-    <h3 className="mb-1 font-semibold text-base text-black dark:text-dark-text">{entry.role}</h3>
+    {mobile ? (
+      <p aria-hidden="true" className="mb-1 font-semibold text-base text-black dark:text-dark-text">
+        {entry.role}
+      </p>
+    ) : (
+      <h3 className="mb-1 font-semibold text-base text-black dark:text-dark-text">{entry.role}</h3>
+    )}
     <p className="mb-2 text-gray-darker text-sm dark:text-dark-text-secondary">
       {entry.companyUrl ? (
         <Link

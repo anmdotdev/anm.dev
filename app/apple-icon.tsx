@@ -25,12 +25,12 @@ const AppleIcon = () => {
       <span
         style={{
           color: '#e5e5e5',
-          fontSize: 96,
+          fontSize: 72,
           fontFamily: 'JetBrains Mono',
           fontWeight: 700,
         }}
       >
-        am
+        anm
       </span>
     </div>,
     {

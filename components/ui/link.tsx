@@ -13,6 +13,7 @@ interface ILinkProps {
   href: string
   rel?: string
   showIcon?: 'always' | 'hover' | 'never'
+  style?: React.CSSProperties
   target?: string
 }
 
@@ -59,7 +60,10 @@ export default ({
   return (
     <Link
       {...rest}
-      className={classnames('group inline-flex items-center hover:underline', className || '')}
+      className={classnames(
+        'group inline-flex items-center hover:underline focus-visible:underline focus-visible:outline-none',
+        className || '',
+      )}
       download={download}
       href={href}
       prefetch={!external}
