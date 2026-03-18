@@ -13,6 +13,7 @@ interface TableOfContentsProps {
   variant?: 'desktop' | 'mobile'
 }
 
+const DESKTOP_TOC_OFFSET = 60
 const TOC_SCROLL_OFFSET = 32
 
 const TocLinks = ({
@@ -54,7 +55,6 @@ const TocLinks = ({
 const TableOfContents = ({ headings, variant = 'mobile' }: TableOfContentsProps) => {
   const [activeId, setActiveId] = useState<string>('')
   const [isOpen, setIsOpen] = useState(false)
-  const [sidebarLeft, setSidebarLeft] = useState<number | null>(null)
   const observerRef = useRef<IntersectionObserver | null>(null)
 
   const navigate = (id: string) => {
@@ -102,46 +102,15 @@ const TableOfContents = ({ headings, variant = 'mobile' }: TableOfContentsProps)
     }
   }, [headings])
 
-  useEffect(() => {
-    if (variant !== 'desktop') {
-      return
-    }
-
-    const updatePosition = () => {
-      const article = document.querySelector('article')
-      if (!article) {
-        setSidebarLeft(null)
-        return
-      }
-
-      const rect = article.getBoundingClientRect()
-      const available = window.innerWidth - rect.right
-
-      if (available >= 248) {
-        setSidebarLeft(rect.right + 32)
-        return
-      }
-
-      setSidebarLeft(null)
-    }
-
-    updatePosition()
-    window.addEventListener('resize', updatePosition)
-    return () => {
-      window.removeEventListener('resize', updatePosition)
-    }
-  }, [variant])
-
   if (variant === 'desktop') {
-    if (sidebarLeft === null) {
-      return null
-    }
-
     return (
       <nav
         aria-label="Table of contents"
-        className="fixed top-24 hidden w-52 xl:block"
-        style={{ left: sidebarLeft }}
+        className="hidden self-start overflow-y-auto xl:sticky xl:block"
+        style={{
+          maxHeight: `calc(100vh - ${DESKTOP_TOC_OFFSET + 24}px)`,
+          top: `${DESKTOP_TOC_OFFSET}px`,
+        }}
       >
         <h2 className="mb-3 font-semibold text-[11px] text-gray-dark uppercase tracking-wider dark:text-dark-text-muted">
           On this page

@@ -68,6 +68,7 @@ const sitemap = (): MetadataRoute.Sitemap => {
     lastModified: new Date(getArticleModifiedTime(post)),
     changeFrequency: 'monthly' as const,
     priority: 0.7,
+    images: [`https://anm.dev/blog/${post.slug}/opengraph-image`],
   }))
 
   const tagEntries = getIndexableTags()

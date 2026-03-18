@@ -1,8 +1,10 @@
 import Link from 'components/ui/link'
-import { formatDate, getArticleDateTime, getBlogPosts } from 'lib/blog'
+import { formatDate, getArticleDateTime, getArticleModifiedTime, getBlogPosts } from 'lib/blog'
 import type { Metadata } from 'next'
 
 export const revalidate = 300
+
+const WHITESPACE_RE = /\s+/
 
 const formatMonthYear = (dateStr: string): string => {
   const date = new Date(dateStr)
@@ -22,7 +24,7 @@ export const metadata: Metadata = {
     description:
       'Thoughts on frontend engineering, TypeScript, React, developer tools, AI prompts, and building for the web.',
     url: 'https://anm.dev/blog',
-    type: 'website',
+    type: 'profile',
     siteName: 'anmdotdev',
     locale: 'en_US',
     images: [
@@ -31,6 +33,7 @@ export const metadata: Metadata = {
         width: 1200,
         height: 630,
         alt: 'anmdotdev blog',
+        type: 'image/png',
       },
     ],
   },
@@ -88,8 +91,12 @@ const BlogPage = () => {
       '@id': `https://anm.dev/blog/${post.slug}#article`,
       headline: post.title,
       datePublished: getArticleDateTime(post),
+      dateModified: getArticleModifiedTime(post),
       url: `https://anm.dev/blog/${post.slug}`,
       description: post.summary,
+      image: `https://anm.dev/blog/${post.slug}/opengraph-image`,
+      keywords: post.tags,
+      wordCount: post.plainText.split(WHITESPACE_RE).filter(Boolean).length,
       inLanguage: 'en-US',
       author: {
         '@type': 'Person',
@@ -145,7 +152,7 @@ const BlogPage = () => {
                       href={`/blog/${post.slug}`}
                       showIcon="never"
                     >
-                      <span className="flex items-center gap-2 font-medium text-black text-sm group-hover/post:underline dark:text-dark-text">
+                      <h3 className="flex items-center gap-2 font-medium text-black text-sm group-hover/post:underline dark:text-dark-text">
                         {post.title}
                         {post.draft && (
                           <span className="shrink-0 rounded bg-amber-100 px-1.5 py-0.5 font-medium text-[10px] text-amber-800 uppercase leading-none dark:bg-amber-900/30 dark:text-amber-400">
@@ -157,14 +164,15 @@ const BlogPage = () => {
                             Scheduled
                           </span>
                         )}
-                      </span>
+                      </h3>
                       {post.summary && (
                         <span className="line-clamp-2 text-gray-dark text-xs dark:text-dark-text-secondary">
                           {post.summary}
                         </span>
                       )}
                       <span className="text-gray text-xs tabular-nums dark:text-dark-text-muted">
-                        {formatDate(post.date)} · {post.readingTime}
+                        <time dateTime={getArticleDateTime(post)}>{formatDate(post.date)}</time> ·{' '}
+                        {post.readingTime}
                       </span>
                     </Link>
                   </article>

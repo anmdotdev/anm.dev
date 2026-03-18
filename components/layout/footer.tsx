@@ -45,23 +45,28 @@ const Footer = () => (
       </div>
       <div className="flex-1">
         <h2 className="mb-4 font-semibold text-lg dark:text-dark-text">Social</h2>
-        {links.map(({ icon, link, text }) => (
-          <Link
-            className="mb-1.5 whitespace-nowrap text-gray-dark text-sm dark:text-dark-text-secondary"
-            external
-            href={link}
-            key={link}
-          >
-            <Image
-              alt=""
-              className="mr-2.5 inline-block w-4 text-black dark:invert"
-              height={16}
-              src={icon}
-              width={16}
-            />
-            <span>{text}</span>
-          </Link>
-        ))}
+        <nav aria-label="Social links">
+          <ul className="list-none p-0">
+            {links.map(({ icon, link, text }) => (
+              <li key={link}>
+                <Link
+                  className="mb-1.5 whitespace-nowrap text-gray-dark text-sm dark:text-dark-text-secondary"
+                  external
+                  href={link}
+                >
+                  <Image
+                    alt=""
+                    className="mr-2.5 inline-block w-4 text-black dark:invert"
+                    height={16}
+                    src={icon}
+                    width={16}
+                  />
+                  <span>{text}</span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
       </div>
     </div>
   </footer>

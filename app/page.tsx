@@ -25,6 +25,7 @@ export const metadata: Metadata = {
         width: 1200,
         height: 630,
         alt: 'anmdotdev - Anmol Mahatpurkar',
+        type: 'image/png',
       },
     ],
   },

@@ -1,14 +1,12 @@
 import Comments from 'components/blog/comments'
-import CopyPageMenu from 'components/blog/copy-page-menu'
 import PostFooterActions from 'components/blog/post-footer-actions'
-import Reactions, { ReactionsProvider } from 'components/blog/reactions'
+import { ReactionsProvider } from 'components/blog/reactions'
 import ReadingProgress from 'components/blog/reading-progress'
 import RelatedPosts from 'components/blog/related-posts'
 import SeriesNavigation from 'components/blog/series-navigation'
-import ShareButton from 'components/blog/share-button'
+import StickyPostHeader from 'components/blog/sticky-post-header'
 import TableOfContents from 'components/blog/table-of-contents'
 import mdxComponents from 'components/mdx/mdx-components'
-import Link from 'components/ui/link'
 import {
   formatDate,
   getArticleDateTime,
@@ -101,6 +99,7 @@ export const generateMetadata = async ({ params }: BlogPostPageProps): Promise<M
           width: 1200,
           height: 630,
           alt: post.title,
+          type: 'image/png',
         },
       ],
     },
@@ -180,88 +179,36 @@ const BlogPostPage = async ({ params }: BlogPostPageProps) => {
             data-article-type="blog-post"
             data-article-word-count={wordCount}
           >
-            <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <nav aria-label="Breadcrumb" className="text-gray text-xs dark:text-dark-text-muted">
-                <Link
-                  className="hover:text-black dark:hover:text-dark-text"
-                  href="/blog"
-                  showIcon="never"
-                >
-                  Blogs
-                </Link>
-                <span aria-hidden="true" className="mx-1.5">
-                  /
-                </span>
-                <span className="text-black dark:text-dark-text">{post.title}</span>
-              </nav>
-              <div className="flex shrink-0 items-center gap-1.5">
-                <Reactions />
-                <ShareButton slug={slug} />
-                <CopyPageMenu slug={slug} title={post.title} />
-              </div>
-            </div>
+            <StickyPostHeader
+              dateLabel={formatDate(post.date)}
+              dateTime={getArticleDateTime(post)}
+              draft={post.draft}
+              readingTime={post.readingTime}
+              scheduledPreviewLabel={post.scheduled ? formatDate(post.date) : undefined}
+              slug={slug}
+              tags={post.tags.map((tag) => ({ href: getTagPath(tag), label: tag }))}
+              title={post.title}
+            />
 
-            {post.draft && (
-              <div className="mb-6 rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-amber-800 text-sm dark:border-amber-800/40 dark:bg-amber-900/20 dark:text-amber-400">
-                This post is a draft and is only visible in development.
-              </div>
-            )}
-            {post.scheduled && (
-              <div className="mb-6 rounded-md border border-blue-200 bg-blue-50 px-4 py-3 text-blue-800 text-sm dark:border-blue-800/40 dark:bg-blue-900/20 dark:text-blue-400">
-                This post is scheduled for {formatDate(post.date)} and is currently visible as a
-                preview.
-              </div>
-            )}
+            <div className="xl:grid xl:grid-cols-[minmax(0,1fr)_13rem] xl:items-start xl:gap-10">
+              <div className="min-w-0">
+                {hasToc && <TableOfContents headings={headings} variant="mobile" />}
 
-            <header className="mb-10 border-gray-lighter border-b pb-8 dark:border-dark-border">
-              <h1 className="mb-3 font-semibold text-2xl text-black leading-tight dark:text-dark-text">
-                {post.title}
-              </h1>
-              <div className="flex flex-wrap items-center gap-2 text-gray-dark text-xs dark:text-dark-text-muted">
-                <time dateTime={getArticleDateTime(post)}>{formatDate(post.date)}</time>
-                <span aria-hidden="true">·</span>
-                <span>{post.readingTime}</span>
-                {post.tags.length > 0 && (
-                  <>
-                    <span aria-hidden="true">·</span>
-                    <span>
-                      {post.tags.map((tag, index) => (
-                        <span key={tag}>
-                          <Link
-                            className="hover:text-black dark:hover:text-dark-text"
-                            href={getTagPath(tag)}
-                            showIcon="never"
-                          >
-                            {tag}
-                          </Link>
-                          {index < post.tags.length - 1 && ', '}
-                        </span>
-                      ))}
-                    </span>
-                  </>
+                <div className="prose">{content}</div>
+
+                {seriesPosts.length > 0 && (
+                  <SeriesNavigation currentSlug={slug} posts={seriesPosts} />
                 )}
-                <span className="whitespace-nowrap">
-                  <span aria-hidden="true" className="mr-2">
-                    ·
-                  </span>
-                  <span>Anmol Mahatpurkar</span>
-                </span>
+
+                <PostFooterActions slug={slug} />
+                <Comments slug={slug} />
+
+                {relatedPosts.length > 0 && <RelatedPosts posts={relatedPosts} />}
               </div>
-            </header>
 
-            {hasToc && <TableOfContents headings={headings} variant="mobile" />}
-
-            <div className="prose">{content}</div>
-
-            {seriesPosts.length > 0 && <SeriesNavigation currentSlug={slug} posts={seriesPosts} />}
-
-            <PostFooterActions slug={slug} />
-            <Comments slug={slug} />
-
-            {relatedPosts.length > 0 && <RelatedPosts posts={relatedPosts} />}
+              {hasToc && <TableOfContents headings={headings} variant="desktop" />}
+            </div>
           </article>
-
-          {hasToc && <TableOfContents headings={headings} variant="desktop" />}
 
           <script
             /* biome-ignore lint/security/noDangerouslySetInnerHtml: JSON-LD structured data */
@@ -273,6 +220,7 @@ const BlogPostPage = async ({ params }: BlogPostPageProps) => {
                 headline: post.title,
                 datePublished: getArticleDateTime(post),
                 dateModified,
+                dateCreated: getArticleDateTime(post),
                 author: {
                   '@type': 'Person',
                   '@id': 'https://anm.dev/#person',
@@ -291,10 +239,23 @@ const BlogPostPage = async ({ params }: BlogPostPageProps) => {
                   '@type': 'WebPage',
                   '@id': `https://anm.dev/blog/${slug}`,
                 },
-                isPartOf: {
-                  '@type': 'WebSite',
-                  '@id': 'https://anm.dev/#website',
-                },
+                isPartOf: [
+                  {
+                    '@type': 'WebSite',
+                    '@id': 'https://anm.dev/#website',
+                  },
+                  ...(post.series
+                    ? [
+                        {
+                          '@type': 'CreativeWorkSeries',
+                          '@id': `https://anm.dev/blog#series-${post.series}`,
+                          name: post.seriesTitle || post.series,
+                          url: 'https://anm.dev/blog',
+                        },
+                      ]
+                    : []),
+                ],
+                ...(post.seriesOrder == null ? {} : { position: post.seriesOrder }),
                 image: `https://anm.dev/blog/${slug}/opengraph-image`,
                 thumbnailUrl: `https://anm.dev/blog/${slug}/opengraph-image`,
                 wordCount,

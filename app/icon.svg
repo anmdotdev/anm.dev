@@ -3,7 +3,7 @@
     text {
       font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
       font-weight: 700;
-      font-size: 18px;
+      font-size: 13px;
     }
     @media (prefers-color-scheme: light) {
       text { fill: #222; }
@@ -12,5 +12,5 @@
       text { fill: #e5e5e5; }
     }
   </style>
-  <text x="50%" y="54%" dominant-baseline="middle" text-anchor="middle">am</text>
+  <text x="50%" y="54%" dominant-baseline="middle" text-anchor="middle">anm</text>
 </svg>

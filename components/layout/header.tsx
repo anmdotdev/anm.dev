@@ -14,7 +14,7 @@ const Header = () => (
     <Link className="shrink-0 font-semibold text-black text-lg dark:text-dark-text" href="/">
       {siteName}
     </Link>
-    <nav className="flex items-center space-x-2 sm:space-x-3">
+    <nav aria-label="Main navigation" className="flex items-center space-x-2 sm:space-x-3">
       {navLinks.map(({ link, text, shortText }, index) => (
         <span className="flex items-center space-x-2 sm:space-x-3" key={link}>
           {index > 0 && (

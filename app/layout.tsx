@@ -90,8 +90,11 @@ const RootLayout = ({ children }: IRootLayoutProps) => (
       {/* biome-ignore lint/security/noDangerouslySetInnerHtml: static script to prevent theme flash */}
       <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       <meta content="#6a35ff" name="theme-color" />
+      <link href="https://api.github.com" rel="preconnect" />
       <link href="https://api.github.com" rel="dns-prefetch" />
       <link href="https://github.com" rel="dns-prefetch" />
+      <link href="https://anm.dev" hrefLang="en" rel="alternate" />
+      <link href="https://anm.dev" hrefLang="x-default" rel="alternate" />
       <link
         href="/feed.xml"
         rel="alternate"
