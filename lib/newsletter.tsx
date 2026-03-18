@@ -6,7 +6,7 @@ import NewsletterConfirmationEmail from 'emails/newsletter-confirmation'
 import NewsletterPostPublishedEmail from 'emails/newsletter-post-published'
 import { getBlogPost, getBlogPosts } from 'lib/blog'
 import { ensureDb } from 'lib/db'
-import { getAbsoluteUrl, NEWSLETTER_FROM_NAME, SITE_URL } from 'lib/site'
+import { getAbsoluteUrl, NEWSLETTER_FROM_NAME } from 'lib/site'
 import { Resend, type WebhookEventPayload } from 'resend'
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -523,10 +523,6 @@ const syncSubscriberToResend = async (subscriber: NewsletterSubscriber): Promise
     email: subscriber.email,
     unsubscribed: false,
     segments: [{ id: segmentId }],
-    properties: {
-      source: subscriber.source,
-      website: SITE_URL,
-    },
   })
 
   if (createResult.error || !createResult.data) {

@@ -1,7 +1,7 @@
 'use client'
 
 import { getStoredNewsletterEmail, setStoredNewsletterEmail } from 'lib/newsletter-email-storage'
-import { useState, useTransition } from 'react'
+import { useState } from 'react'
 
 interface NewsletterSignupFormProps {
   buttonLabel?: string
@@ -15,6 +15,8 @@ interface SubscribeResponse {
   message?: string
 }
 
+type SubmissionStatus = 'idle' | 'submitting' | 'success'
+
 const NewsletterSignupForm = ({
   buttonLabel = 'Subscribe',
   disabled = false,
@@ -23,83 +25,115 @@ const NewsletterSignupForm = ({
 }: NewsletterSignupFormProps) => {
   const [email, setEmail] = useState(() => getStoredNewsletterEmail())
   const [company, setCompany] = useState('')
+  const [status, setStatus] = useState<SubmissionStatus>('idle')
+  const [submittedEmail, setSubmittedEmail] = useState<string | null>(null)
   const [message, setMessage] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
-  const [isPending, startTransition] = useTransition()
+  const isSubmitting = status === 'submitting'
+  const isSuccessful = status === 'success'
+  const isFormDisabled = disabled || isSubmitting || isSuccessful
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
+
+    if (isFormDisabled) {
+      return
+    }
+
     setMessage(null)
     setError(null)
+    setStatus('submitting')
 
-    startTransition(() => {
-      setStoredNewsletterEmail(email)
+    const nextEmail = email.trim()
+    setStoredNewsletterEmail(nextEmail)
 
-      fetch('/api/newsletter/subscribe', {
+    try {
+      const response = await fetch('/api/newsletter/subscribe', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          email,
+          email: nextEmail,
           company,
           source,
         }),
       })
-        .then(async (response) => {
-          const payload = (await response.json().catch(() => null)) as SubscribeResponse | null
+      const payload = (await response.json().catch(() => null)) as SubscribeResponse | null
 
-          if (!response.ok) {
-            setError(payload?.error ?? 'Unable to subscribe right now. Please try again.')
-            return
-          }
+      if (!response.ok) {
+        setError(payload?.error ?? 'Unable to subscribe right now. Please try again.')
+        setStatus('idle')
+        return
+      }
 
-          setEmail('')
-          setCompany('')
-          setMessage(
-            payload?.message ??
-              'If this email can receive updates, a confirmation link is on its way.',
-          )
-        })
-        .catch(() => {
-          setError('Unable to subscribe right now. Please try again.')
-        })
-    })
+      setSubmittedEmail(nextEmail)
+      setCompany('')
+      setMessage(
+        payload?.message ?? 'If this email can receive updates, a confirmation link is on its way.',
+      )
+      setStatus('success')
+    } catch {
+      setError('Unable to subscribe right now. Please try again.')
+      setStatus('idle')
+    }
   }
 
   return (
-    <form className="space-y-3" onSubmit={handleSubmit}>
-      <div className="flex flex-col gap-3 sm:flex-row">
-        <div className="min-w-0 flex-1">
-          <label className="sr-only" htmlFor={inputId}>
-            Email address
-          </label>
-          <input
-            autoComplete="email"
-            className="w-full rounded-lg border border-gray-lighter bg-white px-3 py-2 text-black text-sm placeholder:text-gray focus:border-gray-light focus:outline-none disabled:cursor-not-allowed disabled:opacity-60 dark:border-dark-border dark:bg-dark-surface dark:text-dark-text dark:focus:border-dark-border-highlight dark:placeholder:text-dark-text-muted"
-            disabled={disabled || isPending}
-            id={inputId}
-            name="email"
-            onChange={(event) => setEmail(event.target.value)}
-            placeholder="you@example.com"
-            required
-            type="email"
-            value={email}
-          />
-        </div>
-        <button
-          className="rounded-lg bg-purple px-4 py-2 font-semibold text-sm text-white transition-colors hover:bg-purple-dark disabled:cursor-not-allowed disabled:opacity-60"
-          disabled={disabled || isPending}
-          type="submit"
+    <form aria-busy={isSubmitting} className="space-y-3" onSubmit={handleSubmit}>
+      {isSuccessful ? (
+        <div
+          aria-live="polite"
+          className="rounded-xl border border-success bg-success/10 px-4 py-3"
+          role="status"
         >
-          {isPending ? 'Submitting...' : buttonLabel}
-        </button>
-      </div>
+          <p className="font-medium text-sm text-success-darker dark:text-success-light">
+            Confirmation email sent
+          </p>
+          {submittedEmail ? (
+            <p className="mt-1 text-success-darker text-xs dark:text-success-light">
+              We sent a confirmation link to <span className="font-medium">{submittedEmail}</span>.
+            </p>
+          ) : null}
+          <p className="mt-2 text-success-darker text-xs dark:text-success-light">
+            You will only get new post notifications after you verify that confirmation email.
+          </p>
+          <p className="mt-2 text-success-darker text-xs dark:text-success-light">{message}</p>
+        </div>
+      ) : (
+        <div className="flex flex-col gap-3 sm:flex-row">
+          <div className="min-w-0 flex-1">
+            <label className="sr-only" htmlFor={inputId}>
+              Email address
+            </label>
+            <input
+              autoComplete="email"
+              className="w-full rounded-lg border border-gray-lighter bg-white px-3 py-2 text-black text-sm placeholder:text-gray focus:border-gray-light focus:outline-none disabled:cursor-not-allowed disabled:opacity-60 dark:border-dark-border dark:bg-dark-surface dark:text-dark-text dark:focus:border-dark-border-highlight dark:placeholder:text-dark-text-muted"
+              disabled={isFormDisabled}
+              id={inputId}
+              name="email"
+              onChange={(event) => setEmail(event.target.value)}
+              placeholder="you@example.com"
+              required
+              type="email"
+              value={email}
+            />
+          </div>
+          <button
+            className="rounded-lg bg-purple px-4 py-2 font-semibold text-sm text-white transition-colors hover:bg-purple-dark disabled:cursor-not-allowed disabled:opacity-60"
+            disabled={isFormDisabled}
+            type="submit"
+          >
+            {isSubmitting ? 'Subscribing...' : buttonLabel}
+          </button>
+        </div>
+      )}
 
       <div aria-hidden="true" className="hidden">
         <label htmlFor={`${inputId}-company`}>Company</label>
         <input
           autoComplete="off"
+          disabled={isFormDisabled}
           id={`${inputId}-company`}
           onChange={(event) => setCompany(event.target.value)}
           tabIndex={-1}
@@ -108,10 +142,11 @@ const NewsletterSignupForm = ({
         />
       </div>
 
-      {message ? (
-        <p className="text-success-darker text-xs dark:text-success-light">{message}</p>
+      {error ? (
+        <p aria-live="polite" className="text-error-dark text-xs dark:text-error-light">
+          {error}
+        </p>
       ) : null}
-      {error ? <p className="text-error-dark text-xs dark:text-error-light">{error}</p> : null}
     </form>
   )
 }
