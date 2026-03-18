@@ -1,5 +1,5 @@
 import { getBlogPost } from 'lib/blog'
-import { addLike, getReactionCounts, hasDisliked, toggleDislike } from 'lib/db'
+import { addLike, addView, getReactionCounts, hasDisliked, toggleDislike } from 'lib/db'
 import { NextResponse } from 'next/server'
 
 interface RouteParams {
@@ -35,8 +35,17 @@ export const POST = async (request: Request, { params }: RouteParams) => {
 
     const body = (await request.json()) as { type?: string; fingerprint?: string }
 
-    if (!(body.type && body.fingerprint)) {
-      return NextResponse.json({ error: 'Missing type or fingerprint' }, { status: 400 })
+    if (!body.type) {
+      return NextResponse.json({ error: 'Missing type' }, { status: 400 })
+    }
+
+    if (body.type === 'view') {
+      const result = await addView(slug)
+      return NextResponse.json(result)
+    }
+
+    if (!body.fingerprint) {
+      return NextResponse.json({ error: 'Missing fingerprint' }, { status: 400 })
     }
 
     if (body.type === 'like') {
@@ -49,7 +58,10 @@ export const POST = async (request: Request, { params }: RouteParams) => {
       return NextResponse.json(result)
     }
 
-    return NextResponse.json({ error: 'Type must be "like" or "dislike"' }, { status: 400 })
+    return NextResponse.json(
+      { error: 'Type must be "like", "dislike", or "view"' },
+      { status: 400 },
+    )
   } catch (error) {
     console.error('Reactions POST error:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })

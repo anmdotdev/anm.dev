@@ -33,9 +33,21 @@ const initDb = async () => {
   await db.batch([
     "CREATE TABLE IF NOT EXISTS reactions (id INTEGER PRIMARY KEY AUTOINCREMENT, slug TEXT NOT NULL, type TEXT NOT NULL CHECK (type IN ('like', 'dislike')), fingerprint TEXT NOT NULL, created_at TEXT NOT NULL DEFAULT (datetime('now')))",
     'CREATE INDEX IF NOT EXISTS idx_reactions_slug ON reactions(slug)',
+    "CREATE TABLE IF NOT EXISTS blog_views (id INTEGER PRIMARY KEY AUTOINCREMENT, slug TEXT NOT NULL, created_at TEXT NOT NULL DEFAULT (datetime('now')))",
+    'CREATE INDEX IF NOT EXISTS idx_blog_views_slug ON blog_views(slug)',
     "CREATE TABLE IF NOT EXISTS comments (id INTEGER PRIMARY KEY AUTOINCREMENT, slug TEXT NOT NULL, parent_id INTEGER, author_name TEXT NOT NULL, author_email TEXT, content TEXT NOT NULL, fingerprint TEXT NOT NULL, created_at TEXT NOT NULL DEFAULT (datetime('now')), FOREIGN KEY (parent_id) REFERENCES comments(id))",
     'CREATE INDEX IF NOT EXISTS idx_comments_slug ON comments(slug)',
     'CREATE INDEX IF NOT EXISTS idx_comments_parent ON comments(parent_id)',
+    "CREATE TABLE IF NOT EXISTS newsletter_subscribers (id INTEGER PRIMARY KEY AUTOINCREMENT, email TEXT NOT NULL, email_normalized TEXT NOT NULL UNIQUE, source TEXT NOT NULL DEFAULT 'website', status TEXT NOT NULL CHECK (status IN ('pending', 'active', 'unsubscribed', 'bounced', 'complained')), resend_contact_id TEXT, confirmed_at TEXT, unsubscribed_at TEXT, suppression_reason TEXT, created_at TEXT NOT NULL DEFAULT (datetime('now')), updated_at TEXT NOT NULL DEFAULT (datetime('now')))",
+    'CREATE INDEX IF NOT EXISTS idx_newsletter_subscribers_status ON newsletter_subscribers(status)',
+    "CREATE TABLE IF NOT EXISTS newsletter_tokens (id INTEGER PRIMARY KEY AUTOINCREMENT, subscriber_id INTEGER NOT NULL, type TEXT NOT NULL CHECK (type IN ('confirm', 'unsubscribe', 'manage')), token_hash TEXT NOT NULL UNIQUE, expires_at TEXT NOT NULL, used_at TEXT, created_at TEXT NOT NULL DEFAULT (datetime('now')), FOREIGN KEY (subscriber_id) REFERENCES newsletter_subscribers(id))",
+    'CREATE INDEX IF NOT EXISTS idx_newsletter_tokens_lookup ON newsletter_tokens(type, token_hash)',
+    "CREATE TABLE IF NOT EXISTS newsletter_campaigns (id INTEGER PRIMARY KEY AUTOINCREMENT, kind TEXT NOT NULL CHECK (kind IN ('post_published')), post_slug TEXT NOT NULL, post_title TEXT NOT NULL, post_date TEXT NOT NULL, subject TEXT NOT NULL, preview_text TEXT NOT NULL, status TEXT NOT NULL CHECK (status IN ('pending', 'sending', 'sent', 'failed')), resend_broadcast_id TEXT, sent_at TEXT, failure_reason TEXT, created_at TEXT NOT NULL DEFAULT (datetime('now')), updated_at TEXT NOT NULL DEFAULT (datetime('now')), UNIQUE (kind, post_slug))",
+    'CREATE INDEX IF NOT EXISTS idx_newsletter_campaigns_status ON newsletter_campaigns(status, post_date)',
+    "CREATE TABLE IF NOT EXISTS newsletter_events (id INTEGER PRIMARY KEY AUTOINCREMENT, subscriber_id INTEGER, campaign_id INTEGER, provider TEXT NOT NULL, provider_event_id TEXT, provider_message_id TEXT, event_type TEXT NOT NULL, payload_json TEXT NOT NULL, occurred_at TEXT NOT NULL, created_at TEXT NOT NULL DEFAULT (datetime('now')), UNIQUE (provider, provider_event_id), FOREIGN KEY (subscriber_id) REFERENCES newsletter_subscribers(id), FOREIGN KEY (campaign_id) REFERENCES newsletter_campaigns(id))",
+    'CREATE INDEX IF NOT EXISTS idx_newsletter_events_subscriber ON newsletter_events(subscriber_id)',
+    "CREATE TABLE IF NOT EXISTS newsletter_signup_attempts (id INTEGER PRIMARY KEY AUTOINCREMENT, key_hash TEXT NOT NULL, created_at TEXT NOT NULL DEFAULT (datetime('now')))",
+    'CREATE INDEX IF NOT EXISTS idx_newsletter_signup_attempts_key_hash ON newsletter_signup_attempts(key_hash, created_at)',
   ])
 }
 
@@ -49,32 +61,52 @@ const ensureDb = async (): Promise<Client> => {
   return getClient()
 }
 
-export const getReactionCounts = async (
-  slug: string,
-): Promise<{ likes: number; dislikes: number }> => {
+export { ensureDb }
+
+export interface ReactionCounts {
+  dislikes: number
+  likes: number
+  views: number
+}
+
+export const getReactionCounts = async (slug: string): Promise<ReactionCounts> => {
   const db = await ensureDb()
-  const likes = await db.execute({
-    sql: 'SELECT COUNT(*) as count FROM reactions WHERE slug = ? AND type = ?',
-    args: [slug, 'like'],
-  })
-  const dislikes = await db.execute({
-    sql: 'SELECT COUNT(*) as count FROM reactions WHERE slug = ? AND type = ?',
-    args: [slug, 'dislike'],
-  })
+  const [likes, dislikes, views] = await Promise.all([
+    db.execute({
+      sql: 'SELECT COUNT(*) as count FROM reactions WHERE slug = ? AND type = ?',
+      args: [slug, 'like'],
+    }),
+    db.execute({
+      sql: 'SELECT COUNT(*) as count FROM reactions WHERE slug = ? AND type = ?',
+      args: [slug, 'dislike'],
+    }),
+    db.execute({
+      sql: 'SELECT COUNT(*) as count FROM blog_views WHERE slug = ?',
+      args: [slug],
+    }),
+  ])
+
   return {
     likes: (likes.rows[0]?.count as number) ?? 0,
     dislikes: (dislikes.rows[0]?.count as number) ?? 0,
+    views: (views.rows[0]?.count as number) ?? 0,
   }
 }
 
-export const addLike = async (
-  slug: string,
-  fingerprint: string,
-): Promise<{ likes: number; dislikes: number }> => {
+export const addLike = async (slug: string, fingerprint: string): Promise<ReactionCounts> => {
   const db = await ensureDb()
   await db.execute({
     sql: 'INSERT INTO reactions (slug, type, fingerprint) VALUES (?, ?, ?)',
     args: [slug, 'like', fingerprint],
+  })
+  return getReactionCounts(slug)
+}
+
+export const addView = async (slug: string): Promise<ReactionCounts> => {
+  const db = await ensureDb()
+  await db.execute({
+    sql: 'INSERT INTO blog_views (slug) VALUES (?)',
+    args: [slug],
   })
   return getReactionCounts(slug)
 }
@@ -91,7 +123,7 @@ export const hasDisliked = async (slug: string, fingerprint: string): Promise<bo
 export const toggleDislike = async (
   slug: string,
   fingerprint: string,
-): Promise<{ likes: number; dislikes: number; userDisliked: boolean }> => {
+): Promise<ReactionCounts & { userDisliked: boolean }> => {
   const db = await ensureDb()
   const existing = await hasDisliked(slug, fingerprint)
 

@@ -169,7 +169,7 @@ const StickyPostHeader = ({
             <StickyOverlayBreadcrumb title={title} />
             <div className="flex shrink-0 items-center gap-1.5">
               <Reactions />
-              <ShareButton slug={slug} />
+              <ShareButton slug={slug} title={title} />
               <CopyPageMenu slug={slug} title={title} />
             </div>
           </div>
@@ -193,7 +193,7 @@ const StickyPostHeader = ({
           </nav>
           <div className="flex shrink-0 items-center gap-1.5">
             <Reactions />
-            <ShareButton slug={slug} />
+            <ShareButton slug={slug} title={title} />
             <CopyPageMenu slug={slug} title={title} />
           </div>
         </div>

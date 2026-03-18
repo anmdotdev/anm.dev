@@ -355,6 +355,10 @@ interface ParsedBlogFile {
   feedHtml: string
   lastModified?: string
   lastModifiedTime?: string
+  newsletterDisabled: boolean
+  newsletterExcerpt?: string
+  newsletterPreview?: string
+  newsletterSubject?: string
   plainText: string
   readingTime: string
   scheduled: boolean
@@ -399,6 +403,13 @@ const parseBlogFile = (slug: string): ParsedBlogFile | null => {
     summary: typeof data.summary === 'string' ? data.summary : '',
     draft,
     scheduled,
+    newsletterDisabled: Boolean(data.newsletterDisabled),
+    newsletterExcerpt:
+      typeof data.newsletterExcerpt === 'string' ? data.newsletterExcerpt : undefined,
+    newsletterPreview:
+      typeof data.newsletterPreview === 'string' ? data.newsletterPreview : undefined,
+    newsletterSubject:
+      typeof data.newsletterSubject === 'string' ? data.newsletterSubject : undefined,
     series: typeof data.series === 'string' ? data.series : undefined,
     seriesOrder: typeof data.seriesOrder === 'number' ? data.seriesOrder : undefined,
     seriesTitle: typeof data.seriesTitle === 'string' ? data.seriesTitle : undefined,
@@ -417,6 +428,10 @@ export interface BlogPost {
   feedHtml: string
   lastModified?: string
   lastModifiedTime?: string
+  newsletterDisabled: boolean
+  newsletterExcerpt?: string
+  newsletterPreview?: string
+  newsletterSubject?: string
   plainText: string
   readingTime: string
   scheduled: boolean

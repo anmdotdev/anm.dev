@@ -1,5 +1,6 @@
 'use client'
 
+import { formatCompactCount } from 'lib/helpers'
 import type { ReactNode } from 'react'
 import { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react'
 
@@ -10,9 +11,11 @@ interface ReactionsContextValue {
   likes: number
   react: (type: ReactionType) => void
   userDisliked: boolean
+  views: number
 }
 
 const ReactionsContext = createContext<ReactionsContextValue | null>(null)
+const recordedViewEntries = new Set<string>()
 
 const getFingerprint = (): string => {
   const stored = localStorage.getItem('anm-blog-user')
@@ -20,6 +23,22 @@ const getFingerprint = (): string => {
     return JSON.parse(stored).id as string
   }
   return ''
+}
+
+const getViewEntryKey = (slug: string): string => {
+  const historyState = window.history.state ?? {}
+  let viewId = historyState.__anmBlogViewId as string | undefined
+
+  if (!viewId) {
+    viewId = crypto.randomUUID()
+    window.history.replaceState(
+      { ...historyState, __anmBlogViewId: viewId },
+      '',
+      window.location.href,
+    )
+  }
+
+  return `${slug}:${viewId}`
 }
 
 interface ReactionsProviderProps {
@@ -30,6 +49,7 @@ interface ReactionsProviderProps {
 export const ReactionsProvider = ({ slug, children }: ReactionsProviderProps) => {
   const [likes, setLikes] = useState(0)
   const [dislikes, setDislikes] = useState(0)
+  const [views, setViews] = useState(0)
   const [userDisliked, setUserDisliked] = useState(false)
   const likeDebounce = useRef<ReturnType<typeof setTimeout> | null>(null)
   const pendingLikes = useRef(0)
@@ -39,16 +59,52 @@ export const ReactionsProvider = ({ slug, children }: ReactionsProviderProps) =>
     const params = fingerprint ? `?fingerprint=${fingerprint}` : ''
     const res = await fetch(`/api/blog/${slug}/reactions${params}`)
     if (res.ok) {
-      const data = (await res.json()) as { likes: number; dislikes: number; userDisliked: boolean }
+      const data = (await res.json()) as {
+        dislikes: number
+        likes: number
+        userDisliked: boolean
+        views: number
+      }
       setLikes(data.likes)
       setDislikes(data.dislikes)
+      setViews(data.views)
       setUserDisliked(data.userDisliked)
     }
   }, [slug])
 
+  const recordView = useCallback(async () => {
+    const viewEntryKey = getViewEntryKey(slug)
+    if (recordedViewEntries.has(viewEntryKey)) {
+      return
+    }
+
+    recordedViewEntries.add(viewEntryKey)
+
+    const res = await fetch(`/api/blog/${slug}/reactions`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type: 'view' }),
+    })
+
+    if (!res.ok) {
+      recordedViewEntries.delete(viewEntryKey)
+      return
+    }
+
+    const data = (await res.json()) as { dislikes: number; likes: number; views: number }
+    setLikes(data.likes)
+    setDislikes(data.dislikes)
+    setViews(data.views)
+  }, [slug])
+
   useEffect(() => {
-    fetchCounts()
-  }, [fetchCounts])
+    const initializeReactions = async () => {
+      await fetchCounts()
+      await recordView()
+    }
+
+    initializeReactions().catch(() => undefined)
+  }, [fetchCounts, recordView])
 
   const flushLikes = useCallback(() => {
     const count = pendingLikes.current
@@ -107,7 +163,9 @@ export const ReactionsProvider = ({ slug, children }: ReactionsProviderProps) =>
   )
 
   return (
-    <ReactionsContext value={{ likes, dislikes, userDisliked, react }}>{children}</ReactionsContext>
+    <ReactionsContext value={{ likes, dislikes, userDisliked, views, react }}>
+      {children}
+    </ReactionsContext>
   )
 }
 
@@ -136,8 +194,21 @@ const ThumbsDownIcon = ({ className }: { className?: string }) => (
   </svg>
 )
 
+const EyeIcon = ({ className }: { className?: string }) => (
+  <svg aria-hidden="true" className={className} fill="none" viewBox="0 0 24 24">
+    <path
+      d="M2 12s3.6-6 10-6s10 6 10 6s-3.6 6-10 6S2 12 2 12Z"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="2"
+    />
+    <circle cx="12" cy="12" fill="currentColor" r="3" />
+  </svg>
+)
+
 const Reactions = () => {
-  const { likes, dislikes, userDisliked, react } = useReactions()
+  const { likes, dislikes, userDisliked, views, react } = useReactions()
   const [particles, setParticles] = useState<FloatingParticle[]>([])
   const particleId = useRef(0)
 
@@ -158,6 +229,17 @@ const Reactions = () => {
 
   return (
     <div className="flex items-center gap-1.5">
+      <div
+        aria-label={`${views} ${views === 1 ? 'view' : 'views'}`}
+        className="flex items-center gap-1.5 rounded-md border border-gray-lighter bg-white px-2 py-1.5 text-xs dark:border-dark-border dark:bg-dark-surface"
+        role="status"
+      >
+        <EyeIcon className="h-3.5 w-3.5 text-gray-dark dark:text-dark-text-muted" />
+        <span aria-live="polite" className="text-gray-dark dark:text-dark-text-muted">
+          {formatCompactCount(views)}
+        </span>
+      </div>
+
       <div className="relative">
         <button
           aria-label={`Like this post (${likes})`}
@@ -167,7 +249,7 @@ const Reactions = () => {
         >
           <ThumbsUpIcon className="h-3.5 w-3.5 text-black dark:text-dark-text" />
           <span aria-live="polite" className="text-success-dark dark:text-success-light">
-            {likes}
+            {formatCompactCount(likes)}
           </span>
         </button>
         {particles
@@ -200,7 +282,7 @@ const Reactions = () => {
           className={`h-3.5 w-3.5 ${userDisliked ? 'text-error-dark dark:text-error-light' : 'text-black dark:text-dark-text'}`}
         />
         <span aria-live="polite" className="text-error-light dark:text-error-lighter">
-          {dislikes}
+          {formatCompactCount(dislikes)}
         </span>
       </button>
     </div>

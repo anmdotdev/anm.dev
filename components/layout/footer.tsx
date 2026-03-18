@@ -32,10 +32,15 @@ const links = [
     link: 'mailto:hey@anm.dev',
     text: 'hey@anm.dev',
   },
+  {
+    icon: emailIcon,
+    link: '/blog#newsletter',
+    text: 'Blog Newsletter',
+  },
 ]
 
 const Footer = () => (
-  <footer className="absolute bottom-0 w-full border-gray-lighter border-t bg-white max-md:text-center dark:border-dark-border dark:bg-dark-surface">
+  <footer className="w-full border-gray-lighter border-t bg-white max-md:text-center dark:border-dark-border dark:bg-dark-surface">
     <div className="mx-auto flex max-w-3xl space-x-8 pt-12 pb-16 max-sm:flex-col max-sm:space-x-0 max-sm:space-y-6 max-sm:px-6 md:px-6">
       <div className="flex-1">
         <h2 className="mb-4 font-semibold text-lg dark:text-dark-text">About</h2>
@@ -46,12 +51,12 @@ const Footer = () => (
       <div className="flex-1">
         <h2 className="mb-4 font-semibold text-lg dark:text-dark-text">Social</h2>
         <nav aria-label="Social links">
-          <ul className="list-none p-0">
+          <ul className="flex flex-wrap gap-x-4 gap-y-2 p-0 max-md:justify-center">
             {links.map(({ icon, link, text }) => (
               <li key={link}>
                 <Link
-                  className="mb-1.5 whitespace-nowrap text-gray-dark text-sm dark:text-dark-text-secondary"
-                  external
+                  className="whitespace-nowrap text-gray-dark text-sm dark:text-dark-text-secondary"
+                  external={link.startsWith('http') || link.startsWith('mailto:')}
                   href={link}
                 >
                   <Image

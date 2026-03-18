@@ -1,0 +1,25 @@
+name: Newsletter Publish
+
+on:
+  schedule:
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Trigger newsletter publish endpoint
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+          NEWSLETTER_CRON_URL: ${{ secrets.NEWSLETTER_CRON_URL }}
+        run: |
+          if [ -z "$NEWSLETTER_CRON_URL" ] || [ -z "$CRON_SECRET" ]; then
+            echo "Missing NEWSLETTER_CRON_URL or CRON_SECRET secret."
+            exit 1
+          fi
+
+          curl --fail-with-body --show-error --silent \
+            -H "Authorization: Bearer ${CRON_SECRET}" \
+            "$NEWSLETTER_CRON_URL"

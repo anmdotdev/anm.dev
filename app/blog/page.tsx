@@ -1,6 +1,10 @@
+import NewsletterSignupCard from 'components/newsletter/signup-card'
+import NewsletterStatusNotice from 'components/newsletter/status-notice'
 import Link from 'components/ui/link'
 import { formatDate, getArticleDateTime, getArticleModifiedTime, getBlogPosts } from 'lib/blog'
+import { isNewsletterConfigured } from 'lib/newsletter'
 import type { Metadata } from 'next'
+import { Suspense } from 'react'
 
 export const revalidate = 300
 
@@ -58,6 +62,7 @@ export const metadata: Metadata = {
 
 const BlogPage = () => {
   const posts = getBlogPosts()
+  const newsletterEnabled = isNewsletterConfigured()
 
   const sections: { label: string; posts: typeof posts }[] = []
   for (const post of posts) {
@@ -133,7 +138,7 @@ const BlogPage = () => {
   }
 
   return (
-    <section className="mx-auto max-w-3xl px-6 pt-8 pb-24">
+    <section className="mx-auto max-w-3xl px-6 pt-8 pb-12 md:pb-12">
       <h1 className="mb-2 font-semibold text-2xl text-black dark:text-dark-text">Blog</h1>
       <p className="mb-12 text-gray-dark text-sm dark:text-dark-text-secondary">
         Writing about web dev, developer tools, and building in the modern AI era.
@@ -190,6 +195,18 @@ const BlogPage = () => {
           ))}
         </div>
       )}
+      <div className="mt-8 space-y-4" id="newsletter">
+        <Suspense fallback={null}>
+          <NewsletterStatusNotice />
+        </Suspense>
+        <NewsletterSignupCard
+          compact
+          description="New blog post published? You get a short note and a direct link."
+          enabled={newsletterEnabled}
+          source="blog-index"
+          title="Prefer email over checking back?"
+        />
+      </div>
       <script
         /* biome-ignore lint/security/noDangerouslySetInnerHtml: JSON-LD structured data */
         dangerouslySetInnerHTML={{

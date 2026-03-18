@@ -1,6 +1,8 @@
+import NewsletterSignupCard from 'components/newsletter/signup-card'
 import Link from 'components/ui/link'
 import type { BlogPost } from 'lib/blog'
 import { formatDate, getArticleDateTime } from 'lib/blog'
+import { isNewsletterConfigured } from 'lib/newsletter'
 
 interface RecentPostsProps {
   posts: BlogPost[]
@@ -11,8 +13,10 @@ const RecentPosts = ({ posts }: RecentPostsProps) => {
     return null
   }
 
+  const newsletterEnabled = isNewsletterConfigured()
+
   return (
-    <section className="mx-auto w-full max-w-lg pt-2 pb-16 max-sm:px-6">
+    <section className="mx-auto w-full max-w-lg pt-2 pb-12 max-sm:px-6 sm:pb-10">
       <h2 className="mb-6 font-semibold text-lg dark:text-dark-text">My Recent Blogs</h2>
 
       <div className="space-y-5">
@@ -49,6 +53,15 @@ const RecentPosts = ({ posts }: RecentPostsProps) => {
       >
         Read more posts...
       </Link>
+
+      <NewsletterSignupCard
+        className="mt-8"
+        compact
+        description="Get an email when the next article goes live."
+        enabled={newsletterEnabled}
+        source="home-recent-posts"
+        title="Follow the blog by email"
+      />
     </section>
   )
 }

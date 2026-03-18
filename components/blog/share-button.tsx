@@ -1,28 +1,100 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 interface ShareButtonProps {
+  label?: string
   slug: string
+  title?: string
+  visibleLabel?: 'always' | 'desktop'
 }
 
-const ShareButton = ({ slug }: ShareButtonProps) => {
-  const [copied, setCopied] = useState(false)
+type ShareFeedbackState = 'copied' | 'idle' | 'shared'
+
+const FEEDBACK_RESET_DELAY_MS = 2000
+const SITE_ORIGIN = 'https://anm.dev'
+
+const ShareButton = ({
+  label = 'Share',
+  slug,
+  title,
+  visibleLabel = 'desktop',
+}: ShareButtonProps) => {
+  const [feedback, setFeedback] = useState<ShareFeedbackState>('idle')
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const postUrl = `${SITE_ORIGIN}/blog/${slug}`
+
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current)
+      }
+    }
+  }, [])
+
+  const setTransientFeedback = (nextFeedback: Exclude<ShareFeedbackState, 'idle'>) => {
+    setFeedback(nextFeedback)
+
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current)
+    }
+
+    timeoutRef.current = setTimeout(() => {
+      setFeedback('idle')
+      timeoutRef.current = null
+    }, FEEDBACK_RESET_DELAY_MS)
+  }
 
   const copyUrl = async () => {
-    await navigator.clipboard.writeText(`https://anm.dev/blog/${slug}`)
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
+    await navigator.clipboard.writeText(postUrl)
+    setTransientFeedback('copied')
   }
+
+  const sharePost = async () => {
+    if (typeof navigator.share !== 'function') {
+      await copyUrl()
+      return
+    }
+
+    try {
+      await navigator.share({
+        title,
+        url: postUrl,
+      })
+      setTransientFeedback('shared')
+    } catch (error) {
+      if (error instanceof DOMException && error.name === 'AbortError') {
+        return
+      }
+
+      await copyUrl()
+    }
+  }
+
+  let ariaLabel = `${label} (open share sheet or copy post URL)`
+  if (feedback === 'copied') {
+    ariaLabel = `${label} (link copied)`
+  } else if (feedback === 'shared') {
+    ariaLabel = `${label} (share sheet opened)`
+  }
+
+  let buttonText = label
+  if (feedback === 'copied') {
+    buttonText = 'Copied!'
+  } else if (feedback === 'shared') {
+    buttonText = 'Shared!'
+  }
+
+  const labelClassName = visibleLabel === 'always' ? '' : 'hidden sm:inline'
 
   return (
     <button
-      aria-label={copied ? 'Share (link copied)' : 'Share (copy post URL to clipboard)'}
+      aria-label={ariaLabel}
       className="flex items-center gap-1.5 rounded-md border border-gray-lighter bg-white px-2 py-1.5 font-medium text-black text-xs transition-colors hover:bg-gray-lightest sm:px-3 dark:border-dark-border dark:bg-dark-surface dark:text-dark-text dark:hover:bg-dark-surface-hover"
-      onClick={copyUrl}
+      onClick={sharePost}
       type="button"
     >
-      {copied ? (
+      {feedback === 'copied' || feedback === 'shared' ? (
         <svg
           aria-hidden="true"
           className="h-3.5 w-3.5 text-success-dark"
@@ -48,8 +120,8 @@ const ShareButton = ({ slug }: ShareButtonProps) => {
           />
         </svg>
       )}
-      <span aria-live="polite" className="hidden sm:inline">
-        {copied ? 'Copied!' : 'Share'}
+      <span aria-live="polite" className={labelClassName}>
+        {buttonText}
       </span>
     </button>
   )

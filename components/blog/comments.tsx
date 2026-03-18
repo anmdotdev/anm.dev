@@ -1,5 +1,6 @@
 'use client'
 
+import { getStoredNewsletterEmail } from 'lib/newsletter-email-storage'
 import { useCallback, useEffect, useRef, useState } from 'react'
 
 const PREFIXES = [
@@ -62,13 +63,23 @@ interface UserIdentity {
 
 const getUserIdentity = (): UserIdentity => {
   const stored = localStorage.getItem('anm-blog-user')
+  const newsletterEmail = getStoredNewsletterEmail()
+
   if (stored) {
-    return JSON.parse(stored) as UserIdentity
+    const user = JSON.parse(stored) as UserIdentity
+    if (newsletterEmail && user.email !== newsletterEmail) {
+      const updatedUser = { ...user, email: newsletterEmail }
+      localStorage.setItem('anm-blog-user', JSON.stringify(updatedUser))
+      return updatedUser
+    }
+
+    return user
   }
+
   const user: UserIdentity = {
     id: crypto.randomUUID(),
     name: generateName(),
-    email: '',
+    email: newsletterEmail,
   }
   localStorage.setItem('anm-blog-user', JSON.stringify(user))
   return user

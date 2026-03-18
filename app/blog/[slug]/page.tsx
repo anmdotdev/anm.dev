@@ -182,7 +182,7 @@ const BlogPostPage = async ({ params }: BlogPostPageProps) => {
     <>
       <ReadingProgress />
       <ReactionsProvider slug={slug}>
-        <div className="relative mx-auto mt-4 max-w-5xl border-gray-lighter border-t px-6 pt-10 pb-24 dark:border-dark-border">
+        <div className="relative mx-auto mt-4 max-w-5xl border-gray-lighter border-t px-6 pt-10 pb-16 dark:border-dark-border">
           <article
             data-article-date={post.date}
             data-article-reading-time={post.readingTime}
@@ -214,7 +214,7 @@ const BlogPostPage = async ({ params }: BlogPostPageProps) => {
                   <SeriesNavigation currentSlug={slug} posts={seriesPosts} />
                 )}
 
-                <PostFooterActions slug={slug} />
+                <PostFooterActions slug={slug} title={post.title} />
                 <Comments slug={slug} />
 
                 {relatedPosts.length > 0 && <RelatedPosts posts={relatedPosts} />}
