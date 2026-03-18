@@ -305,6 +305,39 @@ const getSubscriberByNormalizedEmail = async (
   return row ? rowToSubscriber(row) : null
 }
 
+const syncActiveSubscriberFromResend = async (
+  subscriber: NewsletterSubscriber,
+): Promise<NewsletterSubscriber> => {
+  if (subscriber.status !== 'active') {
+    return subscriber
+  }
+
+  const resend = getResendClient()
+  const result = await resend.contacts.get(
+    subscriber.resendContactId ? { id: subscriber.resendContactId } : { email: subscriber.email },
+  )
+
+  if (result.error?.name === 'not_found') {
+    const updatedSubscriber = await updateSubscriberStatus(subscriber.email, 'unsubscribed')
+    return updatedSubscriber ?? subscriber
+  }
+
+  if (result.error) {
+    throw new Error(`Unable to verify newsletter contact status: ${result.error.message}`)
+  }
+
+  if (!result.data?.unsubscribed) {
+    return subscriber
+  }
+
+  const updatedSubscriber = await updateSubscriberStatus(subscriber.email, 'unsubscribed', {
+    occurredAt: new Date().toISOString(),
+    resendContactId: result.data.id,
+  })
+
+  return updatedSubscriber ?? subscriber
+}
+
 const recordSignupAttempt = async (keyHash: string): Promise<void> => {
   const db = await ensureDb()
   await db.execute({
@@ -406,7 +439,7 @@ const upsertPendingSubscriber = async (
 }> => {
   const db = await ensureDb()
   const emailNormalized = normalizeEmail(email)
-  const existing = await getSubscriberByNormalizedEmail(emailNormalized)
+  let existing = await getSubscriberByNormalizedEmail(emailNormalized)
 
   if (!existing) {
     const insertResult = await db.execute({
@@ -431,9 +464,13 @@ const upsertPendingSubscriber = async (
   }
 
   if (existing.status === 'active') {
-    return {
-      shouldSendConfirmation: false,
-      subscriber: existing,
+    existing = await syncActiveSubscriberFromResend(existing)
+
+    if (existing.status === 'active') {
+      return {
+        shouldSendConfirmation: false,
+        subscriber: existing,
+      }
     }
   }
 

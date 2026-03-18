@@ -1,4 +1,7 @@
+'use client'
+
 import { classnames } from 'lib/helpers'
+import { useState } from 'react'
 
 import NewsletterSignupForm from './signup-form'
 
@@ -13,6 +16,23 @@ interface NewsletterSignupCardProps {
   title: string
 }
 
+const SuccessIcon = () => (
+  <span
+    aria-hidden="true"
+    className="inline-flex size-10 items-center justify-center rounded-full bg-white/85 text-success-darker shadow-sm"
+  >
+    <svg aria-hidden="true" className="size-5" fill="none" viewBox="0 0 16 16">
+      <path
+        d="M4 8.2 6.5 10.7 12 5.3"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="1.8"
+      />
+    </svg>
+  </span>
+)
+
 const NewsletterSignupCard = ({
   buttonLabel,
   className,
@@ -24,6 +44,41 @@ const NewsletterSignupCard = ({
   title,
 }: NewsletterSignupCardProps) => {
   const inputId = `newsletter-email-${source.replace(/[^a-z0-9]+/gi, '-')}`
+  const [submittedEmail, setSubmittedEmail] = useState<string | null>(null)
+
+  if (submittedEmail) {
+    return (
+      <section
+        className={classnames(
+          'rounded-2xl border border-success/30 bg-success text-success-darker shadow-sm',
+          compact ? 'p-5' : 'p-6 sm:p-8',
+          className,
+        )}
+        id={id}
+      >
+        <div className="flex items-start gap-4">
+          <SuccessIcon />
+          <div className="min-w-0">
+            <p
+              className={classnames(
+                'font-semibold text-success-darker',
+                compact ? 'text-xl' : 'text-2xl',
+              )}
+            >
+              Thanks for subscribing
+            </p>
+            <p className="mt-2 text-sm text-success-darker sm:text-base">
+              Check your inbox for a confirmation email at{' '}
+              <span className="font-medium">{submittedEmail}</span>.
+            </p>
+            <p className="mt-2 text-sm text-success-darker sm:text-base">
+              You&apos;ll start getting new post updates after you confirm it.
+            </p>
+          </div>
+        </div>
+      </section>
+    )
+  }
 
   return (
     <section
@@ -58,6 +113,7 @@ const NewsletterSignupCard = ({
           buttonLabel={buttonLabel}
           disabled={!enabled}
           inputId={inputId}
+          onSuccess={setSubmittedEmail}
           source={source}
         />
       </div>
