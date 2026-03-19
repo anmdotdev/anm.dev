@@ -25,7 +25,6 @@ const PostFooterActions = ({ slug, title }: PostFooterActionsProps) => {
       </div>
       <NewsletterSignupCard
         className="mt-6"
-        compact
         description="If this piece was useful, subscribe to get the next one in your inbox."
         enabled={newsletterEnabled}
         source={`post-footer-${slug}`}

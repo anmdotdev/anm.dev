@@ -10,3 +10,4 @@ data/*.db
 data/*.db-journal
 data/*.db-wal
 .codex-review
+.codex-artifacts

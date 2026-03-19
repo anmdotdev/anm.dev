@@ -8,7 +8,6 @@ import NewsletterSignupForm from './signup-form'
 interface NewsletterSignupCardProps {
   buttonLabel?: string
   className?: string
-  compact?: boolean
   description: string
   enabled: boolean
   id?: string
@@ -33,10 +32,93 @@ const SuccessIcon = () => (
   </span>
 )
 
+interface SignupSuccessStateProps {
+  className?: string
+  id?: string
+  submittedEmail: string
+}
+
+const SignupSuccessState = ({ className, id, submittedEmail }: SignupSuccessStateProps) => (
+  <section
+    className={classnames(
+      'rounded-xl border border-success/40 bg-success/10 p-4 text-success-darker shadow-sm sm:p-5',
+      className,
+    )}
+    id={id}
+  >
+    <div className="flex items-start gap-3">
+      <SuccessIcon />
+      <div className="min-w-0">
+        <p className="font-semibold text-base text-success-darker">Thanks for subscribing</p>
+        <p className="mt-2 text-sm text-success-darker">
+          Check your inbox for a confirmation email at{' '}
+          <span className="font-medium">{submittedEmail}</span>.
+        </p>
+        <p className="mt-2 text-sm text-success-darker">
+          You&apos;ll start getting new post updates after you confirm it.
+        </p>
+      </div>
+    </div>
+  </section>
+)
+
+interface SignupIdleStateProps {
+  buttonLabel?: string
+  className?: string
+  description: string
+  enabled: boolean
+  id?: string
+  inputId: string
+  onSuccess: (email: string) => void
+  source: string
+  title: string
+}
+
+const SignupIdleState = ({
+  buttonLabel,
+  className,
+  description,
+  enabled,
+  id,
+  inputId,
+  onSuccess,
+  source,
+  title,
+}: SignupIdleStateProps) => (
+  <section
+    className={classnames(
+      'rounded-xl border border-gray-lighter bg-white p-4 shadow-sm sm:p-5 dark:border-dark-border dark:bg-dark-surface',
+      className,
+    )}
+    id={id}
+  >
+    <div className="flex flex-wrap items-start gap-4 sm:gap-6">
+      <div className="min-w-0 flex-1 basis-72">
+        <p className="mb-1.5 font-semibold text-[11px] text-purple uppercase tracking-[0.16em] dark:text-purple-light">
+          Newsletter
+        </p>
+        <h2 className="font-semibold text-black text-sm dark:text-dark-text">{title}</h2>
+        <p className="mt-1 text-gray-dark text-xs dark:text-dark-text-secondary">{description}</p>
+      </div>
+      <div className="min-w-[16rem] flex-1 basis-80">
+        <NewsletterSignupForm
+          buttonLabel={buttonLabel}
+          disabled={!enabled}
+          inputId={inputId}
+          onSuccess={onSuccess}
+          source={source}
+        />
+        <p className="mt-2 text-[11px] text-gray dark:text-dark-text-muted">
+          No spam. Double opt-in. One email per post.
+        </p>
+      </div>
+    </div>
+  </section>
+)
+
 const NewsletterSignupCard = ({
   buttonLabel,
   className,
-  compact = false,
   description,
   enabled,
   id,
@@ -47,80 +129,21 @@ const NewsletterSignupCard = ({
   const [submittedEmail, setSubmittedEmail] = useState<string | null>(null)
 
   if (submittedEmail) {
-    return (
-      <section
-        className={classnames(
-          'rounded-2xl border border-success/40 bg-success/10 text-success-darker shadow-sm',
-          compact ? 'p-5' : 'p-6 sm:p-8',
-          className,
-        )}
-        id={id}
-      >
-        <div className="flex items-start gap-4">
-          <SuccessIcon />
-          <div className="min-w-0">
-            <p
-              className={classnames(
-                'font-semibold text-success-darker',
-                compact ? 'text-xl' : 'text-2xl',
-              )}
-            >
-              Thanks for subscribing
-            </p>
-            <p className="mt-2 text-sm text-success-darker sm:text-base">
-              Check your inbox for a confirmation email at{' '}
-              <span className="font-medium">{submittedEmail}</span>.
-            </p>
-            <p className="mt-2 text-sm text-success-darker sm:text-base">
-              You&apos;ll start getting new post updates after you confirm it.
-            </p>
-          </div>
-        </div>
-      </section>
-    )
+    return <SignupSuccessState className={className} id={id} submittedEmail={submittedEmail} />
   }
 
   return (
-    <section
-      className={classnames(
-        'rounded-2xl border border-gray-lighter bg-white shadow-sm dark:border-dark-border dark:bg-dark-surface',
-        compact ? 'p-5' : 'p-6 sm:p-8',
-        className,
-      )}
+    <SignupIdleState
+      buttonLabel={buttonLabel}
+      className={className}
+      description={description}
+      enabled={enabled}
       id={id}
-    >
-      <p className="mb-2 font-semibold text-[11px] text-purple uppercase tracking-[0.16em] dark:text-purple-light">
-        Newsletter
-      </p>
-      <h2
-        className={classnames(
-          'font-semibold text-black dark:text-dark-text',
-          compact ? 'text-lg' : 'text-2xl',
-        )}
-      >
-        {title}
-      </h2>
-      <p
-        className={classnames(
-          'mt-2 text-gray-dark dark:text-dark-text-secondary',
-          compact ? 'text-sm' : 'text-base',
-        )}
-      >
-        {description}
-      </p>
-      <div className="mt-5">
-        <NewsletterSignupForm
-          buttonLabel={buttonLabel}
-          disabled={!enabled}
-          inputId={inputId}
-          onSuccess={setSubmittedEmail}
-          source={source}
-        />
-      </div>
-      <p className="mt-3 text-gray text-xs dark:text-dark-text-muted">
-        No spam, ever. Double opt-in. One email per new post. Unsubscribe any time.
-      </p>
-    </section>
+      inputId={inputId}
+      onSuccess={setSubmittedEmail}
+      source={source}
+      title={title}
+    />
   )
 }
 

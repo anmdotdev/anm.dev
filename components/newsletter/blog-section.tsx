@@ -79,11 +79,10 @@ const NewsletterBlogSection = ({ enabled }: NewsletterBlogSectionProps) => {
         </div>
       ) : null}
       <NewsletterSignupCard
-        compact
-        description="New blog post published? You get a short note and a direct link."
+        description="One short email when a new post goes live."
         enabled={enabled}
         source="blog-index"
-        title="Prefer email over checking back?"
+        title="Get new posts by email"
       />
     </div>
   )

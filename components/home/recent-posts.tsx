@@ -56,7 +56,6 @@ const RecentPosts = ({ posts }: RecentPostsProps) => {
 
       <NewsletterSignupCard
         className="mt-8"
-        compact
         description="Get an email when the next article goes live."
         enabled={newsletterEnabled}
         source="home-recent-posts"

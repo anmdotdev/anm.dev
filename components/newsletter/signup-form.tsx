@@ -1,5 +1,6 @@
 'use client'
 
+import { classnames } from 'lib/helpers'
 import { getStoredNewsletterEmail, setStoredNewsletterEmail } from 'lib/newsletter-email-storage'
 import { useState } from 'react'
 
@@ -30,6 +31,10 @@ const NewsletterSignupForm = ({
   const [error, setError] = useState<string | null>(null)
   const isSubmitting = status === 'submitting'
   const isFormDisabled = disabled || isSubmitting
+  const inputClassName =
+    'w-full rounded-lg border border-gray-lighter bg-white px-3 py-2 text-black text-xs placeholder:text-gray focus:border-gray-light focus:outline-none disabled:cursor-not-allowed disabled:opacity-60 dark:border-dark-border dark:bg-dark-surface dark:text-dark-text dark:focus:border-dark-border-highlight dark:placeholder:text-dark-text-muted'
+  const buttonClassName =
+    'rounded-lg bg-purple px-3 py-2 font-semibold text-xs text-white transition-colors hover:bg-purple-dark disabled:cursor-not-allowed disabled:opacity-60'
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -73,15 +78,15 @@ const NewsletterSignupForm = ({
   }
 
   return (
-    <form aria-busy={isSubmitting} className="space-y-3" onSubmit={handleSubmit}>
-      <div className="flex flex-col gap-3 sm:flex-row">
-        <div className="min-w-0 flex-1">
+    <form aria-busy={isSubmitting} className="space-y-2" onSubmit={handleSubmit}>
+      <div className="flex flex-wrap gap-3">
+        <div className="min-w-[12rem] flex-1 basis-56">
           <label className="sr-only" htmlFor={inputId}>
             Email address
           </label>
           <input
             autoComplete="email"
-            className="w-full rounded-lg border border-gray-lighter bg-white px-3 py-2 text-black text-sm placeholder:text-gray focus:border-gray-light focus:outline-none disabled:cursor-not-allowed disabled:opacity-60 dark:border-dark-border dark:bg-dark-surface dark:text-dark-text dark:focus:border-dark-border-highlight dark:placeholder:text-dark-text-muted"
+            className={inputClassName}
             disabled={isFormDisabled}
             id={inputId}
             name="email"
@@ -93,7 +98,7 @@ const NewsletterSignupForm = ({
           />
         </div>
         <button
-          className="rounded-lg bg-purple px-4 py-2 font-semibold text-sm text-white transition-colors hover:bg-purple-dark disabled:cursor-not-allowed disabled:opacity-60"
+          className={classnames('shrink-0', buttonClassName)}
           disabled={isFormDisabled}
           type="submit"
         >
