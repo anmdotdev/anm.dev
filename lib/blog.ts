@@ -16,6 +16,20 @@ const UNORDERED_LIST_PREFIX_REGEX = /^-\s+/
 const HEADING_LINE_REGEX = /^(#{2,3})\s+(.+)$/
 const UNORDERED_LIST_LINE_REGEX = /^-\s+(.+)$/
 const ORDERED_LIST_LINE_REGEX = /^\d+\.\s+(.+)$/
+const MDX_COMPONENT_REGEX = /<\/?([A-Za-z][\w-]*)(\s[^>]*)?>/g
+const MDX_SELF_CLOSING_COMPONENT_REGEX = /<([A-Za-z][\w-]*)(\s[^>]*)?\/>/g
+const MDX_CALLOUT_REGEX = /<Callout(?:\s+type="([^"]+)")?\s*>([\s\S]*?)<\/Callout>/g
+const MDX_PHILOSOPHY_REGEX = /<Philosophy>([\s\S]*?)<\/Philosophy>/g
+const MDX_PROMPT_BOX_REGEX = /<PromptBox>([\s\S]*?)<\/PromptBox>/g
+const MDX_MERMAID_BLOCK_REGEX = /<Mermaid>([\s\S]*?)<\/Mermaid>/g
+const MDX_MERMAID_CHART_PROP_REGEX = /<Mermaid\s+chart="([^"]+)"\s*\/>/g
+
+const CALLOUT_LABELS = {
+  important: 'Important',
+  note: 'Note',
+  tip: 'Tip',
+  warning: 'Warning',
+} as const
 
 const IS_DEV = process.env.NODE_ENV === 'development'
 const SITE_TIME_ZONE = 'Asia/Kolkata'
@@ -99,9 +113,67 @@ const currentDateKey = (): string => getDateKey(new Date())
 const isPublished = (dateKey: string): boolean => dateKey <= currentDateKey()
 
 const stripJsxTags = (content: string): string =>
-  content
-    .replace(/<([A-Za-z][\w-]*)(\s[^>]*)?\/>/g, '')
-    .replace(/<\/?([A-Za-z][\w-]*)(\s[^>]*)?>/g, '')
+  content.replace(MDX_SELF_CLOSING_COMPONENT_REGEX, '').replace(MDX_COMPONENT_REGEX, '')
+
+const normalizeMdxBlockContent = (content: string): string =>
+  content.trim().replace(/\n{3,}/g, '\n\n')
+
+const blockquoteMarkdown = (content: string, label?: string): string => {
+  const lines = normalizeMdxBlockContent(content).split('\n')
+  let usedLabel = false
+
+  return lines
+    .map((line) => {
+      if (!line.trim()) {
+        return '>'
+      }
+
+      if (!(label && !usedLabel)) {
+        return `> ${line}`
+      }
+
+      usedLabel = true
+      return `> **${label}:** ${line.trim()}`
+    })
+    .join('\n')
+}
+
+const promptBoxMarkdown = (content: string): string => {
+  const normalized = normalizeMdxBlockContent(content)
+  return `**Prompt:**\n\n\`\`\`text\n${normalized}\n\`\`\``
+}
+
+const mermaidMarkdown = (content: string): string => {
+  const normalized = normalizeMdxBlockContent(content)
+  return `\`\`\`mermaid\n${normalized}\n\`\`\``
+}
+
+const getCalloutLabel = (type: string | undefined): string | undefined =>
+  type === 'philosophy'
+    ? undefined
+    : (CALLOUT_LABELS[type as keyof typeof CALLOUT_LABELS] ?? CALLOUT_LABELS.note)
+
+export const mdxToMarkdown = (content: string): string =>
+  stripJsxTags(
+    content
+      .replace(MDX_PROMPT_BOX_REGEX, (_match, innerContent: string) =>
+        promptBoxMarkdown(innerContent),
+      )
+      .replace(MDX_PHILOSOPHY_REGEX, (_match, innerContent: string) =>
+        blockquoteMarkdown(innerContent),
+      )
+      .replace(MDX_CALLOUT_REGEX, (_match, type: string | undefined, innerContent: string) =>
+        blockquoteMarkdown(innerContent, getCalloutLabel(type)),
+      )
+      .replace(MDX_MERMAID_BLOCK_REGEX, (_match, innerContent: string) =>
+        mermaidMarkdown(innerContent),
+      )
+      .replace(MDX_MERMAID_CHART_PROP_REGEX, (_match, chart: string) =>
+        mermaidMarkdown(chart.replace(/\s*\|\s*/g, '\n').replace(/\\n/g, '\n')),
+      ),
+  )
+    .replace(/\n{3,}/g, '\n\n')
+    .trim()
 
 const normalizeInlineMarkdown = (value: string): string =>
   value

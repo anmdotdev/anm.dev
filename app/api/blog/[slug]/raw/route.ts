@@ -1,4 +1,4 @@
-import { formatDate, getBlogPost } from 'lib/blog'
+import { formatDate, getBlogPost, mdxToMarkdown } from 'lib/blog'
 
 interface RawRouteParams {
   params: Promise<{ slug: string }>
@@ -19,7 +19,7 @@ export const GET = async (_request: Request, { params }: RawRouteParams) => {
 > Source: https://anm.dev/blog/${slug}
 
 ${post.summary ? `**${post.summary}**\n\n---\n` : ''}
-${post.content}`
+${mdxToMarkdown(post.content)}`
 
   return new Response(markdown, {
     headers: {
