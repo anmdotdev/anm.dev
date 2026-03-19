@@ -110,8 +110,10 @@ const NewsletterSignupForm = ({
         <label htmlFor={`${inputId}-company`}>Company</label>
         <input
           autoComplete="off"
+          data-bwignore="true"
           disabled={isFormDisabled}
           id={`${inputId}-company`}
+          name="company"
           onChange={(event) => setCompany(event.target.value)}
           tabIndex={-1}
           type="text"

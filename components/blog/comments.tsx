@@ -249,9 +249,11 @@ const CommentForm = ({ slug, parentId, onSubmit, onCancel, autoFocus }: CommentF
           Posting as
         </label>
         <input
+          autoComplete="nickname"
           className="w-full rounded-md border border-gray-lighter bg-white px-3 py-1.5 text-black text-xs placeholder:text-gray sm:w-48 dark:border-dark-border dark:bg-dark-surface dark:text-dark-text dark:placeholder:text-dark-text-muted"
           id={`comment-name-${parentId ?? 'root'}`}
           maxLength={50}
+          name="authorName"
           onChange={(e) => setName(e.target.value)}
           placeholder="Display name"
           type="text"
@@ -263,8 +265,10 @@ const CommentForm = ({ slug, parentId, onSubmit, onCancel, autoFocus }: CommentF
               Email (optional)
             </label>
             <input
+              autoComplete="email"
               className="w-full rounded-md border border-gray-lighter bg-white px-3 py-1.5 text-black text-xs placeholder:text-gray sm:w-56 dark:border-dark-border dark:bg-dark-surface dark:text-dark-text dark:placeholder:text-dark-text-muted"
               id={`comment-email-${parentId ?? 'root'}`}
+              name="authorEmail"
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Email (optional, not displayed)"
               type="email"
@@ -292,6 +296,7 @@ const CommentForm = ({ slug, parentId, onSubmit, onCancel, autoFocus }: CommentF
           className="w-full resize-none rounded-lg border border-gray-lighter bg-white px-3 py-2 text-black text-sm placeholder:text-gray focus:border-gray-light focus:outline-none dark:border-dark-border dark:bg-dark-surface dark:text-dark-text dark:focus:border-dark-border-highlight dark:placeholder:text-dark-text-muted"
           id={`comment-content-${parentId ?? 'root'}`}
           maxLength={2000}
+          name="content"
           onChange={(e) => setContent(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder={parentId ? 'Write a reply...' : 'Join the discussion...'}
