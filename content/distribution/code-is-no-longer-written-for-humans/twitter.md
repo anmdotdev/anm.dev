@@ -6,8 +6,7 @@ I used to think maintainability lived mostly inside the code.
 
 Good variable names. Clean abstractions. Small functions. Predictable file structure.
 
-That instinct is still correct.
-It is just no longer sufficient.
+That instinct is still fundamentally correct, now more than ever. It is just no longer enough. We knew it probably never was, but we got away with it for a long time because the next reader was always a human with implicit context.
 
 ---
 
