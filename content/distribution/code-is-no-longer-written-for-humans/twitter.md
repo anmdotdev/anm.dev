@@ -1,18 +1,32 @@
 ## Post 1
 
-Code is no longer written primarily where humans read it line by line. It is increasingly written as the executable output of a clearer layer above it: intent.
+Code is no longer written primarily where humans read it line by line.
 
-I used to think maintainability lived mostly inside the code.
-
-Good variable names. Clean abstractions. Small functions. Predictable file structure.
-
-That instinct is still fundamentally correct, now more than ever. It is just no longer enough. We knew it probably never was, but we got away with it for a long time because the next reader was always a human with implicit context.
+It is increasingly written as the executable output of a clearer layer above it: intent.
 
 ---
 
 ## Post 2
 
-Working with AI coding agents has changed how I think about what code is *for*.
+I used to think maintainability lived mostly inside the code.
+
+Good variable names. Clean abstractions. Small functions. Predictable file structure.
+
+That instinct is still fundamentally correct, now more than ever.
+
+---
+
+## Post 3
+
+It is just no longer enough.
+
+We knew it probably never was, but we got away with it for a long time because the next reader was always a human with implicit context.
+
+---
+
+## Post 4
+
+Working with AI coding agents has changed how I think about what code is for.
 
 The next thing reading your code may not be a human teammate.
 It may be an agent.
@@ -21,7 +35,7 @@ And agents are good at different things than humans are.
 
 ---
 
-## Post 3
+## Post 5
 
 An agent can read a hundred files faster than I can read five.
 
@@ -32,7 +46,7 @@ It is ambiguity.
 
 ---
 
-## Post 4
+## Post 6
 
 If the real rule lives in Slack, in somebody's head, or in unwritten team lore, the model has to guess.
 
@@ -44,7 +58,7 @@ It is that the code is not the full source of truth for intent.
 
 ---
 
-## Post 5
+## Post 7
 
 So the bottleneck is shifting.
 
@@ -58,7 +72,7 @@ How success is verified.
 
 ---
 
-## Post 6
+## Post 8
 
 That is why I think docs and tests matter even more in AI-native workflows.
 
@@ -69,7 +83,7 @@ Together, they act like the contract above the code.
 
 ---
 
-## Post 7
+## Post 9
 
 Readable code still matters.
 Architecture still matters.
