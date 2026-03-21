@@ -1,21 +1,35 @@
 ---
 subject: "Voice-first AI coding is really about context, not speed"
 preview: "Voice prompting works because it makes rich context cheap enough to provide every time."
-summary: "The core idea is simple: voice lowers the cost of thoroughness, and AI output improves when you stop compressing context."
+summary: "I thought voice dictation was a gimmick until AI coding made me realize the real problem was not typing speed, but context budget."
 ---
 
-I used to think voice dictation for coding was a gimmick. I type quickly, I like keyboards, and talking to my computer felt like the opposite of precision.
+I thought voice dictation for coding was a gimmick.
 
-What changed my mind was realizing I did not have a typing-speed problem. I had a context-budget problem. Every typed prompt quietly pushed me to leave things out.
+I like keyboards. I type quickly. I have spent an unreasonable amount of time caring about key travel, editor shortcuts, and whether a tool feels "fast." Talking to my computer felt like the opposite of that. It felt vague, clumsy, and slightly embarrassing.
+
+Then AI coding showed me something I had missed:
+
+I did not have a typing problem. I had a context-budget problem.
+
+Every time I typed a prompt, I unconsciously optimized for brevity. I would leave things out. I would skip the file path. I would avoid explaining the tradeoff. I would trust the model to infer the edge case. Not because I wanted to be vague, but because typing five paragraphs of precise context feels expensive.
 
 > Voice-first prompting works because it makes thoroughness cheap.
 
-When I type, I compress. I skip the file path. I trim the tradeoff. I trust the model to infer the fragile part of the codebase. Not because I want to be vague, but because typing five paragraphs of context feels expensive.
+Most bad AI prompts are not bad because the person using the model is unclear in their own head. They are bad because the person compresses the request too hard on the way out.
 
-When I speak, I naturally include the missing detail: where the code lives, what pattern to follow, what should not break, what edge case already worries me, and what success should look like in the actual product.
+You know where the relevant code already lives. You know what pattern the new code should follow. You know what edge case is probably going to break. You know what you definitely do not want the model to change. Then you type: "Add a dark mode toggle to the header."
 
-- Voice is not mainly about talking faster than typing.
-- It is about lowering the friction of saying the next useful sentence.
-- That extra context reduces model guessing dramatically.
+That is not a thinking failure. It is a transmission failure.
 
-The important part is not dictating everything. It is using voice where you usually underwrite the brief: feature requests, refactors, bug reports, and review prompts. Once rich context becomes the default, the quality jump is hard to unsee.
+If you were handing that same task to a developer who had just joined your team, you would not stop there. You would mention the file, the existing hook, the styles to match, the constraints to respect, and the layout you do not want broken.
+
+That second version is not "better prompt engineering." It is just fuller context.
+
+Voice fixes that by making it cheap to say the extra sentence. And then the extra sentence after that. And then the one where you remember the fragile part of the codebase that the model really should not touch.
+
+That is why I think voice-first prompting matters. Not because speaking is faster. Because it removes friction between what you know and what the model needs to know.
+
+Typing trained a lot of us to be terse. AI rewards being clear.
+
+That is the deeper shift for me.
