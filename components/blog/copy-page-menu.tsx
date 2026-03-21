@@ -1,5 +1,7 @@
 'use client'
 
+import { captureAnalyticsEvent, getArticleAnalyticsContext } from 'lib/analytics/client'
+import { ANALYTICS_EVENTS } from 'lib/analytics/events'
 import { useEffect, useRef, useState } from 'react'
 
 interface CopyPageMenuProps {
@@ -36,12 +38,46 @@ const CopyPageMenu = ({ slug, title }: CopyPageMenuProps) => {
 
   const blogUrl = `https://anm.dev/blog/${slug}`
 
+  const setCopiedState = () => {
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
+
+  const getCopyAnalyticsProperties = (
+    copyAction: string,
+    copyFormat: string,
+    additionalProperties?: Record<string, boolean | number | string>,
+  ) => ({
+    ...getArticleAnalyticsContext(document.querySelector('article')),
+    copy_action: copyAction,
+    copy_format: copyFormat,
+    ...additionalProperties,
+  })
+
+  const captureCopyAction = (
+    copyAction: string,
+    copyFormat: string,
+    additionalProperties?: Record<string, boolean | number | string>,
+  ) => {
+    captureAnalyticsEvent(
+      ANALYTICS_EVENTS.blogCopyAction,
+      getCopyAnalyticsProperties(copyAction, copyFormat, additionalProperties),
+    )
+  }
+
+  const captureAiAssistClick = (assistantName: string) => {
+    captureAnalyticsEvent(ANALYTICS_EVENTS.blogAiAssistClicked, {
+      ...getArticleAnalyticsContext(document.querySelector('article')),
+      assistant_name: assistantName,
+    })
+  }
+
   const copyPageText = async () => {
     const articleEl = document.querySelector('article')
     if (articleEl) {
       await navigator.clipboard.writeText(articleEl.innerText)
-      setCopied(true)
-      setTimeout(() => setCopied(false), 2000)
+      captureCopyAction('copy_page_text', 'plain_text')
+      setCopiedState()
     }
     setOpen(false)
   }
@@ -50,8 +86,8 @@ const CopyPageMenu = ({ slug, title }: CopyPageMenuProps) => {
     const res = await fetch(`/api/blog/${slug}/raw`)
     const markdown = await res.text()
     await navigator.clipboard.writeText(markdown)
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
+    captureCopyAction('copy_page_text', 'markdown')
+    setCopiedState()
     setOpen(false)
   }
 
@@ -65,6 +101,7 @@ const CopyPageMenu = ({ slug, title }: CopyPageMenuProps) => {
     a.download = `${slug}.md`
     a.click()
     URL.revokeObjectURL(url)
+    captureCopyAction('download_page', 'markdown')
     setOpen(false)
   }
 
@@ -85,8 +122,8 @@ const CopyPageMenu = ({ slug, title }: CopyPageMenuProps) => {
       2,
     )
     await navigator.clipboard.writeText(json)
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
+    captureCopyAction('copy_page_text', 'json')
+    setCopiedState()
     setOpen(false)
   }
 
@@ -96,8 +133,8 @@ const CopyPageMenu = ({ slug, title }: CopyPageMenuProps) => {
     const year = date ? new Date(date).getFullYear() : new Date().getFullYear()
     const citation = `Mahatpurkar, A. (${year}). ${title}. anm.dev. ${blogUrl}`
     await navigator.clipboard.writeText(citation)
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
+    captureCopyAction('copy_page_text', 'citation')
+    setCopiedState()
     setOpen(false)
   }
 
@@ -130,7 +167,14 @@ const CopyPageMenu = ({ slug, title }: CopyPageMenuProps) => {
           aria-haspopup="true"
           aria-label="More copy options"
           className="px-2 py-1.5 text-gray-dark transition-colors hover:bg-gray-lightest dark:text-dark-text-muted dark:hover:bg-dark-surface-hover"
-          onClick={() => setOpen(!open)}
+          onClick={() => {
+            const nextOpen = !open
+            captureAnalyticsEvent(ANALYTICS_EVENTS.blogCopyAction, {
+              ...getCopyAnalyticsProperties('toggle_menu', 'menu'),
+              is_open: nextOpen,
+            })
+            setOpen(nextOpen)
+          }}
           type="button"
         >
           <svg
@@ -151,6 +195,7 @@ const CopyPageMenu = ({ slug, title }: CopyPageMenuProps) => {
             <button
               className="flex w-full items-center gap-3 px-3 py-2.5 text-left text-xs transition-colors hover:bg-gray-lightest dark:hover:bg-dark-surface-hover"
               onClick={() => {
+                captureCopyAction('view_page', 'markdown')
                 window.open(`/api/blog/${slug}/raw`, '_blank')
                 setOpen(false)
               }}
@@ -276,6 +321,7 @@ const CopyPageMenu = ({ slug, title }: CopyPageMenuProps) => {
             <a
               className="flex w-full items-center gap-3 px-3 py-2.5 text-left text-xs transition-colors hover:bg-gray-lightest dark:hover:bg-dark-surface-hover"
               href={`https://claude.ai/new?q=${encodeURIComponent(`Read and summarize this article: ${blogUrl}`)}`}
+              onClick={() => captureAiAssistClick('claude')}
               rel="noopener noreferrer"
               target="_blank"
             >
@@ -301,6 +347,7 @@ const CopyPageMenu = ({ slug, title }: CopyPageMenuProps) => {
             <a
               className="flex w-full items-center gap-3 px-3 py-2.5 text-left text-xs transition-colors hover:bg-gray-lightest dark:hover:bg-dark-surface-hover"
               href={`https://chatgpt.com/?q=${encodeURIComponent(`Read and summarize this article: ${blogUrl}`)}`}
+              onClick={() => captureAiAssistClick('chatgpt')}
               rel="noopener noreferrer"
               target="_blank"
             >
@@ -315,6 +362,7 @@ const CopyPageMenu = ({ slug, title }: CopyPageMenuProps) => {
             <a
               className="flex w-full items-center gap-3 px-3 py-2.5 text-left text-xs transition-colors hover:bg-gray-lightest dark:hover:bg-dark-surface-hover"
               href={`https://www.perplexity.ai/?q=${encodeURIComponent(`Summarize this article: ${blogUrl}`)}`}
+              onClick={() => captureAiAssistClick('perplexity')}
               rel="noopener noreferrer"
               target="_blank"
             >
@@ -329,6 +377,7 @@ const CopyPageMenu = ({ slug, title }: CopyPageMenuProps) => {
             <a
               className="flex w-full items-center gap-3 px-3 py-2.5 text-left text-xs transition-colors hover:bg-gray-lightest dark:hover:bg-dark-surface-hover"
               href={`https://gemini.google.com/app?q=${encodeURIComponent(`Read and summarize this article: ${blogUrl}`)}`}
+              onClick={() => captureAiAssistClick('gemini')}
               rel="noopener noreferrer"
               target="_blank"
             >
@@ -353,6 +402,7 @@ const CopyPageMenu = ({ slug, title }: CopyPageMenuProps) => {
             <a
               className="flex w-full items-center gap-3 px-3 py-2.5 text-left text-xs transition-colors hover:bg-gray-lightest dark:hover:bg-dark-surface-hover"
               href={`https://x.com/i/grok?text=${encodeURIComponent(`Read and summarize this article: ${blogUrl}`)}`}
+              onClick={() => captureAiAssistClick('grok')}
               rel="noopener noreferrer"
               target="_blank"
             >
@@ -372,6 +422,7 @@ const CopyPageMenu = ({ slug, title }: CopyPageMenuProps) => {
             <a
               className="flex w-full items-center gap-3 px-3 py-2.5 text-left text-xs transition-colors hover:bg-gray-lightest dark:hover:bg-dark-surface-hover"
               href={`https://chat.deepseek.com/?q=${encodeURIComponent(`Read and summarize this article: ${blogUrl}`)}`}
+              onClick={() => captureAiAssistClick('deepseek')}
               rel="noopener noreferrer"
               target="_blank"
             >

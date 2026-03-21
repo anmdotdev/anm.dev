@@ -194,6 +194,17 @@ const TagPage = async ({ params }: TagPageProps) => {
         {posts.map((post) => (
           <article key={post.slug}>
             <Link
+              analyticsProperties={{
+                current_tag: resolvedTag,
+                destination_path: `/blog/${post.slug}`,
+                link_location: 'blog_tag_page',
+                link_section: 'tag_post_list',
+                link_type: 'blog_post',
+                page_category: 'blog',
+                page_name: `blog:tag:${canonicalTagSlug}`,
+                post_slug: post.slug,
+                post_tags: post.tags.join(','),
+              }}
               className="group/post !flex !items-start !no-underline flex-col gap-1 py-4"
               href={`/blog/${post.slug}`}
               showIcon="never"

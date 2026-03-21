@@ -41,6 +41,12 @@ const StickyOverlayBreadcrumb = ({ title }: { title: string }) => (
     className="flex items-center gap-2 text-gray text-xs dark:text-dark-text-muted"
   >
     <Link
+      analyticsProperties={{
+        destination_path: '/',
+        link_location: 'blog_post_overlay',
+        link_section: 'breadcrumb',
+        link_type: 'internal_navigation',
+      }}
       aria-label="Go to homepage"
       className="flex h-7 w-7 shrink-0 items-center justify-center rounded-sm border border-gray-lighter transition-colors hover:border-black dark:border-dark-border dark:hover:border-dark-text"
       href="/"
@@ -55,7 +61,17 @@ const StickyOverlayBreadcrumb = ({ title }: { title: string }) => (
         width={16}
       />
     </Link>
-    <Link className="hover:text-black dark:hover:text-dark-text" href="/blog" showIcon="never">
+    <Link
+      analyticsProperties={{
+        destination_path: '/blog',
+        link_location: 'blog_post_overlay',
+        link_section: 'breadcrumb',
+        link_type: 'internal_navigation',
+      }}
+      className="hover:text-black dark:hover:text-dark-text"
+      href="/blog"
+      showIcon="never"
+    >
       Blogs
     </Link>
     <span aria-hidden="true" className="text-gray-light dark:text-dark-text-muted">
@@ -180,6 +196,12 @@ const StickyPostHeader = ({
         <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <nav aria-label="Breadcrumb" className="text-gray text-xs dark:text-dark-text-muted">
             <Link
+              analyticsProperties={{
+                destination_path: '/blog',
+                link_location: 'blog_post',
+                link_section: 'breadcrumb',
+                link_type: 'internal_navigation',
+              }}
               className="hover:text-black dark:hover:text-dark-text"
               href="/blog"
               showIcon="never"
@@ -241,6 +263,13 @@ const StickyPostHeader = ({
                   {tags.map((tag, index) => (
                     <span key={tag.label}>
                       <Link
+                        analyticsProperties={{
+                          destination_path: tag.href,
+                          link_location: 'blog_post',
+                          link_section: 'post_tags',
+                          link_type: 'blog_tag',
+                          post_tag: tag.label,
+                        }}
                         className="hover:text-black dark:hover:text-dark-text"
                         href={tag.href}
                         showIcon="never"

@@ -16,6 +16,14 @@ const RelatedPosts = ({ posts }: RelatedPostsProps) => (
       {posts.map((post) => (
         <li className="text-left" key={post.slug}>
           <Link
+            analyticsProperties={{
+              destination_path: `/blog/${post.slug}`,
+              link_location: 'blog_post',
+              link_section: 'related_posts',
+              link_type: 'blog_post',
+              post_slug: post.slug,
+              post_tags: post.tags.join(','),
+            }}
             className="!flex !w-full flex-col items-start gap-0.5 text-left text-sm no-underline hover:no-underline"
             href={`/blog/${post.slug}`}
             showIcon="never"

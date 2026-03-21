@@ -1,6 +1,9 @@
 'use client'
 
+import { captureAnalyticsEvent } from 'lib/analytics/client'
+import { ANALYTICS_EVENTS } from 'lib/analytics/events'
 import { useSearchParams } from 'next/navigation'
+import { useEffect } from 'react'
 
 import NewsletterSignupCard from './signup-card'
 
@@ -50,6 +53,19 @@ const NewsletterBlogSection = ({ enabled }: NewsletterBlogSectionProps) => {
   const searchParams = useSearchParams()
   const status = searchParams.get('newsletter')
   const statusCopy = status ? STATUS_COPY[status as keyof typeof STATUS_COPY] : null
+
+  useEffect(() => {
+    if (!(status && statusCopy)) {
+      return
+    }
+
+    captureAnalyticsEvent(ANALYTICS_EVENTS.blogNewsletterStatusViewed, {
+      newsletter_status: status,
+      newsletter_status_type: SUCCESS_STATES.has(status) ? 'success' : 'error',
+      page_category: 'blog',
+      page_name: 'blog:index',
+    })
+  }, [status, statusCopy])
 
   if (status && statusCopy && SUCCESS_STATES.has(status)) {
     return (

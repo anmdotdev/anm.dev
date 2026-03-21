@@ -8,6 +8,13 @@ const GithubStarCount = async ({ githubOrgName, githubRepoName }) => {
 
   return (
     <Link
+      analyticsProperties={{
+        click_area: 'open_source_github_button',
+        destination_path: `https://github.com/${githubOrgName}/${githubRepoName}`,
+        link_category: 'github_repository',
+        repo_name: githubRepoName,
+        source_page: 'open_source',
+      }}
       className="rounded-xs border border-gray-lighter bg-white text-xs dark:border-dark-border dark:bg-dark-surface"
       external
       href={`https://github.com/${githubOrgName}/${githubRepoName}`}

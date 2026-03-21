@@ -1,5 +1,7 @@
 'use client'
 
+import { captureAnalyticsEvent } from 'lib/analytics/client'
+import { ANALYTICS_EVENTS } from 'lib/analytics/events'
 import { useCallback, useEffect, useState } from 'react'
 
 const getSystemTheme = (): 'light' | 'dark' => {
@@ -50,6 +52,11 @@ const ThemeToggle = () => {
     applyTheme(next)
     localStorage.setItem('theme', next ? 'dark' : 'light')
     setAnnouncement(next ? 'Dark mode enabled' : 'Light mode enabled')
+    captureAnalyticsEvent(ANALYTICS_EVENTS.themeToggled, {
+      from_theme: isDark ? 'dark' : 'light',
+      theme_source: 'manual_toggle',
+      to_theme: next ? 'dark' : 'light',
+    })
   }, [isDark])
 
   return (

@@ -1,5 +1,11 @@
 'use client'
 
+import {
+  captureAnalyticsEvent,
+  getAnalyticsHeaders,
+  getArticleAnalyticsContext,
+} from 'lib/analytics/client'
+import { ANALYTICS_EVENTS } from 'lib/analytics/events'
 import { formatCompactCount } from 'lib/helpers'
 import type { ReactNode } from 'react'
 import { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react'
@@ -82,7 +88,7 @@ export const ReactionsProvider = ({ slug, children }: ReactionsProviderProps) =>
 
     const res = await fetch(`/api/blog/${slug}/reactions`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', ...getAnalyticsHeaders() },
       body: JSON.stringify({ type: 'view' }),
     })
 
@@ -121,7 +127,7 @@ export const ReactionsProvider = ({ slug, children }: ReactionsProviderProps) =>
     for (let i = 0; i < count; i++) {
       fetch(`/api/blog/${slug}/reactions`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', ...getAnalyticsHeaders() },
         body: JSON.stringify({ type: 'like', fingerprint }),
       })
     }
@@ -155,7 +161,7 @@ export const ReactionsProvider = ({ slug, children }: ReactionsProviderProps) =>
 
       fetch(`/api/blog/${slug}/reactions`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', ...getAnalyticsHeaders() },
         body: JSON.stringify({ type: 'dislike', fingerprint }),
       })
     },
@@ -222,6 +228,11 @@ const Reactions = () => {
 
   const handleClick = (type: ReactionType) => {
     react(type)
+    captureAnalyticsEvent(ANALYTICS_EVENTS.blogReactionClicked, {
+      ...getArticleAnalyticsContext(document.querySelector('article')),
+      reaction_state: type === 'dislike' && userDisliked ? 'removed' : 'applied',
+      reaction_type: type,
+    })
     if (type === 'like') {
       spawnParticle(type)
     }

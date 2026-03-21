@@ -1,5 +1,7 @@
 'use client'
 
+import { captureAnalyticsEvent, getAnalyticsHeaders } from 'lib/analytics/client'
+import { ANALYTICS_EVENTS } from 'lib/analytics/events'
 import { getStoredNewsletterEmail } from 'lib/newsletter-email-storage'
 import { useCallback, useEffect, useRef, useState } from 'react'
 
@@ -202,7 +204,7 @@ const CommentForm = ({ slug, parentId, onSubmit, onCancel, autoFocus }: CommentF
 
     const res = await fetch(`/api/blog/${slug}/comments`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', ...getAnalyticsHeaders() },
       body: JSON.stringify({
         authorName: currentName,
         authorEmail: email.trim() || undefined,
@@ -210,7 +212,17 @@ const CommentForm = ({ slug, parentId, onSubmit, onCancel, autoFocus }: CommentF
         parentId: parentId ?? undefined,
         fingerprint: user.id,
       }),
-    })
+    }).catch(() => null)
+
+    if (!res) {
+      captureAnalyticsEvent(ANALYTICS_EVENTS.blogCommentSubmissionFailed, {
+        error_message: 'network_error',
+        is_reply: Boolean(parentId),
+        post_slug: slug,
+      })
+      setSubmitting(false)
+      return
+    }
 
     if (res.ok) {
       setContent('')
@@ -251,6 +263,7 @@ const CommentForm = ({ slug, parentId, onSubmit, onCancel, autoFocus }: CommentF
         <input
           autoComplete="nickname"
           className="w-full rounded-md border border-gray-lighter bg-white px-3 py-1.5 text-black text-xs placeholder:text-gray sm:w-48 dark:border-dark-border dark:bg-dark-surface dark:text-dark-text dark:placeholder:text-dark-text-muted"
+          data-ph-no-capture="true"
           id={`comment-name-${parentId ?? 'root'}`}
           maxLength={50}
           name="authorName"
@@ -267,6 +280,7 @@ const CommentForm = ({ slug, parentId, onSubmit, onCancel, autoFocus }: CommentF
             <input
               autoComplete="email"
               className="w-full rounded-md border border-gray-lighter bg-white px-3 py-1.5 text-black text-xs placeholder:text-gray sm:w-56 dark:border-dark-border dark:bg-dark-surface dark:text-dark-text dark:placeholder:text-dark-text-muted"
+              data-ph-no-capture="true"
               id={`comment-email-${parentId ?? 'root'}`}
               name="authorEmail"
               onChange={(e) => setEmail(e.target.value)}
@@ -294,6 +308,7 @@ const CommentForm = ({ slug, parentId, onSubmit, onCancel, autoFocus }: CommentF
         </label>
         <textarea
           className="w-full resize-none rounded-lg border border-gray-lighter bg-white px-3 py-2 text-black text-sm placeholder:text-gray focus:border-gray-light focus:outline-none dark:border-dark-border dark:bg-dark-surface dark:text-dark-text dark:focus:border-dark-border-highlight dark:placeholder:text-dark-text-muted"
+          data-ph-no-capture="true"
           id={`comment-content-${parentId ?? 'root'}`}
           maxLength={2000}
           name="content"
@@ -478,7 +493,7 @@ const Comments = ({ slug }: CommentsProps) => {
   const handleDelete = async (id: number) => {
     const res = await fetch(`/api/blog/${slug}/comments`, {
       method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', ...getAnalyticsHeaders() },
       body: JSON.stringify({ id, fingerprint: currentUserId }),
     })
     if (res.ok) {

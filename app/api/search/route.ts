@@ -1,12 +1,45 @@
+import { ANALYTICS_EVENTS } from 'lib/analytics/events'
+import { emitBackendLog, flushPostHogLogs } from 'lib/analytics/logs'
+import {
+  captureServerAnalyticsEvent,
+  getPostHogDistinctIdFromCookieHeader,
+  getPostHogSessionIdFromCookieHeader,
+} from 'lib/analytics/server'
 import { getBlogPosts } from 'lib/blog'
 import type { NextRequest } from 'next/server'
+import { after } from 'next/server'
 
 const WHITESPACE_REGEX = /\s+/
 
-export const GET = (request: NextRequest) => {
+export const GET = async (request: NextRequest) => {
+  const startedAt = Date.now()
+  const posthogDistinctId = getPostHogDistinctIdFromCookieHeader(
+    request.headers.get('cookie') ?? undefined,
+  )
+  const posthogSessionId = getPostHogSessionIdFromCookieHeader(
+    request.headers.get('cookie') ?? undefined,
+  )
+
+  after(async () => {
+    await flushPostHogLogs()
+  })
+
   const query = request.nextUrl.searchParams.get('q')?.trim().toLowerCase()
 
   if (!query) {
+    emitBackendLog({
+      attributes: {
+        duration_ms: Date.now() - startedAt,
+        http_method: request.method,
+        http_route: request.nextUrl.pathname,
+        http_status_code: 400,
+        outcome: 'validation_error',
+        posthog_distinct_id: posthogDistinctId,
+      },
+      body: 'Search request rejected because query parameter was missing',
+      eventName: 'search.request.completed',
+      level: 'WARN',
+    })
     return Response.json({ error: 'Missing query parameter "q"', results: [] }, { status: 400 })
   }
 
@@ -53,6 +86,36 @@ export const GET = (request: NextRequest) => {
     markdownUrl: `https://anm.dev/api/blog/${post.slug}/raw`,
     score,
   }))
+
+  await captureServerAnalyticsEvent({
+    distinctId: posthogDistinctId,
+    event: ANALYTICS_EVENTS.siteSearchPerformed,
+    properties: {
+      $session_id: posthogSessionId,
+      has_results: results.length > 0,
+      page_category: 'website',
+      query_length: query.length,
+      query_term_count: terms.length,
+      request_path: request.nextUrl.pathname,
+      results_count: results.length,
+      search_surface: 'public_api',
+    },
+  })
+
+  emitBackendLog({
+    attributes: {
+      duration_ms: Date.now() - startedAt,
+      http_method: request.method,
+      http_route: request.nextUrl.pathname,
+      http_status_code: 200,
+      outcome: 'success',
+      posthog_distinct_id: posthogDistinctId,
+      query_term_count: terms.length,
+      results_count: results.length,
+    },
+    body: 'Search request completed successfully',
+    eventName: 'search.request.completed',
+  })
 
   return Response.json(
     {

@@ -42,6 +42,15 @@ const OpenSourceProject = ({
     >
       {cardClickable ? (
         <Link
+          analyticsProperties={{
+            click_area: cardClickable ? 'open_source_card' : 'open_source_link',
+            destination_path: cardLinkUrl,
+            is_demo_link: Boolean(demoUrl),
+            link_category: 'open_source_project',
+            project_name: name,
+            repo_name: githubRepoName,
+            source_page: 'open_source',
+          }}
           aria-label={cardLinkLabel}
           className="absolute inset-0 z-0 rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-black focus-visible:outline-offset-2 dark:focus-visible:outline-dark-text"
           external
@@ -75,6 +84,15 @@ const OpenSourceProject = ({
           <div className="pointer-events-auto relative z-20 mt-2 flex flex-wrap gap-3 max-md:justify-center">
             {showDemoButton && demoUrl ? (
               <Link
+                analyticsProperties={{
+                  click_area: 'open_source_demo_button',
+                  destination_path: demoUrl,
+                  is_demo_link: true,
+                  link_category: 'open_source_project',
+                  project_name: name,
+                  repo_name: githubRepoName,
+                  source_page: 'open_source',
+                }}
                 className="rounded-xs border border-gray-lighter bg-gray-lightest px-3 py-1 text-xs dark:border-dark-border dark:bg-dark-surface dark:text-dark-text-secondary"
                 external
                 href={demoUrl}

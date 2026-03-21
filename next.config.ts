@@ -1,5 +1,17 @@
 import type { NextConfig } from 'next'
 
+const DEFAULT_POSTHOG_PROXY_PATH = '/ingest'
+const TRAILING_SLASH_REGEX = /\/+$/
+
+const normalizeHost = (value?: string): string | null => {
+  const trimmed = value?.trim()
+  return trimmed ? trimmed.replace(TRAILING_SLASH_REGEX, '') : null
+}
+
+const posthogHost = normalizeHost(process.env.NEXT_PUBLIC_POSTHOG_HOST)
+const posthogProxyPath =
+  process.env.NEXT_PUBLIC_POSTHOG_PROXY_PATH?.trim() || DEFAULT_POSTHOG_PROXY_PATH
+
 const securityHeaders = [
   { key: 'X-Content-Type-Options', value: 'nosniff' },
   { key: 'Referrer-Policy', value: 'origin-when-cross-origin' },
@@ -13,9 +25,10 @@ const securityHeaders = [
       "default-src 'self'",
       `script-src 'self' 'unsafe-inline'${process.env.NODE_ENV === 'development' ? " 'unsafe-eval'" : ''}`,
       "style-src 'self' 'unsafe-inline'",
-      "img-src 'self' data: https:",
+      "img-src 'self' data: blob: https:",
       "font-src 'self'",
       "connect-src 'self' https://api.github.com",
+      "worker-src 'self' blob:",
       "frame-ancestors 'none'",
       "base-uri 'self'",
       "form-action 'self'",
@@ -24,6 +37,7 @@ const securityHeaders = [
 ]
 
 const nextConfig: NextConfig = {
+  productionBrowserSourceMaps: true,
   trailingSlash: false,
   headers: async () => [
     {
@@ -31,6 +45,15 @@ const nextConfig: NextConfig = {
       headers: securityHeaders,
     },
   ],
+  rewrites: async () =>
+    posthogHost
+      ? [
+          {
+            source: `${posthogProxyPath}/:path*`,
+            destination: `${posthogHost}/:path*`,
+          },
+        ]
+      : [],
   redirects: async () => [
     {
       source: '/about',

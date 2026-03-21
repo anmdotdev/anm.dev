@@ -1,7 +1,9 @@
 'use client'
 
+import { captureAnalyticsEvent, getPageCategoryFromSource } from 'lib/analytics/client'
+import { ANALYTICS_EVENTS } from 'lib/analytics/events'
 import { classnames } from 'lib/helpers'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import NewsletterSignupForm from './signup-form'
 
@@ -52,7 +54,10 @@ const SignupSuccessState = ({ className, id, submittedEmail }: SignupSuccessStat
         <p className="font-semibold text-base text-success-darker">Thanks for subscribing</p>
         <p className="mt-2 text-sm text-success-darker">
           Check your inbox for a confirmation email at{' '}
-          <span className="font-medium">{submittedEmail}</span>.
+          <span className="font-medium" data-ph-mask-text="true">
+            {submittedEmail}
+          </span>
+          .
         </p>
         <p className="mt-2 text-sm text-success-darker">
           You&apos;ll start getting new post updates after you confirm it.
@@ -127,23 +132,61 @@ const NewsletterSignupCard = ({
 }: NewsletterSignupCardProps) => {
   const inputId = `newsletter-email-${source.replace(/[^a-z0-9]+/gi, '-')}`
   const [submittedEmail, setSubmittedEmail] = useState<string | null>(null)
+  const cardRef = useRef<HTMLDivElement | null>(null)
+  const hasCapturedViewRef = useRef(false)
+
+  useEffect(() => {
+    const cardElement = cardRef.current
+    if (!(cardElement && !hasCapturedViewRef.current)) {
+      return
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const [entry] = entries
+        if (!(entry?.isIntersecting && !hasCapturedViewRef.current)) {
+          return
+        }
+
+        hasCapturedViewRef.current = true
+        captureAnalyticsEvent(ANALYTICS_EVENTS.newsletterCtaViewed, {
+          cta_source: source,
+          cta_title: title,
+          is_enabled: enabled,
+          page_category: getPageCategoryFromSource(source),
+        })
+        observer.disconnect()
+      },
+      { threshold: 0.4 },
+    )
+
+    observer.observe(cardElement)
+
+    return () => observer.disconnect()
+  }, [enabled, source, title])
 
   if (submittedEmail) {
-    return <SignupSuccessState className={className} id={id} submittedEmail={submittedEmail} />
+    return (
+      <div ref={cardRef}>
+        <SignupSuccessState className={className} id={id} submittedEmail={submittedEmail} />
+      </div>
+    )
   }
 
   return (
-    <SignupIdleState
-      buttonLabel={buttonLabel}
-      className={className}
-      description={description}
-      enabled={enabled}
-      id={id}
-      inputId={inputId}
-      onSuccess={setSubmittedEmail}
-      source={source}
-      title={title}
-    />
+    <div ref={cardRef}>
+      <SignupIdleState
+        buttonLabel={buttonLabel}
+        className={className}
+        description={description}
+        enabled={enabled}
+        id={id}
+        inputId={inputId}
+        onSuccess={setSubmittedEmail}
+        source={source}
+        title={title}
+      />
+    </div>
   )
 }
 

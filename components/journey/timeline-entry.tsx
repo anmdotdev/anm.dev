@@ -85,6 +85,14 @@ const EntryCard = ({
     <p className="mb-2 text-gray-darker text-sm dark:text-dark-text-secondary">
       {entry.companyUrl ? (
         <Link
+          analyticsProperties={{
+            click_area: 'journey_company_link',
+            company_name: entry.company,
+            destination_path: entry.companyUrl,
+            link_category: 'company',
+            role_name: entry.role,
+            source_page: 'journey',
+          }}
           className="text-link underline decoration-current underline-offset-2 dark:text-dark-link"
           external
           href={entry.companyUrl}

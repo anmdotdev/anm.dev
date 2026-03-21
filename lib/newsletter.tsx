@@ -5,6 +5,7 @@ import { render, toPlainText } from '@react-email/render'
 import NewsletterConfirmationEmail from 'emails/newsletter-confirmation'
 import NewsletterPostPublishedEmail from 'emails/newsletter-post-published'
 import NewsletterWelcomeEmail from 'emails/newsletter-welcome'
+import { getNewsletterSubscriberAnalyticsId } from 'lib/analytics/constants'
 import { getBlogPost, getBlogPosts } from 'lib/blog'
 import { type BlogEmailTextBlock, getRequiredBlogEmailDistribution } from 'lib/blog-distribution'
 import { ensureDb } from 'lib/db'
@@ -120,10 +121,13 @@ interface SubscribeToNewsletterOptions {
 
 interface SubscribeToNewsletterResult {
   message: string
+  subscriberAnalyticsId?: string
 }
 
 interface ConfirmNewsletterResult {
+  source?: string
   status: 'already-confirmed' | 'confirmed' | 'invalid'
+  subscriberAnalyticsId?: string
 }
 
 interface NewsletterSendConfig {
@@ -157,6 +161,9 @@ const normalizeEmail = (email: string): string => email.trim().toLowerCase()
 const isValidEmail = (email: string): boolean => EMAIL_REGEX.test(email)
 
 const hashValue = (value: string): string => crypto.createHash('sha256').update(value).digest('hex')
+
+const toSubscriberAnalyticsId = (subscriberId: number): string =>
+  getNewsletterSubscriberAnalyticsId(subscriberId)
 
 const generateToken = (): string => crypto.randomBytes(24).toString('base64url')
 
@@ -631,6 +638,7 @@ export const subscribeToNewsletter = async ({
 
   return {
     message: 'If this email can receive updates, a confirmation link is on its way.',
+    subscriberAnalyticsId: toSubscriberAnalyticsId(subscriber.id),
   }
 }
 
@@ -648,7 +656,11 @@ export const confirmNewsletterSubscription = async (
 
   if (tokenRecord.subscriber.status === 'active') {
     await markTokenUsed(tokenRecord.id)
-    return { status: 'already-confirmed' }
+    return {
+      status: 'already-confirmed',
+      subscriberAnalyticsId: toSubscriberAnalyticsId(tokenRecord.subscriber.id),
+      source: tokenRecord.subscriber.source,
+    }
   }
 
   const resendContactId = await syncSubscriberToResend(tokenRecord.subscriber)
@@ -672,7 +684,11 @@ export const confirmNewsletterSubscription = async (
     // Confirmation should succeed even if the follow-up welcome email fails transiently.
   }
 
-  return { status: 'confirmed' }
+  return {
+    status: 'confirmed',
+    subscriberAnalyticsId: toSubscriberAnalyticsId(tokenRecord.subscriber.id),
+    source: tokenRecord.subscriber.source,
+  }
 }
 
 export const queueNewsletterCampaignForPost = async (postSlug: string): Promise<boolean> => {

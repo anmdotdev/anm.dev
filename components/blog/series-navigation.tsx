@@ -25,6 +25,14 @@ const SeriesNavigation = ({ currentSlug, posts }: SeriesNavigationProps) => {
       <p className="text-[0.9375rem] text-black leading-[1.75] dark:text-dark-text">
         <span>Next in this series:</span>{' '}
         <Link
+          analyticsProperties={{
+            destination_path: `/blog/${nextPost.slug}`,
+            link_location: 'blog_post',
+            link_section: 'series_navigation',
+            link_type: 'blog_post',
+            post_slug: nextPost.slug,
+            post_tags: nextPost.tags.join(','),
+          }}
           className="font-medium text-link dark:text-dark-link"
           href={`/blog/${nextPost.slug}`}
           showIcon="never"

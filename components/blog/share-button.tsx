@@ -1,5 +1,7 @@
 'use client'
 
+import { captureAnalyticsEvent, getArticleAnalyticsContext } from 'lib/analytics/client'
+import { ANALYTICS_EVENTS } from 'lib/analytics/events'
 import { useEffect, useRef, useState } from 'react'
 
 interface ShareButtonProps {
@@ -45,12 +47,31 @@ const ShareButton = ({
     }, FEEDBACK_RESET_DELAY_MS)
   }
 
+  const getShareAnalyticsProperties = (shareMethod: string, shareOutcome?: string) => ({
+    ...getArticleAnalyticsContext(document.querySelector('article')),
+    share_label: label,
+    share_method: shareMethod,
+    share_outcome: shareOutcome,
+    visible_label: visibleLabel,
+  })
+
   const copyUrl = async () => {
     await navigator.clipboard.writeText(postUrl)
+    captureAnalyticsEvent(
+      ANALYTICS_EVENTS.blogShareCompleted,
+      getShareAnalyticsProperties('copy_link', 'copied'),
+    )
     setTransientFeedback('copied')
   }
 
   const sharePost = async () => {
+    captureAnalyticsEvent(
+      ANALYTICS_EVENTS.blogShareRequested,
+      getShareAnalyticsProperties(
+        typeof navigator.share === 'function' ? 'web_share' : 'copy_link',
+      ),
+    )
+
     if (typeof navigator.share !== 'function') {
       await copyUrl()
       return
@@ -61,6 +82,10 @@ const ShareButton = ({
         title,
         url: postUrl,
       })
+      captureAnalyticsEvent(
+        ANALYTICS_EVENTS.blogShareCompleted,
+        getShareAnalyticsProperties('web_share', 'shared'),
+      )
       setTransientFeedback('shared')
     } catch (error) {
       if (error instanceof DOMException && error.name === 'AbortError') {

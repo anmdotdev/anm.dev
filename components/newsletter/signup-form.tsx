@@ -1,5 +1,12 @@
 'use client'
 
+import {
+  captureAnalyticsEvent,
+  getAnalyticsHeaders,
+  getPageCategoryFromSource,
+  identifyAnalyticsUser,
+} from 'lib/analytics/client'
+import { ANALYTICS_EVENTS } from 'lib/analytics/events'
 import { classnames } from 'lib/helpers'
 import { getStoredNewsletterEmail, setStoredNewsletterEmail } from 'lib/newsletter-email-storage'
 import { useState } from 'react'
@@ -14,6 +21,7 @@ interface NewsletterSignupFormProps {
 
 interface SubscribeResponse {
   error?: string
+  subscriberAnalyticsId?: string
 }
 
 type SubmissionStatus = 'idle' | 'submitting'
@@ -49,11 +57,18 @@ const NewsletterSignupForm = ({
     const nextEmail = email.trim()
     setStoredNewsletterEmail(nextEmail)
 
+    captureAnalyticsEvent(ANALYTICS_EVENTS.newsletterSignupSubmitted, {
+      form_id: inputId,
+      page_category: getPageCategoryFromSource(source),
+      signup_source: source,
+    })
+
     try {
       const response = await fetch('/api/newsletter/subscribe', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          ...getAnalyticsHeaders(),
         },
         body: JSON.stringify({
           email: nextEmail,
@@ -70,8 +85,20 @@ const NewsletterSignupForm = ({
       }
 
       setCompany('')
+      if (payload?.subscriberAnalyticsId) {
+        identifyAnalyticsUser(payload.subscriberAnalyticsId, {
+          newsletter_status: 'pending_confirmation',
+          signup_source: source,
+        })
+      }
       onSuccess?.(nextEmail)
     } catch {
+      captureAnalyticsEvent(ANALYTICS_EVENTS.newsletterSignupFailed, {
+        error_message: 'network_error',
+        form_id: inputId,
+        page_category: getPageCategoryFromSource(source),
+        signup_source: source,
+      })
       setError('Unable to subscribe right now. Please try again.')
       setStatus('idle')
     }
@@ -87,6 +114,7 @@ const NewsletterSignupForm = ({
           <input
             autoComplete="email"
             className={inputClassName}
+            data-ph-no-capture="true"
             disabled={isFormDisabled}
             id={inputId}
             name="email"
@@ -111,6 +139,7 @@ const NewsletterSignupForm = ({
         <input
           autoComplete="off"
           data-bwignore="true"
+          data-ph-no-capture="true"
           disabled={isFormDisabled}
           id={`${inputId}-company`}
           name="company"

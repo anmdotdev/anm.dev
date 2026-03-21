@@ -20,6 +20,12 @@ const OpenSourceProjects = ({ compactBottomSpacing = false }: OpenSourceProjects
 
     <div className="text-center">
       <Link
+        analyticsProperties={{
+          click_area: 'home_open_source',
+          destination_path: '/open-source',
+          link_category: 'section_cta',
+          source_page: 'home',
+        }}
         className="mt-4 inline-block text-sm underline hover:text-black dark:text-dark-text-secondary dark:hover:text-dark-text"
         href="/open-source"
       >

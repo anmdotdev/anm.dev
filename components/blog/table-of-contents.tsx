@@ -1,5 +1,7 @@
 'use client'
 
+import { captureAnalyticsEvent, getArticleAnalyticsContext } from 'lib/analytics/client'
+import { ANALYTICS_EVENTS } from 'lib/analytics/events'
 import { useEffect, useRef, useState } from 'react'
 
 interface Heading {
@@ -23,7 +25,7 @@ const TocLinks = ({
 }: {
   headings: Heading[]
   activeId: string
-  onNavigate: (id: string) => void
+  onNavigate: (heading: Heading) => void
 }) => (
   <ul className="space-y-0.5 border-gray-lighter border-l dark:border-dark-border">
     {headings.map((heading) => {
@@ -41,7 +43,7 @@ const TocLinks = ({
             href={`#${heading.id}`}
             onClick={(e) => {
               e.preventDefault()
-              onNavigate(heading.id)
+              onNavigate(heading)
             }}
           >
             {heading.text}
@@ -57,16 +59,23 @@ const TableOfContents = ({ headings, variant = 'mobile' }: TableOfContentsProps)
   const [isOpen, setIsOpen] = useState(false)
   const observerRef = useRef<IntersectionObserver | null>(null)
 
-  const navigate = (id: string) => {
-    const el = document.getElementById(id)
+  const navigate = (heading: Heading) => {
+    const el = document.getElementById(heading.id)
     if (el) {
       const top = window.scrollY + el.getBoundingClientRect().top - TOC_SCROLL_OFFSET
       window.scrollTo({
         top: Math.max(top, 0),
         behavior: 'smooth',
       })
-      setActiveId(id)
+      setActiveId(heading.id)
       setIsOpen(false)
+      captureAnalyticsEvent(ANALYTICS_EVENTS.blogTocHeadingSelected, {
+        ...getArticleAnalyticsContext(document.querySelector('article')),
+        heading_id: heading.id,
+        heading_level: heading.level,
+        heading_text: heading.text,
+        toc_variant: variant,
+      })
     }
   }
 
@@ -125,7 +134,15 @@ const TableOfContents = ({ headings, variant = 'mobile' }: TableOfContentsProps)
       <button
         aria-expanded={isOpen}
         className="flex w-full items-center justify-between px-4 py-3 text-left"
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={() => {
+          const nextOpen = !isOpen
+          setIsOpen(nextOpen)
+          captureAnalyticsEvent(ANALYTICS_EVENTS.blogTocToggled, {
+            ...getArticleAnalyticsContext(document.querySelector('article')),
+            is_open: nextOpen,
+            toc_variant: variant,
+          })
+        }}
         type="button"
       >
         <span className="font-semibold text-[11px] text-gray-dark uppercase tracking-wider dark:text-dark-text-muted">

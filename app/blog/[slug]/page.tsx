@@ -1,3 +1,4 @@
+import ArticleEngagementTracker from 'components/analytics/article-engagement-tracker'
 import Comments from 'components/blog/comments'
 import PostFooterActions from 'components/blog/post-footer-actions'
 import { ReactionsProvider } from 'components/blog/reactions'
@@ -187,6 +188,7 @@ const BlogPostPage = async ({ params }: BlogPostPageProps) => {
   return (
     <>
       <ReadingProgress />
+      <ArticleEngagementTracker />
       <ReactionsProvider slug={slug}>
         <div className="relative mx-auto mt-4 max-w-5xl border-gray-lighter border-t px-6 pt-10 pb-16 dark:border-dark-border">
           <article

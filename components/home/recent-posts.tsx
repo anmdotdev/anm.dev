@@ -26,6 +26,13 @@ const RecentPosts = ({ posts }: RecentPostsProps) => {
             key={post.slug}
           >
             <Link
+              analyticsProperties={{
+                click_area: 'home_recent_posts',
+                destination_path: `/blog/${post.slug}`,
+                link_category: 'blog_post',
+                post_slug: post.slug,
+                source_page: 'home',
+              }}
               className="group !flex !items-start !no-underline hover:!no-underline flex-col gap-1"
               href={`/blog/${post.slug}`}
               showIcon="never"
@@ -48,6 +55,12 @@ const RecentPosts = ({ posts }: RecentPostsProps) => {
       </div>
 
       <Link
+        analyticsProperties={{
+          click_area: 'home_recent_posts',
+          destination_path: '/blog',
+          link_category: 'section_cta',
+          source_page: 'home',
+        }}
         className="mt-6 inline-block text-sm underline hover:text-black dark:text-dark-text-secondary dark:hover:text-dark-text"
         href="/blog"
       >

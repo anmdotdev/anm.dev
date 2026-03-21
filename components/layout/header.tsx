@@ -11,7 +11,16 @@ const navLinks = [
 
 const Header = () => (
   <header className="mx-auto flex w-full max-w-lg items-center justify-between py-5 max-sm:px-4">
-    <Link className="shrink-0 font-semibold text-black text-lg dark:text-dark-text" href="/">
+    <Link
+      analyticsProperties={{
+        click_area: 'header',
+        destination_path: '/',
+        link_category: 'brand',
+        source_page: 'global',
+      }}
+      className="shrink-0 font-semibold text-black text-lg dark:text-dark-text"
+      href="/"
+    >
       {siteName}
     </Link>
     <nav aria-label="Main navigation" className="flex items-center space-x-2 sm:space-x-3">
@@ -23,6 +32,12 @@ const Header = () => (
             </span>
           )}
           <Link
+            analyticsProperties={{
+              click_area: 'header',
+              destination_path: link,
+              link_category: 'primary_navigation',
+              source_page: 'global',
+            }}
             className="whitespace-nowrap text-black text-sm hover:underline dark:text-dark-text"
             href={link}
             showIcon="never"

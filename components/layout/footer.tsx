@@ -72,6 +72,13 @@ const Footer = () => (
                 {row.map(({ icon, link, text }) => (
                   <li key={link}>
                     <Link
+                      analyticsProperties={{
+                        click_area: 'footer',
+                        destination_path: link,
+                        link_category: link.startsWith('mailto:') ? 'email' : 'social_or_resource',
+                        link_label: text,
+                        source_page: 'global',
+                      }}
                       className="whitespace-nowrap text-gray-dark text-sm dark:text-dark-text-secondary"
                       external={link.startsWith('http') || link.startsWith('mailto:')}
                       href={link}

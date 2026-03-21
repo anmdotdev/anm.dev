@@ -15,6 +15,10 @@ export const proxy = (request: NextRequest) => {
   const { pathname } = request.nextUrl
   const accept = request.headers.get('accept') || ''
 
+  if (pathname.startsWith('/ingest')) {
+    return NextResponse.next()
+  }
+
   // Content negotiation for blog posts: serve markdown when requested
   const match = pathname.match(BLOG_POST_REGEX)
   if (match) {
@@ -34,5 +38,5 @@ export const proxy = (request: NextRequest) => {
 }
 
 export const config = {
-  matcher: ['/((?!_next/static|_next/image).*)'],
+  matcher: ['/((?!_next/static|_next/image|ingest).*)'],
 }

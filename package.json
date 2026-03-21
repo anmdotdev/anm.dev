@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "postbuild": "node scripts/upload-posthog-sourcemaps.mjs",
     "start": "next start",
     "email:dev": "email dev --dir emails --port 3001",
     "lint": "biome check .",
@@ -16,6 +17,10 @@
   },
   "dependencies": {
     "@libsql/client": "^0.17.0",
+    "@opentelemetry/api-logs": "^0.213.0",
+    "@opentelemetry/exporter-logs-otlp-http": "^0.213.0",
+    "@opentelemetry/resources": "^2.6.0",
+    "@opentelemetry/sdk-logs": "^0.213.0",
     "@radix-ui/react-tooltip": "^1.2.8",
     "@react-email/components": "^1.0.10",
     "@react-email/render": "^2.0.4",
@@ -23,6 +28,8 @@
     "gray-matter": "^4.0.3",
     "next": "16.2.0",
     "next-mdx-remote": "^6.0.0",
+    "posthog-js": "^1.363.1",
+    "posthog-node": "^5.28.5",
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "react-email": "^5.2.10",
@@ -33,6 +40,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.4.8",
+    "@posthog/cli": "^0.7.3",
     "@tailwindcss/postcss": "^4.2.2",
     "@types/node": "^25.5.0",
     "@types/react": "19.2.14",

@@ -16,6 +16,12 @@ const NotFound = () => (
     </p>
     <nav aria-label="Helpful links" className="mb-8 flex flex-col gap-2">
       <Link
+        analyticsProperties={{
+          click_area: 'not_found',
+          destination_path: '/blog',
+          link_category: 'recovery_link',
+          source_page: 'not_found',
+        }}
         className="font-medium text-link text-sm dark:text-dark-link"
         href="/blog"
         showIcon="never"
@@ -23,6 +29,12 @@ const NotFound = () => (
         Read the blog
       </Link>
       <Link
+        analyticsProperties={{
+          click_area: 'not_found',
+          destination_path: '/open-source',
+          link_category: 'recovery_link',
+          source_page: 'not_found',
+        }}
         className="font-medium text-link text-sm dark:text-dark-link"
         href="/open-source"
         showIcon="never"
@@ -30,6 +42,12 @@ const NotFound = () => (
         View open source projects
       </Link>
       <Link
+        analyticsProperties={{
+          click_area: 'not_found',
+          destination_path: '/journey',
+          link_category: 'recovery_link',
+          source_page: 'not_found',
+        }}
         className="font-medium text-link text-sm dark:text-dark-link"
         href="/journey"
         showIcon="never"
@@ -37,7 +55,17 @@ const NotFound = () => (
         See the professional journey
       </Link>
     </nav>
-    <Link className="text-gray text-xs dark:text-dark-text-muted" href="/" showIcon="never">
+    <Link
+      analyticsProperties={{
+        click_area: 'not_found',
+        destination_path: '/',
+        link_category: 'recovery_link',
+        source_page: 'not_found',
+      }}
+      className="text-gray text-xs dark:text-dark-text-muted"
+      href="/"
+      showIcon="never"
+    >
       Go back home
     </Link>
   </section>
