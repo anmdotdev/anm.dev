@@ -3,6 +3,7 @@ import { JetBrains_Mono } from 'next/font/google'
 
 import './globals.css'
 
+import PostHogBootstrap from 'components/analytics/posthog-bootstrap'
 import Shell from 'components/layout/shell'
 
 import defaultMetadata from 'lib/default-metadata'
@@ -112,6 +113,7 @@ const RootLayout = ({ children }: IRootLayoutProps) => (
       />
     </head>
     <body>
+      <PostHogBootstrap />
       <Shell>{children}</Shell>
     </body>
   </html>

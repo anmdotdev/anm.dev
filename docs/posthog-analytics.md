@@ -10,8 +10,8 @@ This app uses PostHog for:
 
 Implementation notes:
 
-- Client-side PostHog initialization lives in `instrumentation-client.ts` and
-  `lib/analytics/browser-init.ts`.
+- Client-side PostHog initialization lives in
+  `components/analytics/posthog-bootstrap.tsx` and `lib/analytics/browser-init.ts`.
 - The browser SDK uses the bundled `posthog-js/dist/module.full.no-external` build so replay,
   exceptions, and analytics do not depend on remote script injection.
 - Browser ingestion goes through the local `/ingest` reverse proxy path configured in
