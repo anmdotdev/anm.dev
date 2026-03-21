@@ -157,8 +157,8 @@ Each log line is a wide event with the request outcome and context such as:
 - `http_status_code`
 - `duration_ms`
 - `outcome`
-- `posthog_distinct_id`
-- `posthog_session_id` when available
+- `posthogDistinctId`
+- `sessionId` when available
 - Route-specific fields like `post_slug`, `signup_source`, `results_count`, or webhook/job context
 
 ## Page Coverage

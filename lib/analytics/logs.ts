@@ -49,6 +49,33 @@ const normalizeLogAttributes = (
     nextAttributes[key] = value
   }
 
+  // Preserve the existing query surface while also emitting the canonical
+  // PostHog/OTel-friendly attributes used for replay and user linking.
+  const posthogDistinctId = nextAttributes.posthog_distinct_id
+  if (typeof posthogDistinctId === 'string' && !('posthogDistinctId' in nextAttributes)) {
+    nextAttributes.posthogDistinctId = posthogDistinctId
+  }
+
+  const posthogSessionId = nextAttributes.posthog_session_id
+  if (typeof posthogSessionId === 'string' && !('sessionId' in nextAttributes)) {
+    nextAttributes.sessionId = posthogSessionId
+  }
+
+  const httpMethod = nextAttributes.http_method
+  if (typeof httpMethod === 'string' && !('http.request.method' in nextAttributes)) {
+    nextAttributes['http.request.method'] = httpMethod
+  }
+
+  const httpStatusCode = nextAttributes.http_status_code
+  if (typeof httpStatusCode === 'number' && !('http.response.status_code' in nextAttributes)) {
+    nextAttributes['http.response.status_code'] = httpStatusCode
+  }
+
+  const httpRoute = nextAttributes.http_route
+  if (typeof httpRoute === 'string' && !('url.path' in nextAttributes)) {
+    nextAttributes['url.path'] = httpRoute
+  }
+
   return nextAttributes
 }
 
@@ -78,6 +105,7 @@ export const initializePostHogLogs = (): void => {
         new OTLPLogExporter({
           headers: {
             Authorization: `Bearer ${posthogKey}`,
+            'Content-Type': 'application/json',
           },
           url: posthogLogsUrl,
         }),
