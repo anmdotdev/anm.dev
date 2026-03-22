@@ -11,7 +11,7 @@ type AnalyticsPrimitive = boolean | number | string
 type AnalyticsProperties = Record<string, AnalyticsPrimitive | null | undefined>
 
 interface PostHogCookieData {
-  $sesid?: string
+  $sesid?: string | [number, string, number]
   distinct_id?: string
 }
 
@@ -95,8 +95,20 @@ export const getPostHogDistinctIdFromCookieHeader = (
 
 export const getPostHogSessionIdFromCookieHeader = (
   cookieHeader?: string | string[],
-): string | undefined =>
-  getPostHogCookieDataFromCookieHeader(cookieHeader)?.$sesid?.trim() || undefined
+): string | undefined => {
+  const sessionValue = getPostHogCookieDataFromCookieHeader(cookieHeader)?.$sesid
+
+  if (typeof sessionValue === 'string') {
+    return sessionValue.trim() || undefined
+  }
+
+  if (Array.isArray(sessionValue)) {
+    const sessionId = sessionValue[1]
+    return typeof sessionId === 'string' ? sessionId.trim() || undefined : undefined
+  }
+
+  return undefined
+}
 
 export const getPostHogDistinctId = (request: Request): string | undefined =>
   getPostHogDistinctIdFromCookieHeader(request.headers.get('cookie') ?? undefined) ??

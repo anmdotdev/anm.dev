@@ -13,7 +13,9 @@ Implementation notes:
 - Client-side PostHog initialization lives in
   `components/analytics/posthog-bootstrap.tsx` and `lib/analytics/browser-init.ts`.
 - The browser SDK uses the bundled `posthog-js/dist/module.full.no-external` build so replay,
-  exceptions, and analytics do not depend on remote script injection.
+  exceptions, and analytics do not depend on remote script injection. Replay support also imports
+  `posthog-js/dist/posthog-recorder` in `lib/analytics/posthog-browser.ts` so the recorder
+  registers locally instead of relying on a remote lazy-load.
 - Browser ingestion goes through the local `/ingest` reverse proxy path configured in
   `next.config.ts`.
 - Analytics, replay, and exception capture initialize immediately when the browser PostHog key and

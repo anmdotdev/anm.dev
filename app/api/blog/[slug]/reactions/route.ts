@@ -1,5 +1,9 @@
 import { emitBackendLog, flushPostHogLogs } from 'lib/analytics/logs'
-import { captureServerAnalyticsException, getPostHogDistinctId } from 'lib/analytics/server'
+import {
+  captureServerAnalyticsException,
+  getPostHogDistinctId,
+  getPostHogSessionId,
+} from 'lib/analytics/server'
 import { getBlogPost } from 'lib/blog'
 import { addLike, addView, getReactionCounts, hasDisliked, toggleDislike } from 'lib/db'
 import { after, NextResponse } from 'next/server'
@@ -29,6 +33,7 @@ export const GET = async (_request: Request, { params }: RouteParams) => {
 export const POST = async (request: Request, { params }: RouteParams) => {
   const startedAt = Date.now()
   const distinctId = getPostHogDistinctId(request)
+  const sessionId = getPostHogSessionId(request)
 
   after(async () => {
     await flushPostHogLogs()
@@ -54,6 +59,7 @@ export const POST = async (request: Request, { params }: RouteParams) => {
           outcome: 'validation_error',
           post_slug: slug,
           posthog_distinct_id: distinctId,
+          posthog_session_id: sessionId,
         },
         body: 'Reaction request failed because type was missing',
         eventName: 'blog.reactions.request.completed',
@@ -77,6 +83,7 @@ export const POST = async (request: Request, { params }: RouteParams) => {
           outcome: 'validation_error',
           post_slug: slug,
           posthog_distinct_id: distinctId,
+          posthog_session_id: sessionId,
           reaction_type: body.type,
         },
         body: 'Reaction request failed because fingerprint was missing',
@@ -105,6 +112,7 @@ export const POST = async (request: Request, { params }: RouteParams) => {
         outcome: 'validation_error',
         post_slug: slug,
         posthog_distinct_id: distinctId,
+        posthog_session_id: sessionId,
         reaction_type: body.type,
       },
       body: 'Reaction request failed because the reaction type was invalid',
@@ -121,6 +129,7 @@ export const POST = async (request: Request, { params }: RouteParams) => {
       distinctId,
       error,
       properties: {
+        $session_id: sessionId,
         page_category: 'blog',
         post_slug: slug,
         request_path: `/api/blog/${slug}/reactions`,
@@ -137,6 +146,7 @@ export const POST = async (request: Request, { params }: RouteParams) => {
         outcome: 'error',
         post_slug: slug,
         posthog_distinct_id: distinctId,
+        posthog_session_id: sessionId,
       },
       body: 'Reaction request failed unexpectedly',
       eventName: 'blog.reactions.request.completed',

@@ -32,6 +32,7 @@ export const GET = async (request: Request) => {
     http_method: 'GET',
     http_route: url.pathname,
     posthog_distinct_id: posthogDistinctId,
+    posthog_session_id: posthogSessionId,
   }
 
   if (!token) {
