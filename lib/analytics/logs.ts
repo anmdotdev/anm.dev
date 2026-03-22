@@ -108,7 +108,7 @@ const getDeploymentEnvironment = (): string =>
   process.env.NODE_ENV ??
   'unknown'
 
-const getPostHogLogsUrl = (): string | null => {
+const getPostHogLogsUrl = (token: string): string | null => {
   const explicitLogsUrl = process.env.POSTHOG_LOGS_URL?.trim()
   if (explicitLogsUrl) {
     return explicitLogsUrl
@@ -120,7 +120,9 @@ const getPostHogLogsUrl = (): string | null => {
   }
 
   try {
-    return new URL('/i/v1/logs', posthogHost).toString()
+    const url = new URL('/i/v1/logs', posthogHost)
+    url.searchParams.set('token', token)
+    return url.toString()
   } catch {
     warnPostHogLogs(
       'Invalid PostHog host. Set NEXT_PUBLIC_POSTHOG_HOST to the ingest host ' +
@@ -134,13 +136,21 @@ const getPostHogLogsUrl = (): string | null => {
 const getPostHogLogsConfig = (): PostHogLogsConfig | null => {
   const token =
     process.env.POSTHOG_LOGS_TOKEN?.trim() ?? process.env.NEXT_PUBLIC_POSTHOG_KEY?.trim() ?? null
-  const url = getPostHogLogsUrl()
 
-  if (!(token && url)) {
+  if (!token) {
     warnPostHogLogs(
-      'PostHog OTEL log export is disabled because the token or endpoint is ' +
-        'missing. Set NEXT_PUBLIC_POSTHOG_KEY and NEXT_PUBLIC_POSTHOG_HOST, ' +
-        'or override them with POSTHOG_LOGS_TOKEN and POSTHOG_LOGS_URL.',
+      'PostHog OTEL log export is disabled because the token is missing. ' +
+        'Set NEXT_PUBLIC_POSTHOG_KEY or POSTHOG_LOGS_TOKEN.',
+    )
+    return null
+  }
+
+  const url = getPostHogLogsUrl(token)
+
+  if (!url) {
+    warnPostHogLogs(
+      'PostHog OTEL log export is disabled because the endpoint is missing. ' +
+        'Set NEXT_PUBLIC_POSTHOG_HOST or POSTHOG_LOGS_URL.',
     )
     return null
   }
@@ -161,6 +171,8 @@ export const initializePostHogLogs = (): void => {
   if (!config) {
     return
   }
+
+  console.info(`[posthog-logs] Initializing OTLP log export to ${config.url}`)
 
   loggerProvider = new LoggerProvider({
     processors: [
