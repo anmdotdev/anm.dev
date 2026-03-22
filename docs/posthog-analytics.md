@@ -258,6 +258,12 @@ Recommended server-side environment variables:
 
 - `POSTHOG_SERVICE_NAME`
   - Recommended value: `anm.dev`
+- `POSTHOG_LOGS_URL`
+  - Optional explicit OTLP logs endpoint
+  - Use this if you want to override the derived `https://.../i/v1/logs` URL
+- `POSTHOG_LOGS_TOKEN`
+  - Optional explicit PostHog project token for OTEL logs
+  - Falls back to `NEXT_PUBLIC_POSTHOG_KEY` when omitted
 - `POSTHOG_CLI_HOST`
   - Recommended value: `https://us.posthog.com` or `https://eu.posthog.com`
 - `POSTHOG_CLI_API_KEY`

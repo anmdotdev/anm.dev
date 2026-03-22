@@ -10,14 +10,28 @@ type LogAttributes = Record<string, LogAttributeValue>
 
 type BackendLogLevel = 'DEBUG' | 'ERROR' | 'INFO' | 'WARN'
 
+interface PostHogLogsConfig {
+  serviceName: string
+  token: string
+  url: string
+}
+
 const LOGS_EXPORT_DELAY_MS = 1000
-const POSTHOG_SERVICE_NAME = process.env.POSTHOG_SERVICE_NAME ?? 'anm.dev'
-const posthogKey = process.env.NEXT_PUBLIC_POSTHOG_KEY
-const posthogHost = process.env.NEXT_PUBLIC_POSTHOG_HOST
-const posthogLogsUrl = posthogHost ? new URL('/i/v1/logs', posthogHost).toString() : null
+const DEFAULT_POSTHOG_SERVICE_NAME = 'anm.dev'
+const POSTHOG_LOGGER_NAME = 'anm.dev.backend'
 
 let loggerProvider: LoggerProvider | null = null
 let logsInitialized = false
+let didWarnAboutLogsConfig = false
+
+const warnPostHogLogs = (message: string): void => {
+  if (didWarnAboutLogsConfig) {
+    return
+  }
+
+  didWarnAboutLogsConfig = true
+  console.warn(`[posthog-logs] ${message}`)
+}
 
 const getSeverityNumber = (level: BackendLogLevel): SeverityNumber => {
   switch (level) {
@@ -94,8 +108,57 @@ const getDeploymentEnvironment = (): string =>
   process.env.NODE_ENV ??
   'unknown'
 
+const getPostHogLogsUrl = (): string | null => {
+  const explicitLogsUrl = process.env.POSTHOG_LOGS_URL?.trim()
+  if (explicitLogsUrl) {
+    return explicitLogsUrl
+  }
+
+  const posthogHost = process.env.NEXT_PUBLIC_POSTHOG_HOST?.trim()
+  if (!posthogHost) {
+    return null
+  }
+
+  try {
+    return new URL('/i/v1/logs', posthogHost).toString()
+  } catch {
+    warnPostHogLogs(
+      'Invalid PostHog host. Set NEXT_PUBLIC_POSTHOG_HOST to the ingest host ' +
+        '(for example https://us.i.posthog.com) or set POSTHOG_LOGS_URL ' +
+        'directly.',
+    )
+    return null
+  }
+}
+
+const getPostHogLogsConfig = (): PostHogLogsConfig | null => {
+  const token =
+    process.env.POSTHOG_LOGS_TOKEN?.trim() ?? process.env.NEXT_PUBLIC_POSTHOG_KEY?.trim() ?? null
+  const url = getPostHogLogsUrl()
+
+  if (!(token && url)) {
+    warnPostHogLogs(
+      'PostHog OTEL log export is disabled because the token or endpoint is ' +
+        'missing. Set NEXT_PUBLIC_POSTHOG_KEY and NEXT_PUBLIC_POSTHOG_HOST, ' +
+        'or override them with POSTHOG_LOGS_TOKEN and POSTHOG_LOGS_URL.',
+    )
+    return null
+  }
+
+  return {
+    serviceName: process.env.POSTHOG_SERVICE_NAME?.trim() || DEFAULT_POSTHOG_SERVICE_NAME,
+    token,
+    url,
+  }
+}
+
 export const initializePostHogLogs = (): void => {
-  if (logsInitialized || !(posthogKey && posthogLogsUrl)) {
+  if (logsInitialized) {
+    return
+  }
+
+  const config = getPostHogLogsConfig()
+  if (!config) {
     return
   }
 
@@ -104,10 +167,10 @@ export const initializePostHogLogs = (): void => {
       new BatchLogRecordProcessor(
         new OTLPLogExporter({
           headers: {
-            Authorization: `Bearer ${posthogKey}`,
+            Authorization: `Bearer ${config.token}`,
             'Content-Type': 'application/json',
           },
-          url: posthogLogsUrl,
+          url: config.url,
         }),
         {
           scheduledDelayMillis: LOGS_EXPORT_DELAY_MS,
@@ -116,7 +179,7 @@ export const initializePostHogLogs = (): void => {
     ],
     resource: resourceFromAttributes({
       'deployment.environment': getDeploymentEnvironment(),
-      'service.name': POSTHOG_SERVICE_NAME,
+      'service.name': config.serviceName,
       ...(getServiceVersion() ? { 'service.version': getServiceVersion() } : {}),
     }),
   })
@@ -132,7 +195,7 @@ const getBackendLogger = () => {
     return null
   }
 
-  return logs.getLogger('anm.dev.backend')
+  return loggerProvider.getLogger(POSTHOG_LOGGER_NAME)
 }
 
 export const emitBackendLog = (input: {
@@ -165,5 +228,9 @@ export const flushPostHogLogs = async (): Promise<void> => {
     return
   }
 
-  await loggerProvider.forceFlush()
+  try {
+    await loggerProvider.forceFlush()
+  } catch (error) {
+    console.error('[posthog-logs] Failed to flush logs to PostHog.', error)
+  }
 }

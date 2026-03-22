@@ -11,8 +11,8 @@ type AnalyticsPrimitive = boolean | number | string
 type AnalyticsProperties = Record<string, AnalyticsPrimitive | null | undefined>
 
 interface PostHogCookieData {
-  $sesid?: string | [number, string, number]
-  distinct_id?: string
+  $sesid?: unknown
+  distinct_id?: unknown
 }
 
 const withDefaults = (properties?: AnalyticsProperties): Record<string, AnalyticsPrimitive> => {
@@ -67,6 +67,27 @@ const normalizeHeaderValue = (headerValue?: string | string[]): string | undefin
   return value ? value : undefined
 }
 
+const normalizeCookieStringValue = (value: unknown): string | undefined => {
+  if (typeof value !== 'string') {
+    return undefined
+  }
+
+  const trimmedValue = value.trim()
+  return trimmedValue ? trimmedValue : undefined
+}
+
+const normalizePostHogSessionId = (sessionValue: unknown): string | undefined => {
+  if (typeof sessionValue === 'string') {
+    return normalizeCookieStringValue(sessionValue)
+  }
+
+  if (!Array.isArray(sessionValue)) {
+    return undefined
+  }
+
+  return normalizeCookieStringValue(sessionValue[1])
+}
+
 const getPostHogCookieDataFromCookieHeader = (
   cookieHeader?: string | string[],
 ): PostHogCookieData | null => {
@@ -91,24 +112,12 @@ const getPostHogCookieDataFromCookieHeader = (
 export const getPostHogDistinctIdFromCookieHeader = (
   cookieHeader?: string | string[],
 ): string | undefined =>
-  getPostHogCookieDataFromCookieHeader(cookieHeader)?.distinct_id?.trim() || undefined
+  normalizeCookieStringValue(getPostHogCookieDataFromCookieHeader(cookieHeader)?.distinct_id)
 
 export const getPostHogSessionIdFromCookieHeader = (
   cookieHeader?: string | string[],
-): string | undefined => {
-  const sessionValue = getPostHogCookieDataFromCookieHeader(cookieHeader)?.$sesid
-
-  if (typeof sessionValue === 'string') {
-    return sessionValue.trim() || undefined
-  }
-
-  if (Array.isArray(sessionValue)) {
-    const sessionId = sessionValue[1]
-    return typeof sessionId === 'string' ? sessionId.trim() || undefined : undefined
-  }
-
-  return undefined
-}
+): string | undefined =>
+  normalizePostHogSessionId(getPostHogCookieDataFromCookieHeader(cookieHeader)?.$sesid)
 
 export const getPostHogDistinctId = (request: Request): string | undefined =>
   getPostHogDistinctIdFromCookieHeader(request.headers.get('cookie') ?? undefined) ??
