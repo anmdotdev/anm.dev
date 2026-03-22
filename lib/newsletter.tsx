@@ -800,7 +800,7 @@ const sendCampaign = async (campaign: NewsletterCampaign): Promise<boolean> => {
       replyTo: config.replyToEmail,
       subject,
       previewText: preview,
-      name: `Blog post: ${post.title}`,
+      name: `Blog post: ${post.title}`.slice(0, 70),
       react: emailComponent,
       html,
       text,
