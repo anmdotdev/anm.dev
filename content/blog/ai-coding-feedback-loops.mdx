@@ -8,29 +8,35 @@ summary: "Most bad AI code is not a model problem. It is a feedback-loop problem
 tags: [AI, Workflow, Developer Tools, Testing]
 ---
 
-The most common complaint about AI coding is not that the model is dumb.
+The biggest weakness in most AI coding workflows is not that the model writes bad first drafts.
 
-It is this:
+It is that we as humans are still doing all the validation.
 
-> "It wrote something that looked plausible, but it did not actually work."
+I describe the feature.
+The model writes some code.
+Then I open the browser, click around, read the console, notice the failed request, explain the failure back to the model, and repeat.
 
-That complaint is real. I hit it constantly when I first started using AI for production work.
+That is not really delegation.
 
-The mistake I made was assuming the problem lived in the model.
+It is manual QA wrapped around code generation.
 
-Most of the time, it did not.
+Once I started seeing that clearly, a lot of the usual advice started to feel incomplete.
 
-It lived in the loop.
+Yes, context matters.
+Yes, better prompts help.
+Yes, it is useful to explain the intent precisely.
 
-I was asking the agent to write code, but I was not giving it any meaningful way to verify whether the code worked. It could not see the browser. It could not click the UI. It could not inspect the console. It could not trace the network requests. It could not compare the actual result against the behavior I wanted.
-
-I had effectively hired a developer and blindfolded them.
+But the real unlock is giving the agent a way to validate its own work.
 
 <Callout type="note">
-Bad AI output is very often just blind output.
+The missing context is often not more prose. It is executable feedback. Intent + Validation = Loop
 </Callout>
 
-Once I understood that, my workflow changed. And so did the quality.
+If the agent can inspect the running app, run the checks, compare behavior against scenarios, and keep iterating until the evidence looks right, a lot of the "context problem" starts solving itself.
+
+Now it can discover reality instead of guessing at it.
+
+That is what I mean by completing the loop.
 
 ---
 
@@ -62,6 +68,49 @@ The model is not debugging. It is guessing.
 And if all you give it is "the button is broken" or "the page is blank" or "I got an error," you are forcing it to infer runtime reality from incomplete, second-hand descriptions.
 
 That is why the loop matters more than the prompt.
+
+---
+
+## Most Teams Already Describe Intent. They Do Not Describe Proof.
+
+Most engineers are actually pretty good at describing what they want.
+
+They say things like:
+
+- add a settings page for team billing
+- fix the broken onboarding modal
+- make the invite flow handle expired tokens gracefully
+
+That is usually enough intent to start.
+
+What is usually missing is the other half:
+
+- how the feature should be validated
+- what scenarios must pass
+- how local auth works
+- what browser state matters
+- what request should fire
+- what counts as "done"
+
+So the model produces a draft.
+The human becomes the test harness.
+The human becomes the browser.
+The human becomes the console.
+The human becomes the network inspector.
+
+And then people conclude that AI is unreliable.
+
+The more precise conclusion is this:
+
+the agent was never allowed to close its own loop.
+
+<Callout type="philosophy">
+Intent tells the agent what to build. Validation tells it how to know it is done.
+</Callout>
+
+That distinction matters a lot.
+
+Because once you hand over both, the workflow changes from "generate something plausible" to "keep working until the evidence matches the intent."
 
 ---
 
@@ -155,7 +204,7 @@ If no, it is still just producing drafts.
 
 The single biggest upgrade to my AI workflow was giving the agent browser access.
 
-In practice, that means tools like Playwright MCP and Chrome DevTools MCP.
+In practice, that means tools like [Playwright Skills](https://github.com/lackeyjb/playwright-skill) and [Chrome DevTools Skills](https://github.com/github/awesome-copilot/blob/main/skills/chrome-devtools/SKILL.md).
 
 I am not attached to those exact names. The point is the capability.
 
