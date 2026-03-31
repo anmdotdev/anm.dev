@@ -1,0 +1,272 @@
+---
+title: "The Intent Layer: How Prompts, Specs, and Validation Make Engineering Declarative"
+date: 2026-03-31
+series: "ai-workflows-modern-web-dev"
+seriesOrder: 4
+seriesTitle: "AI Workflows in Modern Web Development"
+summary: "React moved frontend work above manual DOM mutation. Prompts, specs, and validation loops now do the same for AI-assisted engineering."
+tags: [AI, Architecture, Developer Tools, Philosophy]
+---
+
+The previous three essays in this series made three related arguments:
+
+- [Code Is No Longer Written for Humans](/blog/code-is-no-longer-written-for-humans) argued that the center of gravity is moving upward from code into intent.
+- [Stop Typing, Start Talking](/blog/voice-first-ai-coding) argued that richer context matters because most prompts fail by compression.
+- [Complete the Loop](/blog/ai-coding-feedback-loops) argued that agents need validation if they are going to become correct instead of merely plausible.
+
+This post is the synthesis.
+
+I think all three ideas are pointing at the same abstraction shift.
+
+React did not make frontend development easier by removing complexity.
+
+It changed the layer most of us worked in.
+
+Before React, the dominant interface for building UI was imperative. You grabbed DOM nodes, appended children, toggled classes, attached listeners, and manually kept rendering in sync with state.
+
+React gave us a better interface.
+
+You declare what the UI should be.
+React handles the DOM mechanics underneath.
+
+That shift did not eliminate imperative code. It made most product work stop living there.
+
+<Philosophy>
+React made the web more declarative by separating UI intent from DOM mechanics. Prompts, specs, and validation loops are starting to do something similar for engineering work by separating product intent from implementation mechanics.
+</Philosophy>
+
+That is the framing I care about here.
+
+Not "prompt engineering" in the narrow sense.
+
+The intent layer above implementation.
+
+---
+
+## React Worked Because It Changed the Interface
+
+The browser DOM never went away.
+
+React just gave developers a more powerful contract with it.
+
+Instead of spending most of your time saying:
+
+- find this node
+- replace this text
+- toggle this class
+- append this child
+- keep everything internally consistent
+
+you could say:
+
+- given this state, the UI should look like this
+
+That difference sounds simple, but it changed the entire feel of frontend work.
+
+It moved attention away from mutation mechanics and toward product behavior.
+
+The important detail is that React only worked because the declarative layer was paired with a lower layer that could faithfully execute it.
+
+JSX without a renderer would have just been notation.
+
+The renderer is what made the declaration useful.
+
+That same pattern is why I think the current AI shift is more than a prompt trend.
+
+---
+
+## The New Artifact Is Not the Prompt. It Is the Declaration
+
+When people talk about prompts, they often picture a single chat message:
+
+> "build me a dashboard"
+
+That is not the real artifact in serious engineering work.
+
+The real artifact is the declaration around the task:
+
+- what behavior should exist
+- what constraints should hold
+- what scenarios must pass
+- what should not change
+- what evidence will prove the result is correct
+
+Sometimes that declaration is delivered through a prompt.
+Sometimes it lives in a Markdown spec.
+Sometimes it is split across notes, tests, acceptance criteria, and browser checks.
+
+Usually it is some combination.
+
+That is why I increasingly think the prompt is just the transport layer.
+
+The important thing is the declared intent above the code.
+
+If you want the practical argument for why richer context matters, I already made that case in [Stop Typing, Start Talking](/blog/voice-first-ai-coding).
+
+This post is the higher-level claim:
+
+the unit of engineering handoff is becoming less like "request some code" and more like "declare the system you want."
+
+---
+
+## Why This Feels Like React to Me
+
+In React, the declarative input is the UI description.
+
+In AI-assisted engineering, the declarative input is increasingly the product description:
+
+- the behavior
+- the invariants
+- the boundaries
+- the proof
+
+That does not mean English becomes a perfect programming language.
+
+It means more of the important human decisions get expressed before the implementation exists.
+
+A good spec behaves a lot like declarative code in practice.
+
+It narrows the solution space.
+It constrains what is allowed.
+It gives review a stable contract.
+
+That is the similarity I care about.
+
+This is also why the phrase "prompts are declarative code" feels slightly incomplete to me now.
+
+The bigger truth is not just about prompts.
+
+It is about a stack of artifacts that together define intent.
+
+Prompts start the interaction.
+Specs stabilize the intent.
+Scenarios make the intent testable.
+
+That full layer is the analogue to what React gave the web.
+
+---
+
+## Validation Is the Equivalent of the Renderer
+
+This is where the analogy gets stronger.
+
+React needed a renderer.
+
+AI workflows need validation.
+
+Without validation, the declaration is only aspiration.
+
+With validation, the agent can compare reality against the declaration and keep iterating until they match.
+
+<Callout type="note">
+Without a renderer, JSX is notation. Without validation, a spec is aspiration.
+</Callout>
+
+I already went deep on this in [Complete the Loop](/blog/ai-coding-feedback-loops), so I do not want to re-teach that whole argument here.
+
+But it matters to this abstraction model because it explains why prompts alone are not enough.
+
+A declaration becomes powerful when there is a lower layer capable of reconciling reality against it.
+
+For frontend work, that reconciliation happened in the framework runtime.
+
+For AI-assisted engineering, it increasingly happens through tests, type checks, browser automation, and feedback loops that let the agent inspect what actually happened.
+
+That is why tools like agent browser workflows matter so much.
+
+They do not just make demos look smarter.
+
+They make the declarative layer operational.
+
+---
+
+## What This Changes for the Engineer
+
+If this framing is right, the job shifts upward.
+
+Not away from implementation entirely.
+
+Upward.
+
+More of the leverage moves into:
+
+- defining behavior clearly
+- setting constraints precisely
+- choosing what counts as proof
+- reviewing evidence against the declaration
+
+Less of the leverage comes from manually spelling out every implementation step.
+
+That does not make code irrelevant any more than React made the DOM irrelevant.
+
+Code remains the executable layer.
+
+But more of the system's meaning now lives above it.
+
+That is also why I think [Code Is No Longer Written for Humans](/blog/code-is-no-longer-written-for-humans) and this essay are related but not identical.
+
+That post was about where maintainability now begins.
+
+This one is about the abstraction pattern that explains why.
+
+---
+
+## A Small Example
+
+The handoff I want now looks less like:
+
+> "add coupon support to checkout"
+
+and more like:
+
+```md
+## Checkout Coupon Flow
+
+### Behavior
+- Show a coupon input above the order summary.
+- Valid coupons update totals immediately.
+- Invalid coupons show an inline error without clearing the field.
+
+### Constraints
+- Reuse the existing checkout form primitives.
+- Do not change tax calculation logic.
+
+### Validation
+- Run the checkout tests.
+- Open `/checkout` in the browser.
+- Apply both a valid and invalid coupon.
+- Confirm the UI and totals match the scenarios.
+```
+
+That is still not executable by itself.
+
+But it is no longer just a casual request either.
+
+It is an intent artifact.
+
+And once the agent can implement against it and validate against it, that artifact starts functioning much more like declarative code than like ordinary prose.
+
+---
+
+## Where This Leads
+
+I do not think the future is "engineers stop caring about code."
+
+I think the future is that more of the important engineering work happens in the layer above code:
+
+- intent
+- constraints
+- scenarios
+- proof
+
+React made the web more manageable by giving developers a better abstraction than manual DOM mutation.
+
+I think prompts, specs, and validation are starting to give us a better abstraction than manually translating product intent into implementation step by step.
+
+Once you see that, a lot of the AI conversation looks different.
+
+It stops being mainly about whether prompts are clever.
+
+It becomes about whether the intent layer is strong enough for the implementation layer to follow.
+
+---

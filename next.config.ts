@@ -90,6 +90,16 @@ const nextConfig: NextConfig = {
       destination: '/humans.txt',
       permanent: true,
     },
+    {
+      source: '/blog/prompts-are-declarative-code',
+      destination: '/blog/the-intent-layer',
+      permanent: true,
+    },
+    {
+      source: '/blog/react-prompts-specs-declarative-engineering',
+      destination: '/blog/the-intent-layer',
+      permanent: true,
+    },
   ],
 }
 
