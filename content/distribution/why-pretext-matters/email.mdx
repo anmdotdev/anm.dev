@@ -1,0 +1,24 @@
+---
+subject: "Why Pretext matters beyond text measurement"
+preview: "Pretext turns text layout into application data, which should land first in virtualization, editors, and layout infrastructure."
+summary: "Pretext gives applications a cheaper way to reason about text geometry before the DOM is measured, which matters for performance today and infrastructure tomorrow."
+---
+
+Pretext is easy to describe as a text measurement library.
+
+The more important shift is architectural: text layout becomes something application code can query, cache, and build around instead of something you only discover after a render-and-measure loop through the DOM.
+
+That matters immediately for things like:
+
+- virtualization without so much guesswork
+- dense cards and masonry-like layouts
+- editor-style reflow
+- shrink-wrapped text UI
+- more expressive interfaces that still preserve real text
+
+My main takeaway is that most teams will feel this first through open-source libraries. Virtualization systems, React UI infrastructure, layout engines, document editors, and rich text tooling all have strong reasons to absorb a primitive like this.
+
+The caveats are real, and they make the project more credible. Pretext is targeting a well-defined browser text model rather than pretending to be a universal font engine. That is exactly the kind of restraint I want to see in infrastructure like this.
+
+Full post:
+https://anm.dev/blog/why-pretext-matters
