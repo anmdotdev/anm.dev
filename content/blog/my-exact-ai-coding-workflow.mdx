@@ -28,11 +28,15 @@ I want a task that is clear enough to hand off and review.
 
 That means I avoid starting with something like:
 
-> "rethink the entire editor architecture"
+> "make the task board easier to use"
 
-Instead I want something more like:
+Instead I break it down, something more like:
 
-> "add slash-command insertion for image and code blocks to the editor"
+> "show a 5-second Undo toast after someone deletes a task from the board"
+> "allow moving a task between columns by dragging from the task card itself instead of just the handle"
+> "add a keyboard shortcut to archive completed tasks from the board view"
+
+and so on.
 
 If the task is too broad, the model improvises too much and I lose control of the review surface.
 
@@ -67,6 +71,10 @@ The goal is transmission.
 
 If I know something that would help the model make a better decision, I want it in the prompt instead of in my head.
 
+That usually means the prompt is longer than people expect.
+
+I am not trying to write a beautiful prompt. I am trying to offload as much of the real task context as possible in one pass.
+
 ---
 
 ## Step 3: Ask for Understanding Before Changes
@@ -78,11 +86,14 @@ Before I let the model write code, I want it to inspect the relevant part of the
 A typical first prompt sounds like:
 
 <PromptBox>
-Go inspect the editor block system before making changes.
-Read the current block renderer, the slash command menu, and the existing block operations.
-Then explain back how insertion currently works, what files are involved, and where you think image/code block insertion should plug in.
-Feel free to ask clarifying questions before implementing anything.
+I want you to inspect how task deletion currently works before you change anything. Read the board item actions, the deletion mutation, whatever optimistic update or cache logic exists, and the current toast or notification system. Then explain it back to me in plain English. I want to know how a task gets removed from the UI today, what files own that behavior, what happens immediately on the client versus what waits on the server, and where an undo flow should plug in if we want this to stay reliable. If there is already some pattern elsewhere in the app for reversible actions, call that out too. Do not implement yet. I want understanding first.
+
+The behavior I want is very specific. When someone deletes a task from the board, it should disappear immediately so the UI still feels fast, and at the same time we should show a toast with an Undo action for 5 seconds. If they hit Undo in that window, restore the task to the same column and as close to the same position as we can reasonably get. If they do nothing, then after the 5 seconds we treat the deletion as final. I do not want weird state drift here, especially if someone deletes multiple tasks quickly, refreshes during the undo window, has a slow or failed network request, or if the board changes underneath us while the toast is still open. Please point out any edge cases or tradeoffs you see, and ask clarifying questions before implementation if anything about the current flow is ambiguous.
 </PromptBox>
+
+This is one reason I think dictated prompts work so well.
+
+A short prompt sounds clean, but it usually hides the exact behavior, constraints, and edge cases that actually matter.
 
 This gives me two things:
 
@@ -113,22 +124,23 @@ Just enough to define:
 For example:
 
 ```md
-## Slash Command Insertions
+## Task Delete Undo
 
 ### Scope
-- Add slash-command insertion for image and code blocks
-- Reuse existing insertion flow for text and heading blocks
+- Add a 5-second undo flow after deleting a task from the board
+- Reuse the current deletion path and existing toast system
 
 ### Constraints
-- Do not change persisted block schema
-- Follow the current command menu component
-- Keep keyboard flow identical to existing commands
+- Do not change the persisted task schema
+- Keep the existing delete entry point and board interactions intact
+- Avoid a full board refetch for every delete if the current flow already updates local state
 
 ### Scenarios
-1. Typing `/image` inserts an image block below the current block
-2. Typing `/code` inserts a code block and focuses it
-3. Escape closes the command menu without changing content
-4. Existing slash commands still behave exactly the same
+1. Deleting a task removes it immediately and shows an Undo toast
+2. Clicking Undo within 5 seconds restores the task to the same column and roughly the same position
+3. If no action is taken, the task remains deleted after the timeout expires
+4. Multiple deletes in a row do not break the board state or restore the wrong task
+5. If the delete fails, the task is restored and the user sees an error state
 ```
 
 This is usually enough to keep the model inside the right boundaries.
