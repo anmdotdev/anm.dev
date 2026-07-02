@@ -1,0 +1,162 @@
+---
+title: "Markdown & MDX Showcase: A Sample Post"
+date: 2026-07-02
+summary: "A reference post demonstrating headings, lists, code blocks, links, blockquotes, and the custom MDX components available on this blog."
+tags: [Sample, Markdown, Developer Tools]
+---
+
+This is a **sample post** published on July 2, 2026. It exists to show the range of formatting and MDX components supported on this site. Use it as a reference when authoring new essays.
+
+You can mix *italic*, **bold**, and `inline code` in the same sentence. External links open in a new tab — for example, the [MDX documentation](https://mdxjs.com/). Internal links use the site router, like the [blog index](/blog).
+
+---
+
+## Headings and Structure
+
+Posts use `##` for major sections and `###` for subsections. Heading anchors are generated automatically, so readers can link directly to a section like [Lists](#lists) or [Code Blocks](#code-blocks).
+
+### A Third-Level Heading
+
+Keep hierarchy logical: one `h1` comes from the page title, so body content should start at `h2`.
+
+---
+
+## Lists
+
+Unordered lists work for loose collections of ideas:
+
+- First item with **emphasis**
+- Second item with a [link](/blog)
+- Third item with `inline code`
+
+Ordered lists work for sequences:
+
+1. Define the problem
+2. Describe the approach
+3. Validate the result
+
+Nested lists are also supported:
+
+- Parent item
+  - Child item A
+  - Child item B
+- Another parent
+
+---
+
+## Blockquotes
+
+Standard markdown blockquotes render as indented prose:
+
+> Good writing is not about sounding clever. It is about making an idea easy to carry in someone else's head.
+
+You can also stack multiple lines:
+
+> The best prompts are not short.
+>
+> They are complete.
+
+---
+
+## Code Blocks
+
+Fenced code blocks get syntax highlighting via Shiki.
+
+TypeScript:
+
+```typescript
+interface BlogPost {
+  slug: string
+  title: string
+  date: string
+  tags: string[]
+}
+
+export function isPublished(post: BlogPost, today: string): boolean {
+  return post.date <= today
+}
+```
+
+Shell commands:
+
+```bash
+bun run dev
+bun x ultracite check
+```
+
+JSON configuration:
+
+```json
+{
+  "title": "Markdown & MDX Showcase",
+  "date": "2026-07-02",
+  "tags": ["Sample", "Markdown"]
+}
+```
+
+---
+
+## Custom MDX Components
+
+This blog extends plain markdown with a small set of MDX components.
+
+### Callouts
+
+<Callout type="note">
+Notes surface context that is helpful but not central to the argument.
+</Callout>
+
+<Callout type="tip">
+Tips highlight practical advice — like running `bun x ultracite fix` before committing.
+</Callout>
+
+<Callout type="warning">
+Warnings flag behavior that can surprise readers or break production workflows.
+</Callout>
+
+<Callout type="important">
+Important callouts mark constraints readers should not skip.
+</Callout>
+
+### Philosophy
+
+The standalone `Philosophy` component renders as a styled callout for thesis statements:
+
+<Philosophy>
+A sample post is most useful when it exercises real components, not just lorem ipsum filler.
+</Philosophy>
+
+The same visual treatment is available through `<Callout type="philosophy">` when you prefer consistency with other callout types.
+
+### Prompt Box
+
+`PromptBox` formats example prompts the way they appear in AI workflow essays:
+
+<PromptBox>
+Refactor the date parsing in `lib/blog.ts` to accept ISO-8601 strings with timezone offsets. Do not change the public API. Add a test for `Asia/Kolkata` midnight boundaries.
+</PromptBox>
+
+### Mermaid Diagrams
+
+Diagrams render inline using the `Mermaid` component. Pipe characters act as line breaks inside the `chart` prop:
+
+<Mermaid chart="flowchart LR |  A[Write MDX] --> B[Compile] |  B --> C[Render HTML] |  C --> D[Ship]" />
+
+You can also use a block form:
+
+<Mermaid>
+sequenceDiagram
+  participant Author
+  participant Build
+  participant Reader
+  Author->>Build: commit .mdx
+  Build->>Reader: static page
+</Mermaid>
+
+---
+
+## Putting It Together
+
+A typical essay might open with a short hook, use a `Philosophy` block for the core claim, walk through an ordered list of steps, drop in a `PromptBox` for a concrete example, and close with a `Callout type="tip"` for the takeaway.
+
+That is the full toolkit demonstrated here: standard markdown for structure and prose, fenced code for examples, and MDX components for the editorial patterns this site uses most often.
