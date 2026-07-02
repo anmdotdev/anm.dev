@@ -121,3 +121,12 @@ Biome's linter will catch most issues automatically. Focus your attention on:
 ---
 
 Most formatting and common issues are automatically fixed by Biome. Run `bun x ultracite fix` before committing to ensure compliance.
+
+## Cursor Cloud specific instructions
+
+This is a **Next.js 16 (Turbopack) + React 19** personal website/blog managed with **Bun** (see `bun.lock`). There is a single service.
+
+- Run the dev server with `bun run dev` (Next.js on `http://localhost:3000`). Lint with `bun run lint` (Biome); build with `bun run build`. There is no automated test suite.
+- Dependency install: use `bun install --ignore-scripts`. A plain `bun install` fails in this environment because the `prepare` script runs `lefthook install`, which aborts when `core.hooksPath` is set (Cursor manages git hooks). `--ignore-scripts` only skips that git-hook setup and does not affect app dependencies. The update script already handles this on startup.
+- All PostHog env vars in `.env.example` are optional; without them the server logs a harmless `[posthog-logs] ... disabled ... token is missing` warning and runs normally.
+- Blog posts (`content/blog/*.mdx`) support content negotiation: requesting a post with `Accept: text/markdown` returns raw markdown via `app/api/blog/[slug]/raw` (see `proxy.ts`).
